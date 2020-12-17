@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/api-commons/api-commons.iml" filepath="$PROJECT_DIR$/api-commons/api-commons.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fabricPlatform.iml" filepath="$PROJECT_DIR$/fabricPlatform.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fabricTest/fabricTest.iml" filepath="$PROJECT_DIR$/fabricTest/fabricTest.iml" />
+    </modules>
+  </component>
+</project>

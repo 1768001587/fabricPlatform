@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="one.hust.edu.cn.dao.UserDao">
+    <resultMap id="BaseResultMap" type="one.hust.edu.cn.entities.User">
+        <!--映射column为数据库字段，property为实体类属性-->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="username" property="username" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--根据id找User-->
+    <select id="findUserById" parameterType="Integer" resultMap="BaseResultMap">
+        select * from user where id=#{id};
+    </select>
+    <!--找所有User-->
+    <select id="getAllUser" parameterType="Map" resultMap="BaseResultMap">
+        select id,username from user;
+    </select>
+</mapper>
