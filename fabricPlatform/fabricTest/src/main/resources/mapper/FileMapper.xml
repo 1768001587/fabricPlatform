@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="one.hust.edu.cn.dao.FileDao">
+    <resultMap id="BaseResultMap" type="one.hust.edu.cn.entities.MyFile">
+        <!--映射column为数据库字段，property为实体类属性-->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="filename" property="filename" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--上传file-->
+    <insert id="uploadFile" parameterType="MyFile" useGeneratedKeys="true" keyProperty="id">
+        insert into filetable(filename) values(#{filename});
+    </insert>
+</mapper>

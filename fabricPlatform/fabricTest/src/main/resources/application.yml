@@ -4,6 +4,11 @@ server:
 spring:
   application:
     name: springcloud-fabric-test
+  servlet:
+    multipart:
+      #设置上传文件最大值
+      max-file-size: 1000MB
+      max-request-size: 1000MB
   datasource:
     # 当前数据源操作类型
     type: com.alibaba.druid.pool.DruidDataSource      #当前数据源操作类型
@@ -26,6 +31,10 @@ spring:
       testOnReturn: false
       poolPreparedStatements: false
       maxPoolPreparedStatementPerConnectionSize: 200
+  thymeleaf:
+    check-template: true
+    suffix: .html
+    cache: false
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: one.hust.edu.cn.entities #所有Entity别名类所在的包
