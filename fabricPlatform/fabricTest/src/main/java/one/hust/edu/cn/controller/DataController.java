@@ -17,6 +17,8 @@ import java.util.List;
 public class DataController {
     @Resource
     private DataService fileService;
+
+    //上传文件
     @PostMapping(value = "/uploadFile")
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file){
         //获取文件名
@@ -33,11 +35,13 @@ public class DataController {
             return new CommonResult<>(400,"上传失败",null);
         }
     }
+    //获取文件列表
     @GetMapping(value = "getDataList")
     public CommonResult getDataList(){
         List<MyFile> list = fileService.getDataList();
         return new CommonResult<>(200,"获取所有文件列表成功",list);
     }
+    //根据文件id删除文件
     @GetMapping(value = "deleteDataById/{id}")
     public CommonResult deleteDataById(@PathVariable("id") Integer id){
         Integer result = fileService.deleteDataById(id);

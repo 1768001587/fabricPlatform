@@ -15,13 +15,14 @@ import javax.annotation.Resource;
 public class UserController {
     @Resource
     private UserService userService;
-
+    //登录
     @PostMapping(value = "login")
     public CommonResult login(@RequestBody User user){
         boolean result = userService.login(user);
         if(result) return new CommonResult<>(200,"登录成功",user);
         else return new CommonResult<>(400,"登录失败,用户不存在或用户名或密码错误",null);
     }
+    //注册
     @PostMapping(value = "register")
     public CommonResult register(@RequestBody User user){
             boolean result = userService.register(user);

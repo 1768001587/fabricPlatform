@@ -7,6 +7,7 @@ import java.util.List;
 
 @Mapper
 public interface DataDao {
+    //上传文件
     void uploadFile(MyFile myFile);
     //获取文件列表
     List<MyFile> getDataList();
