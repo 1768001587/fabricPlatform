@@ -4,14 +4,24 @@
     <resultMap id="BaseResultMap" type="one.hust.edu.cn.entities.User">
         <!--映射column为数据库字段，property为实体类属性-->
         <id column="id" property="id" jdbcType="INTEGER"/>
-        <id column="username" property="username" jdbcType="VARCHAR"/>
+        <id column="user_name" property="username" jdbcType="VARCHAR"/>
+        <id column="password" property="password" jdbcType="VARCHAR"/>
+        <id column="fabric_user_id" property="fabricUserId" jdbcType="INTEGER"/>
     </resultMap>
     <!--根据id找User-->
     <select id="findUserById" parameterType="Integer" resultMap="BaseResultMap">
         select * from user where id=#{id};
     </select>
     <!--找所有User-->
-    <select id="getAllUser" parameterType="Map" resultMap="BaseResultMap">
-        select id,username from user;
+    <select id="getAllUser" parameterType="Map" resultMap="BaseResultMap" >
+        select id,user_name from user;
     </select>
+    <!--用户登录-->
+    <select id="login"  parameterType="User" resultType="Integer">
+        select count(*) from user where user_name=#{username} and password=#{password} ;
+    </select>
+    <!--用户注册-->
+    <insert id="register"  parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        insert into user(id,user_name,password,fabric_user_id) values(null,#{username},#{password},0);
+    </insert>
 </mapper>

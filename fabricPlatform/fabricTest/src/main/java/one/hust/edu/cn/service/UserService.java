@@ -8,4 +8,8 @@ public interface UserService {
     List<User> getAllUser();
     //根据id查用户
     User findUserById(Integer id);
+    //用户登录
+    boolean login(User user);
+    //用户注册
+    boolean register(User user);
 }

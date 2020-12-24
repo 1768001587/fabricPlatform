@@ -10,5 +10,6 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class MyFile implements Serializable {
     private Integer id;
-    private String filename;
+
+    private String dataName;
 }

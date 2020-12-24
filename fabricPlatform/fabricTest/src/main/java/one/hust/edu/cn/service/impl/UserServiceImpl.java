@@ -12,6 +12,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Resource
     private UserDao userDao;
+
     @Override
     public List<User> getAllUser() {
         return userDao.getAllUser();
@@ -20,5 +21,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findUserById(Integer id) {
         return userDao.findUserById(id);
+    }
+
+    @Override
+    public boolean login(User user) {
+        if(userDao.login(user)==1) return true;
+        else return false;
+    }
+
+    @Override
+    public boolean register(User user) {
+        try{
+            userDao.register(user);
+            return true;
+        }catch (Exception e){
+            return false;
+        }
     }
 }

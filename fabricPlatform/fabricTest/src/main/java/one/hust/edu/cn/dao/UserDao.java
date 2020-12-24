@@ -11,4 +11,8 @@ public interface UserDao {
     List<User> getAllUser();
     //根据id查用户
     User findUserById(Integer id);
+    //用户登录
+    Integer login(User user);
+    //用户注册
+    void register(User user);
 }
