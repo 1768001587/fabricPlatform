@@ -2,25 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="236dd9c6-e056-4139-b4f1-0dcc8da43fff" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/entities/MyFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/entities/MyFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/api-commons/target/classes/one/hust/edu/cn/entities/MyFile.class" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/api-commons/target/classes/one/hust/edu/cn/entities/MyFile.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/CorsConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabricPlatform/api-commons/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/api-commons/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/utils/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/utils/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/InterceptorConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/InterceptorConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/DataController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/DataController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/dao/UserDao.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/dao/UserDao.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/service/UserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/service/impl/UserServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/mapper/DataMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/mapper/DataMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/mapper/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/mapper/UserMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/mapper/DataMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/mapper/DataMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/mapper/UserMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/mapper/UserMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/config/CorsConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/config/CorsConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/config/IntercepterConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/interceptor/AuthenticationInterceptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/interceptor/AuthenticationInterceptor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/controller/DataController.class" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/controller/DataController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/controller/UserController.class" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/controller/UserController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/dao/UserDao.class" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/dao/UserDao.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/service/UserService.class" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/service/UserService.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/service/impl/UserServiceImpl.class" beforeDir="false" afterPath="$PROJECT_DIR$/fabricPlatform/fabricTest/target/classes/one/hust/edu/cn/service/impl/UserServiceImpl.class" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/fabricPlatform/fabricTest/target/" />
     <ignored path="$PROJECT_DIR$/fabricPlatform/api-commons/target/" />
@@ -49,36 +39,38 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
+          <entry key="class" value="4" />
           <entry key="html" value="3" />
-          <entry key="java" value="91" />
+          <entry key="java" value="127" />
           <entry key="md" value="2" />
-          <entry key="xml" value="23" />
+          <entry key="xml" value="25" />
           <entry key="yml" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
+          <entry key="CLASS" value="4" />
           <entry key="HTML" value="3" />
-          <entry key="JAVA" value="91" />
+          <entry key="JAVA" value="127" />
           <entry key="Markdown" value="2" />
-          <entry key="XML" value="23" />
+          <entry key="XML" value="25" />
           <entry key="YAML" value="4" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="8" />
-          <entry key="java" value="1809" />
-          <entry key="xml" value="363" />
+          <entry key="java" value="1988" />
+          <entry key="xml" value="364" />
           <entry key="yml" value="33" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="1809" />
+          <entry key="JAVA" value="1988" />
           <entry key="PLAIN_TEXT" value="8" />
           <entry key="SQL" value="11" />
-          <entry key="XML" value="352" />
+          <entry key="XML" value="353" />
           <entry key="YAML" value="33" />
         </counts>
       </usages-collector>
@@ -89,11 +81,86 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/DataController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="592">
-              <caret line="40" column="47" selection-start-line="40" selection-start-column="47" selection-end-line="40" selection-end-column="47" />
+            <state relative-caret-position="460">
+              <caret line="41" column="55" selection-start-line="41" selection-start-column="55" selection-end-line="41" selection-end-column="55" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/myAnnotation/CheckToken.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="189">
+              <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/InterceptorConfig.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="314">
+              <caret line="21" column="28" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/interceptor/AuthenticationInterceptor.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="58" column="70" lean-forward="true" selection-start-line="58" selection-start-column="20" selection-end-line="58" selection-end-column="70" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/UserController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="358">
+              <caret line="28" column="45" lean-forward="true" selection-start-line="28" selection-start-column="45" selection-end-line="28" selection-end-column="49" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/utils/JwtUtil.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="405">
+              <caret line="67" column="27" selection-start-line="67" selection-start-column="27" selection-end-line="67" selection-end-column="27" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://D:/Program Files (x86)/MavenRepository/io/jsonwebtoken/jjwt/0.9.1/jjwt-0.9.1.jar!/io/jsonwebtoken/JwtBuilder.class">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="311">
+              <caret line="52" column="11" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/entities/User.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -107,6 +174,13 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>isVerify</find>
+      <find>createJWT</find>
+      <find>key</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -115,7 +189,6 @@
       <list>
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/test/java/fabricTest/Java_Python_test.java" />
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/test/java/fabricTest/test2.java" />
-        <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/pom.xml" />
         <option value="$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/entities/User.java" />
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/application.yml" />
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/mapper/FileMapper.xml" />
@@ -134,7 +207,14 @@
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/BaseController.java" />
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/IntercepterConfig.java" />
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/mapper/DataMapper.xml" />
+        <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/pom.xml" />
+        <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/myAnnotation/LoginToken.java" />
+        <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/myAnnotation/CheckToken.java" />
+        <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/InterceptorConfig.java" />
+        <option value="$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/utils/CookieUtil.java" />
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/UserController.java" />
+        <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/interceptor/AuthenticationInterceptor.java" />
+        <option value="$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/utils/JwtUtil.java" />
         <option value="$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/DataController.java" />
       </list>
     </option>
@@ -180,9 +260,9 @@
     <option name="vmOptions" value="-DarchetypeCatalog=internal" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="844" />
-    <option name="y" value="13" />
-    <option name="width" value="960" />
+    <option name="x" value="-174" />
+    <option name="y" value="385" />
+    <option name="width" value="1536" />
     <option name="height" value="1047" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
@@ -368,6 +448,45 @@
             <path>
               <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
               <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
+              <item name="api-commons" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="cn" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
+              <item name="api-commons" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="cn" type="462c0819:PsiDirectoryNode" />
+              <item name="entities" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
+              <item name="api-commons" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="cn" type="462c0819:PsiDirectoryNode" />
+              <item name="myAnnotation" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
+              <item name="api-commons" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="cn" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
               <item name="fabricTest" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -399,6 +518,16 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="cn" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
+              <item name="fabricTest" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="cn" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
@@ -418,28 +547,7 @@
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="cn" type="462c0819:PsiDirectoryNode" />
-              <item name="dao" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
-              <item name="fabricTest" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="cn" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
-              <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
-              <item name="fabricTest" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="main" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="cn" type="462c0819:PsiDirectoryNode" />
-              <item name="service" type="462c0819:PsiDirectoryNode" />
-              <item name="impl" type="462c0819:PsiDirectoryNode" />
+              <item name="interceptor" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
@@ -448,6 +556,15 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="fabricPlatform" type="b2602c69:ProjectViewProjectNode" />
+              <item name="fabricPlatform" type="462c0819:PsiDirectoryNode" />
+              <item name="fabricTest" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="mapper" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -462,7 +579,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1608865882521" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1608889371423" />
     <property name="last_opened_file_path" value="D:/JavaCode/cloud2020" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -470,6 +587,11 @@
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
     <property name="settings.editor.selected.configurable" value="Errors" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\myAnnotation" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -587,7 +709,7 @@
       <workItem from="1608695126056" duration="682000" />
       <workItem from="1608715678479" duration="1501000" />
       <workItem from="1608780562588" duration="11327000" />
-      <workItem from="1608858291467" duration="7523000" />
+      <workItem from="1608858291467" duration="20251000" />
     </task>
     <servers />
   </component>
@@ -600,12 +722,13 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="21561000" />
+    <option name="totallyTimeSpent" value="34289000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23880596" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23880596" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -615,8 +738,8 @@
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32899022" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3615635" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32464713" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3995657" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -640,7 +763,7 @@
       <window_info anchor="right" id="Bean Validation" order="9" weight="0.32995737" />
     </layout>
     <layout-to-restore>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.23614073" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23880596" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -649,14 +772,14 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info id="Web" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.34201956" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32899022" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32464713" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3275488" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32681867" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Spring" order="11" />
@@ -718,13 +841,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="668">
-          <caret line="76" column="19" selection-start-line="76" selection-start-column="19" selection-end-line="76" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/test/java/fabricTest/readFile.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
@@ -782,13 +898,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/entities/User.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="16" column="1" lean-forward="true" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/test/java/fabricTest/UserTest.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="129">
@@ -820,44 +929,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/service/impl/UserServiceImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="28" column="50" selection-start-line="28" selection-start-column="50" selection-end-line="28" selection-end-column="50" />
-          <folding>
-            <element signature="e#696#697#0" expanded="true" />
-            <element signature="e#723#724#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/dao/UserDao.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="14" column="26" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/CorsConfig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="14" column="31" lean-forward="true" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/mapper/UserMapper.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="15" column="57" selection-start-line="15" selection-start-column="57" selection-end-line="15" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/BaseController.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="439">
@@ -875,20 +946,172 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/UserController.java">
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/service/impl/UserServiceImpl.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="304">
-          <caret line="23" selection-start-line="23" selection-end-line="23" />
+        <state relative-caret-position="133">
+          <caret line="28" column="50" selection-start-line="28" selection-start-column="50" selection-end-line="28" selection-end-column="50" />
+          <folding>
+            <element signature="e#696#697#0" expanded="true" />
+            <element signature="e#755#756#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/dao/UserDao.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="14" column="26" selection-start-line="14" selection-start-column="26" selection-end-line="14" selection-end-column="26" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="484">
+          <caret line="86" column="21" selection-start-line="86" selection-start-column="21" selection-end-line="86" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/myAnnotation/LoginToken.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/myAnnotation/CheckToken.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/myAnnotation/LoginToken.java">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/utils/CookieUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="10" lean-forward="true" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/CorsConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="14" column="31" lean-forward="true" selection-start-line="14" selection-start-column="31" selection-end-line="14" selection-end-column="31" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/Program Files (x86)/MavenRepository/com/auth0/java-jwt/3.4.0/java-jwt-3.4.0.jar!/com/auth0/jwt/interfaces/Payload.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="326">
+          <caret line="26" column="10" selection-start-line="26" selection-start-column="10" selection-end-line="26" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_92/src.zip!/java/util/Map.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="211" column="6" selection-start-line="211" selection-start-column="6" selection-end-line="211" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/resources/mapper/UserMapper.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="15" column="57" selection-start-line="15" selection-start-column="57" selection-end-line="15" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/Program Files (x86)/MavenRepository/io/jsonwebtoken/jjwt/0.9.1/jjwt-0.9.1.jar!/io/jsonwebtoken/impl/DefaultJwtBuilder.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="7" column="7" lean-forward="true" selection-start-line="7" selection-start-column="7" selection-end-line="7" selection-end-column="7" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/Program Files (x86)/MavenRepository/io/jsonwebtoken/jjwt/0.9.1/jjwt-0.9.1.jar!/io/jsonwebtoken/Jwts.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="10" column="39" lean-forward="true" selection-start-line="10" selection-start-column="39" selection-end-line="10" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/IntercepterConfig.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="297">
-          <caret line="11" column="1" lean-forward="true" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+        <state relative-caret-position="243">
+          <caret line="9" column="67" selection-start-line="9" selection-start-column="67" selection-end-line="9" selection-end-column="67" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/entities/User.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="14" column="19" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/UserController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="358">
+          <caret line="28" column="45" lean-forward="true" selection-start-line="28" selection-start-column="45" selection-end-line="28" selection-end-column="49" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://D:/Program Files (x86)/MavenRepository/io/jsonwebtoken/jjwt/0.9.1/jjwt-0.9.1.jar!/io/jsonwebtoken/JwtBuilder.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="52" column="11" selection-start-line="52" selection-start-column="11" selection-end-line="52" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/utils/JwtUtil.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="67" column="27" selection-start-line="67" selection-start-column="27" selection-end-line="67" selection-end-column="27" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/api-commons/src/main/java/one/hust/edu/cn/myAnnotation/CheckToken.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="10" column="18" selection-start-line="10" selection-start-column="18" selection-end-line="10" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/config/InterceptorConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="21" column="28" selection-start-line="21" selection-start-column="28" selection-end-line="21" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/interceptor/AuthenticationInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="58" column="70" lean-forward="true" selection-start-line="58" selection-start-column="20" selection-end-line="58" selection-end-column="70" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -897,8 +1120,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/fabricPlatform/fabricTest/src/main/java/one/hust/edu/cn/controller/DataController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="592">
-          <caret line="40" column="47" selection-start-line="40" selection-start-column="47" selection-end-line="40" selection-end-column="47" />
+        <state relative-caret-position="460">
+          <caret line="41" column="55" selection-start-line="41" selection-start-column="55" selection-end-line="41" selection-end-column="55" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -922,7 +1145,7 @@
       </state>
       <state key="FacetStructureConfigurable.UI">
         <settings>
-          <last-edited>No facets are configured</last-edited>
+          <last-edited>Spring</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -957,7 +1180,7 @@
       </state>
       <state key="ModuleStructureConfigurable.UI">
         <settings>
-          <last-edited>fabricPlatform</last-edited>
+          <last-edited>api-commons</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -970,6 +1193,7 @@
       </state>
       <state key="ProjectLibrariesConfigurable.UI">
         <settings>
+          <last-edited>Maven: ch.qos.logback:logback-classic:1.2.3</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
