@@ -1,6 +1,5 @@
 package one.hust.edu.cn.controller;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.CommonResult;
 import one.hust.edu.cn.entities.MyFile;
@@ -10,17 +9,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
 @RestController
-public class DataController {
+public class DataController{
     @Resource
     private DataService fileService;
 
     //上传文件
     @PostMapping(value = "/uploadFile")
-    public CommonResult uploadFile(@RequestParam("file") MultipartFile file){
+    public CommonResult uploadFile(@RequestParam("file") MultipartFile file,@RequestParam("originUserId")Integer originUserId){
         //获取文件名
         String fileName = file.getOriginalFilename();
         String filePath = "D:/研究生资料/南六218实验室/代炜琦项目组文件/github同步代码/uploadFilePackage/";
@@ -28,6 +30,19 @@ public class DataController {
             file.transferTo(new File(filePath+fileName));
             MyFile myFile = new MyFile();
             myFile.setDataName(filePath+fileName);
+            //文件大小以KB作为单位
+            // 首先先将.getSize()获取的Long转为String 然后将String转为Float并除以1024 （因为1KB=1024B）
+            Double size = Double.parseDouble(String.valueOf(file.getSize())) / 1024;
+            BigDecimal b = new BigDecimal(size);
+            // 2表示2位 ROUND_HALF_UP表明四舍五入，
+            size = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            // 此时size就是保留两位小数的浮点数
+            myFile.setDataSize(size);
+            myFile.setOriginUserId(originUserId);
+            myFile.setDataType(fileName.substring(fileName.lastIndexOf("."))+"文件");
+            //初次创建时将初始时间和修改时间写成一样
+            myFile.setCreatedTime(new Timestamp(new Date().getTime()));
+            myFile.setModifiedTime(new Timestamp(new Date().getTime()));
             fileService.uploadFile(myFile);
             return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName,myFile);
         } catch (Exception e) {

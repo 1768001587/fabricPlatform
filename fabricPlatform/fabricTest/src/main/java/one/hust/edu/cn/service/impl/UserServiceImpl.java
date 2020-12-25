@@ -3,6 +3,7 @@ package one.hust.edu.cn.service.impl;
 import one.hust.edu.cn.dao.UserDao;
 import one.hust.edu.cn.entities.User;
 import one.hust.edu.cn.service.UserService;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,8 +25,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User findUserByUsername(String username) {
+        return userDao.findUserByUsername(username);
+    }
+
+    @Override
     public boolean login(User user) {
-        if(userDao.login(user)==1) return true;
+        if(userDao.login(user)>=1) {
+            return true;
+        }
         else return false;
     }
 

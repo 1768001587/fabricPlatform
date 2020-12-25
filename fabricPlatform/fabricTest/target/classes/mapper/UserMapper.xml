@@ -12,6 +12,10 @@
     <select id="findUserById" parameterType="Integer" resultMap="BaseResultMap">
         select * from user where id=#{id};
     </select>
+    <!--根据用户名找User-->
+    <select id="findUserByUsername" parameterType="String" resultMap="BaseResultMap">
+        select * from user where user_name=#{username};
+    </select>
     <!--找所有User-->
     <select id="getAllUser" parameterType="Map" resultMap="BaseResultMap" >
         select id,user_name from user;

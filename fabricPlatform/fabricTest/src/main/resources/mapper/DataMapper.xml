@@ -4,15 +4,22 @@
     <resultMap id="BaseResultMap" type="one.hust.edu.cn.entities.MyFile">
         <!--映射column为数据库字段，property为实体类属性-->
         <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="data" property="data" jdbcType="VARCHAR"/>
         <id column="data_name" property="dataName" jdbcType="VARCHAR"/>
+        <id column="data_type" property="dataType" jdbcType="VARCHAR"/>
+        <id column="data_size" property="dataSize" jdbcType="DOUBLE"/>
+        <id column="origin_user_id" property="originUserId" jdbcType="INTEGER"/>
+        <id column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <id column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
     </resultMap>
     <!--上传file-->
     <insert id="uploadFile" parameterType="MyFile" useGeneratedKeys="true" keyProperty="id">
-        insert into data_sample(data_name) values(#{dataName});
+        insert into data_sample(data_name,data_type,data_size,origin_user_id,created_time,modified_time)
+        values(#{dataName},#{dataType},#{dataSize},#{originUserId},#{createdTime},#{modifiedTime});
     </insert>
     <!--获取文件列表-->
     <select id="getDataList" parameterType="Map" resultMap="BaseResultMap">
-        select id,data_name from data_sample;
+        select id,data_name,data_type,data_size,origin_user_id,created_time,modified_time from data_sample;
     </select>
     <!--根据文件id删除文件-->
     <delete id="deleteDataById" parameterType="Integer">
