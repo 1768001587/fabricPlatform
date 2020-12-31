@@ -1,5 +1,6 @@
 server:
   port: 8080
+  connection-timeout: 18000000
 
 spring:
   application:
@@ -7,8 +8,8 @@ spring:
   servlet:
     multipart:
       #设置上传文件最大值
-      max-file-size: 1000MB
-      max-request-size: 1000MB
+      max-file-size: 100000MB
+      max-request-size: 100000MB
   datasource:
     # 当前数据源操作类型
     type: com.alibaba.druid.pool.DruidDataSource      #当前数据源操作类型

@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -26,6 +27,7 @@ public class DataController{
     //上传文件
     @CheckToken
     @PostMapping(value = "/uploadFile")
+    @ResponseBody
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
@@ -57,18 +59,24 @@ public class DataController{
         }
     }
     //获取文件列表
-    @GetMapping(value = "getDataList")
+    @GetMapping(value = "/getDataList")
     public CommonResult getDataList(){
         List<MyFile> list = fileService.getDataList();
         return new CommonResult<>(200,"获取所有文件列表成功",list);
     }
     //根据文件id删除文件
-    @GetMapping(value = "deleteDataById/{id}")
-    public CommonResult deleteDataById(@PathVariable("id") Integer id){
-        Integer result = fileService.deleteDataById(id);
+    //上传文件
+    @CheckToken
+    @PostMapping(value = "/deleteDataById")
+    @ResponseBody
+    public CommonResult deleteDataById(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest){
+        Integer dataId = Integer.valueOf(params.get("dataId"));
+        Integer result = fileService.deleteDataById(dataId);
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
         if(result<1){
-            return new CommonResult<>(200,"不存在id为："+id+"的文件",null);
+            return new CommonResult<>(200,"不存在id为："+dataId+"的文件",null);
         }
-        return new CommonResult<>(200,"成功删除id为："+id+"的文件",null);
+        return new CommonResult<>(200,"成功删除id为："+dataId+"的文件,token为："+token,null);
     }
 }
