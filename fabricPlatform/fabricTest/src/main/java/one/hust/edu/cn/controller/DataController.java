@@ -34,7 +34,7 @@ public class DataController{
     @CheckToken
     @PostMapping(value = "/data/uploadFile")
     @ResponseBody
-    public CommonResult uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest httpServletRequest){
+    public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
         String filePath = "D:/研究生资料/南六218实验室/代炜琦项目组文件/github同步代码/uploadFilePackage/";
@@ -49,7 +49,7 @@ public class DataController{
             //进行文件传输
             file.transferTo(new File(filePath+fileName));
             MyFile myFile = new MyFile();
-            myFile.setChannelId(1);//这里后面要做出选择channel
+            myFile.setChannelId(channelId);//这里后面要做出选择channel
             myFile.setDataName(filePath+fileName);
             //文件大小以KB作为单位
             // 首先先将.getSize()获取的Long转为String 单位为B

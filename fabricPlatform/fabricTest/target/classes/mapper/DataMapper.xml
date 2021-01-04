@@ -16,7 +16,7 @@
     <!--上传file-->
     <insert id="uploadFile" parameterType="MyFile" useGeneratedKeys="true" keyProperty="id">
         insert into data_sample(channelId,data_name,data,data_type,data_size,origin_user_id,created_time,modified_time)
-        values(1,#{dataName},#{data},#{dataType},#{dataSize},#{originUserId},#{createdTime},#{modifiedTime});
+        values(#{channelId},#{dataName},#{data},#{dataType},#{dataSize},#{originUserId},#{createdTime},#{modifiedTime});
     </insert>
     <!--获取文件列表-->
     <select id="getDataList" parameterType="Map" resultMap="BaseResultMap">

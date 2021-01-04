@@ -3,9 +3,11 @@ package one.hust.edu.cn.service.impl;
 import one.hust.edu.cn.dao.DataAuthorityDao;
 import one.hust.edu.cn.entities.DataAuthority;
 import one.hust.edu.cn.service.DataAuthorityService;
+import org.omg.CORBA.DATA_CONVERSION;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class DataAuthorityServiceImpl implements DataAuthorityService {
@@ -14,5 +16,25 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     @Override
     public void addDataAuthority(DataAuthority dataAuthority) {
         dataAuthorityDao.addDataAuthority(dataAuthority);
+    }
+
+    @Override
+    public DataAuthority findDataAuthorityById(Integer id) {
+        return dataAuthorityDao.findDataAuthorityById(id);
+    }
+
+    @Override
+    public List<DataAuthority> findDataAuthorityByUserId(Integer userId) {
+        return dataAuthorityDao.findDataAuthorityByUserId(userId);
+    }
+
+    @Override
+    public List<DataAuthority> findDataAuthorityByDataId(Integer dataSampleId) {
+        return dataAuthorityDao.findDataAuthorityByDataId(dataSampleId);
+    }
+
+    @Override
+    public void editDataAuthority(Integer id, Integer authorityKey) {
+        dataAuthorityDao.editDataAuthority(id,authorityKey);
     }
 }
