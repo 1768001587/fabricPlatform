@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class MyFile implements Serializable {
     private Integer id;
+    private Integer channelId;
     private String data;
     private String dataName;
     private String dataType;

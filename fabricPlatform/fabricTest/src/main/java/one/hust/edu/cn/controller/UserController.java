@@ -19,7 +19,7 @@ public class UserController{
     @Resource
     private UserService userService;
     //登录
-    @PostMapping(value = "login")
+    @PostMapping(value = "/user/login")
     @LoginToken
     public CommonResult login(@RequestBody User user){
         JSONObject jsonObject = new JSONObject();
@@ -36,7 +36,7 @@ public class UserController{
         }
     }
     //注册
-    @PostMapping(value = "register")
+    @PostMapping(value = "/user/register")
     @LoginToken
     public CommonResult register(@RequestBody User user){
             JSONObject jsonObject = new JSONObject();

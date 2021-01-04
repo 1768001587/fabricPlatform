@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="one.hust.edu.cn.dao.ChannelDao">
+    <resultMap id="BaseResultMap" type="one.hust.edu.cn.entities.Channel">
+        <!--映射column为数据库字段，property为实体类属性-->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="channel_name" property="channelName" jdbcType="INTEGER"/>
+    </resultMap>
+    <select id="getAllChannel" parameterType="Map" resultMap="BaseResultMap" >
+        select * from channel;
+    </select>
+    <select id="findChannelById" parameterType="Map" resultMap="BaseResultMap" >
+        select * from channel where id=#{channelId};
+    </select>
+    <select id="findChannelByName" parameterType="Map" resultMap="BaseResultMap" >
+        select * from channel where channel_name=#{channelName};
+    </select>
+</mapper>
