@@ -14,8 +14,8 @@
     </resultMap>
     <!--上传file-->
     <insert id="uploadFile" parameterType="MyFile" useGeneratedKeys="true" keyProperty="id">
-        insert into data_sample(data_name,data_type,data_size,origin_user_id,created_time,modified_time)
-        values(#{dataName},#{dataType},#{dataSize},#{originUserId},#{createdTime},#{modifiedTime});
+        insert into data_sample(data_name,data,data_type,data_size,origin_user_id,created_time,modified_time)
+        values(#{dataName},#{data},#{dataType},#{dataSize},#{originUserId},#{createdTime},#{modifiedTime});
     </insert>
     <!--获取文件列表-->
     <select id="getDataList" parameterType="Map" resultMap="BaseResultMap">
@@ -25,4 +25,12 @@
     <delete id="deleteDataById" parameterType="Integer">
         delete from data_sample where id=#{id};
     </delete>
+    <!--根据id获取文件-->
+    <select id="findDataById" parameterType="Map" resultMap="BaseResultMap">
+        select * from data_sample where id=#{id};
+    </select>
+    <update id="updateFile" parameterType="MyFile">
+        update data_sample set data=#{data},data_size=#{dataSize},modified_time=#{modifiedTime}
+        where id=#{id}
+    </update>
 </mapper>

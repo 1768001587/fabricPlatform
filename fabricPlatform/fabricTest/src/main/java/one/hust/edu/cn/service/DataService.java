@@ -10,4 +10,8 @@ public interface DataService {
     List<MyFile> getDataList();
     //根据id删除文件
     Integer deleteDataById(Integer id);
+    //根据id获取文件内容
+    MyFile findDataById(Integer dataId);
+    //更新文件
+    void updateFile(MyFile myFile);
 }

@@ -13,4 +13,8 @@ public interface DataDao {
     List<MyFile> getDataList();
     //根据文件id删除文件
     Integer deleteDataById(Integer id);
+    //根据id获取文件内容
+    MyFile findDataById(Integer id);
+    //更新文件
+    void updateFile(MyFile myFile);
 }

@@ -28,4 +28,14 @@ public class DataServiceImpl implements DataService
     public Integer deleteDataById(Integer id) {
         return dataDao.deleteDataById(id);
     }
+
+    @Override
+    public MyFile findDataById(Integer dataId) {
+        return dataDao.findDataById(dataId);
+    }
+
+    @Override
+    public void updateFile(MyFile myFile) {
+        dataDao.updateFile(myFile);
+    }
 }
