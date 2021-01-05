@@ -57,4 +57,9 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     public List<DataAuthority> getAllAuthority() {
         return dataAuthorityDao.getAllAuthority();
     }
+
+    @Override
+    public Integer deleteDataAuthority(DataAuthority dataAuthority) {
+        return dataAuthorityDao.deleteDataAuthority(dataAuthority);
+    }
 }

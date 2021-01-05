@@ -6,12 +6,9 @@ import one.hust.edu.cn.entities.CommonResult;
 import one.hust.edu.cn.entities.DataAuthority;
 import one.hust.edu.cn.entities.MyFile;
 import one.hust.edu.cn.myAnnotation.CheckToken;
-import one.hust.edu.cn.service.ChannelAuthorityService;
-import one.hust.edu.cn.service.DataAuthorityService;
-import one.hust.edu.cn.service.DataService;
+import one.hust.edu.cn.service.*;
 import one.hust.edu.cn.utils.TxtUtil;
 import one.hust.edu.cn.vo.DataUserAuthorityVO;
-import org.omg.PortableServer.LIFESPAN_POLICY_ID;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,13 +24,19 @@ import java.util.*;
 
 @Slf4j
 @RestController
-public class DataController{
+public class DataController {
     @Resource
     private DataService fileService;
     @Resource
     ChannelAuthorityService channelAuthorityService;
     @Resource
     DataAuthorityService dataAuthorityService;
+    @Resource
+    FabricService fabricService;
+    @Resource
+    UserService userService;
+    @Resource
+    ChannelService channelService;
 
     //上传文件
     @CheckToken
@@ -41,21 +44,19 @@ public class DataController{
     @ResponseBody
     @Transactional
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
-        System.out.println(channelId);
         //获取文件名
         String fileName = file.getOriginalFilename();
         String filePath = "D:/研究生资料/南六218实验室/代炜琦项目组文件/github同步代码/uploadFilePackage/";
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
-        //执行fabric
 
         try {
             //进行文件传输
-            file.transferTo(new File(filePath+fileName));
+            file.transferTo(new File(filePath + fileName));
             MyFile myFile = new MyFile();
             myFile.setChannelId(channelId);//这里后面要做出选择channel
-            myFile.setDataName(filePath+fileName);
+            myFile.setDataName(filePath + fileName);
             //文件大小以KB作为单位
             // 首先先将.getSize()获取的Long转为String 单位为B
             Double size = Double.parseDouble(String.valueOf(file.getSize()));
@@ -66,21 +67,44 @@ public class DataController{
             myFile.setDataSize(size);
             myFile.setData(TxtUtil.getTxtContent(myFile));
             myFile.setOriginUserId(originUserId);
-            myFile.setDataType(fileName.substring(fileName.lastIndexOf("."))+"文件");
+            myFile.setDataType(fileName.substring(fileName.lastIndexOf(".")) + "文件");
             //初次创建时将初始时间和修改时间写成一样
             myFile.setCreatedTime(new Timestamp(new Date().getTime()));
             myFile.setModifiedTime(new Timestamp(new Date().getTime()));
             fileService.uploadFile(myFile);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////执行fabric操作
+            String result = "";
+            // 1. 权限申请 一次上链
+            String username = "userA";
+            String dstChannelName = "channel1";
+            String txId = fabricService.applyForCreateFile(username, dstChannelName, myFile.getId()+"");
+            if (txId == null || txId.isEmpty()) {
+                System.out.println("申请文件创建权限失败");
+                return new CommonResult<>(300,"文件创建权限失败",null);
+            }
+            System.out.println("1.创建文件成功 txId: " + txId);
+            result+="1.创建文件成功 txId: " + txId+"\r\n";
             //hash
-
-
+            // 3. 更新链上hash 二次上链
+            String rawRes = fabricService.updateForCreateFile(TxtUtil.getTxtContent(myFile), username, dstChannelName, myFile.getId()+"", txId);
+            System.out.println("2. 更新链上hash ： " + rawRes);
+            result+="2. 更新链上hash ： " + rawRes+"\r\n";
+            // 4. 授予用户文件的查改权限
+            rawRes = fabricService.grantUserPermissionOnFile("channel1", myFile.getId()+"", "read", "role1", Collections.singletonList(username));
+            System.out.println("3.授予用户文件读取权限：" + rawRes);
+            result+="3.授予用户文件读取权限：" + rawRes+"\r\n";
+            rawRes = fabricService.grantUserPermissionOnFile("channel1", myFile.getId()+"", "modify", "role1", Collections.singletonList(username));
+            System.out.println("4.授予用户文件修改权限：" + rawRes);
+            result+="4.授予用户文件修改权限：" + rawRes+"\r\n";
             //写入上传者权限
             dataAuthorityService.addMasterDataAuthority(originUserId,myFile.getId());
-            return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName,myFile);
+
+            return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName+"\r\n"+result,myFile);
         } catch (Exception e) {
-            return new CommonResult<>(400,e.getMessage(),null);
+            return new CommonResult<>(400, e.getMessage(), null);
         }
     }
+
     //获取文件列表
     @CheckToken
     @GetMapping(value = "/data/getDataList")
@@ -109,26 +133,28 @@ public class DataController{
         }
         return new CommonResult<>(200,"获取该用户所有文件权限列表成功",result);
     }
+
     //根据文件id删除文件
     //上传文件
     @CheckToken
     @PostMapping(value = "/data/deleteDataById")
     @ResponseBody
-    public CommonResult deleteDataById(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest){
+    public CommonResult deleteDataById(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
         Integer dataId = Integer.valueOf(params.get("dataId"));
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer result = fileService.deleteDataById(dataId);
-        if(result<1){
-            return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
+        if (result < 1) {
+            return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
         }
-        return new CommonResult<>(200,"成功删除id为："+dataId+"的文件,token为："+token,null);
+        return new CommonResult<>(200, "成功删除id为：" + dataId + "的文件,token为：" + token, null);
     }
+
     //根据文件id获取文件内容
     @CheckToken
     @PostMapping(value = "/data/getData")
     @ResponseBody
-    public CommonResult getData(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest){
+    public CommonResult getData(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
         Integer dataId = Integer.valueOf(params.get("dataId"));
         MyFile result = fileService.findDataById(dataId);
         if(result==null){
@@ -137,8 +163,9 @@ public class DataController{
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         String txtContent = TxtUtil.getTxtContent(result);
-        return new CommonResult<>(200,"文件token为："+token,txtContent);
+        return new CommonResult<>(200, "文件token为：" + token, txtContent);
     }
+
     //根据文件id对文件内容进行更新
     @CheckToken
     @PostMapping(value = "/data/updateData")
@@ -147,10 +174,9 @@ public class DataController{
         Integer dataId = Integer.valueOf(params.get("dataId"));
         String dataContent = params.get("dataContent");
         MyFile myFile = fileService.findDataById(dataId);
-        if(myFile==null){
-            return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
+        if (myFile == null) {
+            return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
         }
-        // 从 http 请求头中取出 token
         File old_file = new File(myFile.getDataName());
         old_file.delete();
         File new_file = new File(myFile.getDataName());
@@ -173,6 +199,6 @@ public class DataController{
         myFile.setDataSize(size);
         myFile.setModifiedTime(new Timestamp(new Date().getTime()));
         fileService.updateFile(myFile);
-        return new CommonResult<>(200,"id为："+dataId+"的文件更新成功",null);
+        return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功", null);
     }
 }

@@ -24,4 +24,6 @@ public interface DataAuthorityService {
     void addMasterDataAuthority(Integer originUserId, Integer dataSampleId);
     //获取所有权限
     List<DataAuthority> getAllAuthority();
+    //给用户，文件撤销权限
+    Integer deleteDataAuthority(DataAuthority dataAuthority);
 }

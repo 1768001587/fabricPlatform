@@ -26,7 +26,7 @@ public class UserController{
         boolean result = userService.login(user);
         if(result) {
             User uresult = userService.findUserByUsername(user.getUsername());
-            String token = JwtUtil.createJWT(6000000, uresult);
+            String token = JwtUtil.createJWT(Integer.MAX_VALUE, uresult);
             jsonObject.put("user", uresult);
             jsonObject.put("token", token);
             return new CommonResult<>(200,"登录成功",jsonObject);
@@ -43,7 +43,7 @@ public class UserController{
             if(userService.findUserByUsername(user.getUsername())!=null) return new CommonResult<>(400,"注册失败,用户名已存在",null);
             boolean result = userService.register(user);
             if(result) {
-                String token = JwtUtil.createJWT(600000000, user);
+                String token = JwtUtil.createJWT(Integer.MAX_VALUE, user);
                 jsonObject.put("token", token);
                 jsonObject.put("user", user);
                 return new CommonResult<>(200,"注册成功",jsonObject);

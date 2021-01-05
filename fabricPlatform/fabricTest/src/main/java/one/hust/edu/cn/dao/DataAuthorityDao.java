@@ -11,6 +11,8 @@ import java.util.List;
 public interface DataAuthorityDao {
     //添加文件权限
     void addDataAuthority(DataAuthority dataAuthority);
+    //给用户，文件撤销权限
+    Integer deleteDataAuthority(DataAuthority dataAuthority);
     //查找某一个文件的所有权限
     DataAuthority findDataAuthorityById(Integer id);
     //查找某一个用户的所有权限
