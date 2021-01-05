@@ -160,10 +160,21 @@ public class DataController {
         if(result==null){
             return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
         }
+        // 1. 申请读取权限
+        String username = "userA";
+        String dstChannelName = "channel1";
+        String txId = fabricService.applyForReadFile(username, dstChannelName, String.valueOf(dataId));
+        if (txId == null || txId.isEmpty()) {
+            System.out.println("申请文件读取权限失败");
+            return new CommonResult<>(300,"申请文件读取权限失败",null);
+        }
+        // 2. 读取文件
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         String txtContent = TxtUtil.getTxtContent(result);
-        return new CommonResult<>(200, "文件token为：" + token, txtContent);
+        return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, txtContent);
+
+        // TODO: 二次上链？
     }
 
     //根据文件id对文件内容进行更新
@@ -177,6 +188,15 @@ public class DataController {
         if (myFile == null) {
             return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
         }
+        // 1. 申请文件修改权限
+        String username = "userA";
+        String dstChannelName = "channel1";
+        String txId = fabricService.applyForModifyFile(username, dstChannelName, String.valueOf(dataId));
+        if (txId == null || txId.isEmpty()) {
+            System.out.println("申请文件修改权限失败");
+            return new CommonResult<>(300,"申请文件修改权限失败",null);
+        }
+        // 2. 修改文件
         File old_file = new File(myFile.getDataName());
         old_file.delete();
         File new_file = new File(myFile.getDataName());
@@ -199,6 +219,9 @@ public class DataController {
         myFile.setDataSize(size);
         myFile.setModifiedTime(new Timestamp(new Date().getTime()));
         fileService.updateFile(myFile);
-        return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功", null);
+        // 3. 更新hash值到fabric 二次上链
+        String res = fabricService.updateForModifyFile(TxtUtil.getTxtContent(myFile), username, dstChannelName, String.valueOf(dataId), txId);
+        System.out.println("更新hash值结果：" + res);
+        return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功\r\ntxId："+txId, null);
     }
 }
