@@ -42,4 +42,9 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     public Integer checkDataAuthority(DataAuthority dataAuthority) {
         return dataAuthorityDao.checkDataAuthority(dataAuthority);
     }
+
+    @Override
+    public void addMasterDataAuthority(Integer originUserId, Integer dataSampleId) {
+        dataAuthorityDao.addMasterDataAuthority(originUserId,dataSampleId);
+    }
 }

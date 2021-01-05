@@ -18,4 +18,6 @@ public interface DataAuthorityService {
     void editDataAuthority(@Param("id")Integer id,@Param("authorityKey") Integer authorityKey);
     //查询是否有操作权限
     Integer checkDataAuthority(DataAuthority dataAuthority);
+    //插入文件上传者的权限，包括修改，查看，删除
+    void addMasterDataAuthority(Integer originUserId, Integer dataSampleId);
 }

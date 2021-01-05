@@ -27,7 +27,7 @@ public class DataAuthorityController {
     DataService dataService;
 
     //给用户，文件添加权限
-    @PostMapping(value = "/channel/addDataAuthority")
+    @PostMapping(value = "/dataAuthority/addDataAuthority")
     public CommonResult addDataAuthority(@RequestBody DataAuthority dataAuthority) {
         Integer userId = dataAuthority.getUserId();
         Integer dataSampleId = dataAuthority.getDataSampleId();
@@ -42,7 +42,7 @@ public class DataAuthorityController {
         return new CommonResult<>(200,"添加权限成功",dataAuthority);
     }
     //查找某一用户的所有权限
-    @PostMapping(value = "/channel/findDataAuthorityByUserId")
+    @PostMapping(value = "/dataAuthority/findDataAuthorityByUserId")
     public CommonResult findDataAuthorityByUserId(@RequestBody Map<String, String> params) {
         Integer userId = Integer.valueOf(params.get("userId"));
         User user = userService.findUserById(userId);
@@ -51,7 +51,7 @@ public class DataAuthorityController {
         return new CommonResult<>(200,"查找成功",result);
     }
     //查找某一文件的所有权限
-    @PostMapping(value = "/channel/findDataAuthorityByDataId")
+    @PostMapping(value = "/dataAuthority/findDataAuthorityByDataId")
     public CommonResult findDataAuthorityByDataId(@RequestBody Map<String, String> params) {
         Integer dataSampleId = Integer.valueOf(params.get("dataSampleId"));
         MyFile myFile = dataService.findDataById(dataSampleId);
@@ -60,7 +60,7 @@ public class DataAuthorityController {
         return new CommonResult<>(200,"查找成功",result);
     }
     //根据id更改权限
-    @PostMapping(value = "/channel/editDataAuthority")
+    @PostMapping(value = "/dataAuthority/editDataAuthority")
     public CommonResult editDataAuthority(@RequestBody Map<String, String> params) {
         Integer id = Integer.valueOf(params.get("id"));
         Integer authorityKey = Integer.valueOf(params.get("authorityKey"));

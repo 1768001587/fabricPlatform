@@ -23,7 +23,10 @@
     <update id="editDataAuthority" parameterType="java.lang.Integer">
         update data_authority set authority_key=#{authorityKey} where id=#{id}
     </update>
-    <select id="checkDataAuthority">
-        select * from data_authority where user_id=#{userId} and data_sample_id=#{dataSampleId} and authority_key=#{authorityKey}
+    <select id="checkDataAuthority" parameterType="DataAuthority" resultType="Integer">
+        select count(*) from data_authority where user_id=#{userId} and data_sample_id=#{dataSampleId} and authority_key=#{authorityKey}
     </select>
+    <insert id="addMasterDataAuthority">
+        insert into data_authority values (null,#{userId},#{dataSampleId},1),(null,#{userId},#{dataSampleId},2),(null,#{userId},#{dataSampleId},3);
+    </insert>
 </mapper>
