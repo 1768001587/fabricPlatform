@@ -93,8 +93,7 @@ public class FabricServiceImpl implements FabricService {
         return response.body().toString();
     }
 
-    @Override
-    public String applyForCreateFile(String username, String dstChannelName, String fileId) {
+    private String applyForOptFile(String username, String dstChannelName, String fileId, String opt) throws IOException {
         // 由于该例子中一次上链都由org5发起 暂时写死
         String peers = "peer0.org5.example.com";
         String channelName = "channel2";
@@ -107,26 +106,37 @@ public class FabricServiceImpl implements FabricService {
             add(username);
             add(dstChannelName);
             add(fileId);
-            add("add");
+            add(opt);
         }};
         String rawRes = crossAccess(peers, channelName, ccName, fcn, args);
         // 获取上链事务id
-        JsonNode root = null;
-        String txId;
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(rawRes);
+        return root.path("dst_chain_record").path("this_tx_id").asText();
+    }
+
+    @Override
+    public String applyForCreateFile(String username, String dstChannelName, String fileId) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            root = mapper.readTree(rawRes);
-            txId = root.path("dst_chain_record").path("this_tx_id").asText();
-            return txId;
+            return applyForOptFile(username,dstChannelName, fileId, "add");
         } catch (IOException e) {
-            System.out.println("获取创建文件权限失败：" + rawRes);
+            System.out.println("获取创建文件权限失败");
             return "";
         }
 
     }
 
     @Override
-    public String updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
+    public String applyForModifyFile(String username, String dstChannelName, String fileId) {
+        try {
+            return applyForOptFile(username,dstChannelName, fileId, "modify");
+        } catch (IOException e) {
+            System.out.println("获取创建文件权限失败");
+            return "";
+        }
+    }
+
+    private String updateForOptFile(String fileString, String username, String dstChannelName, String fileId, String txId, String opt){
         String hashSHA1 = HashUtil.hash(fileString, "SHA1");
         String peers = "peer0.org3.example.com";
         String channelName = "channel1";
@@ -138,9 +148,19 @@ public class FabricServiceImpl implements FabricService {
             add(username);
             add(dstChannelName);
             add(fileId);
-            add("add");
+            add(opt);
         }};
         return dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
+    }
+
+    @Override
+    public String updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
+        return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "add");
+    }
+
+    @Override
+    public String updateForModifyFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
+        return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "modify");
     }
 
 

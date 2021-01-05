@@ -72,17 +72,38 @@ public interface FabricService {
      */
     String applyForCreateFile(String username, String dstChannelName, String fileId);
 
+    /**
+     * 申请修改文件权限  第一次上链
+     * @param username 申请用户
+     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
+     * @param fileId 文件id
+     * @return 事务id 或 空字符串
+     */
+    String applyForModifyFile(String username, String dstChannelName, String fileId);
+
 
     /**
-     * 更新链上文件hash值  第二次上链
-     * @param fileString
-     * @param username
-     * @param dstChannelName
-     * @param fileId
-     * @param txId
+     * 创建文件时 更新链上文件hash值  第二次上链
+     * @param fileString 文件字符串
+     * @param username 操作用户
+     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
+     * @param fileId 文件id
+     * @param txId 第一次上链事务id
      * @return
      */
     String updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId);
+
+    /**
+     * 修改文件时 更新链上文件hash值  第二次上链
+     * @param fileString 文件字符串
+     * @param username 操作用户
+     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
+     * @param fileId 文件id
+     * @param txId 第一次上链事务id
+     * @return
+     */
+    String updateForModifyFile(String fileString, String username, String dstChannelName, String fileId, String txId);
+
 
     /**
      * 创建文件
