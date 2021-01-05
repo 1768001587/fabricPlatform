@@ -9,12 +9,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="api-commons" />
         <module name="fabricTest" />
+        <module name="service-api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">
       <module name="api-commons" target="1.8" />
       <module name="fabricPlatform" target="1.8" />
       <module name="fabricTest" target="1.8" />
+      <module name="service-api" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/fabricPlatform/api-commons/api-commons.iml" filepath="$PROJECT_DIR$/fabricPlatform/api-commons/api-commons.iml" />
       <module fileurl="file://$PROJECT_DIR$/fabricPlatform/fabricPlatform.iml" filepath="$PROJECT_DIR$/fabricPlatform/fabricPlatform.iml" />
       <module fileurl="file://$PROJECT_DIR$/fabricPlatform/fabricTest/fabricTest.iml" filepath="$PROJECT_DIR$/fabricPlatform/fabricTest/fabricTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/fabricPlatform/service-api/service-api.iml" filepath="$PROJECT_DIR$/fabricPlatform/service-api/service-api.iml" />
     </modules>
   </component>
 </project>
