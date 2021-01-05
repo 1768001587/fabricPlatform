@@ -73,6 +73,15 @@ public interface FabricService {
     String applyForCreateFile(String username, String dstChannelName, String fileId);
 
     /**
+     * 申请读取文件权限  第一次上链
+     * @param username 申请用户
+     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
+     * @param fileId 文件id
+     * @return 事务id 或 空字符串
+     */
+    String applyForReadFile(String username, String dstChannelName, String fileId);
+
+    /**
      * 申请修改文件权限  第一次上链
      * @param username 申请用户
      * @param dstChannelName 目标channel 即申请在该目标channel上创建文件

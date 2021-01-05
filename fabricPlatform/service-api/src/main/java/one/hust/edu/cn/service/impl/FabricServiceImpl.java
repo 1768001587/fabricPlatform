@@ -127,6 +127,16 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
+    public String applyForReadFile(String username, String dstChannelName, String fileId) {
+        try {
+            return applyForOptFile(username,dstChannelName, fileId, "read");
+        } catch (IOException e) {
+            System.out.println("获取读取文件权限失败");
+            return "";
+        }
+    }
+
+    @Override
     public String applyForModifyFile(String username, String dstChannelName, String fileId) {
         try {
             return applyForOptFile(username,dstChannelName, fileId, "modify");

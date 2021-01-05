@@ -8,6 +8,7 @@
     <artifactId>fabricPlatform</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
+        <module>api-commons</module>
         <module>fabricTest</module>
         <module>service-api</module>
     </modules>
@@ -97,36 +98,34 @@
     <!--</repository>-->
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <fork>true</fork>
-                    <addResources>true</addResources>
-                </configuration>
-            </plugin>
-            <!--&lt;!&ndash;protobuf插件&ndash;&gt;-->
-            <!--<plugin>-->
-            <!--    <groupId>org.xolstice.maven.plugins</groupId>-->
-            <!--    <artifactId>protobuf-maven-plugin</artifactId>-->
-            <!--    <version>0.5.1</version>-->
-            <!--    <configuration>-->
-            <!--        <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}-->
-            <!--        </protocArtifact>-->
-            <!--        <pluginId>grpc-java</pluginId>-->
-            <!--        <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}-->
-            <!--        </pluginArtifact>-->
-            <!--    </configuration>-->
-            <!--    <executions>-->
-            <!--        <execution>-->
-            <!--            <goals>-->
-            <!--                <goal>compile</goal>-->
-            <!--                <goal>compile-custom</goal>-->
-            <!--            </goals>-->
-            <!--        </execution>-->
-            <!--    </executions>-->
-            <!--</plugin>-->
-        </plugins>
-    </build>
+    <plugins>
+      <!--<plugin>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+        <!--<configuration>-->
+          <!--<fork>true</fork>-->
+          <!--<addResources>true</addResources>-->
+        <!--</configuration>-->
+      <!--</plugin>-->
+        <!-- &lt;!&ndash;protobuf插件&ndash;&gt;
+         <plugin>
+         <groupId>org.xolstice.maven.plugins</groupId>
+         <artifactId>protobuf-maven-plugin</artifactId>
+         <version>0.5.1</version>
+         <configuration>
+             <protocArtifact>         com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}      </protocArtifact>
+             <pluginId>grpc-java</pluginId>
+             <pluginArtifact>         io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}      </pluginArtifact>
+         </configuration>
+         <executions>
+             <execution>
+                 <goals>
+                     <goal>compile</goal>
+                     <goal>compile-custom</goal>
+                 </goals>
+             </execution>
+         </executions>
+     </plugin>-->
+    </plugins>
+  </build>
 </project>

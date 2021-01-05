@@ -1,6 +1,5 @@
 package one.hust.edu.cn.dao;
 
-import jnr.ffi.annotations.In;
 import one.hust.edu.cn.entities.Channel;
 import org.apache.ibatis.annotations.Mapper;
 
