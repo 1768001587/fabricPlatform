@@ -12,6 +12,7 @@ import one.hust.edu.cn.service.DataService;
 import one.hust.edu.cn.utils.TxtUtil;
 import one.hust.edu.cn.vo.DataUserAuthorityVO;
 import org.omg.PortableServer.LIFESPAN_POLICY_ID;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,7 @@ public class DataController{
     @CheckToken
     @PostMapping(value = "/data/uploadFile/{channelId}")
     @ResponseBody
+    @Transactional
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         System.out.println(channelId);
         //获取文件名
@@ -69,6 +71,9 @@ public class DataController{
             myFile.setCreatedTime(new Timestamp(new Date().getTime()));
             myFile.setModifiedTime(new Timestamp(new Date().getTime()));
             fileService.uploadFile(myFile);
+            //hash
+
+
             //写入上传者权限
             dataAuthorityService.addMasterDataAuthority(originUserId,myFile.getId());
             return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName,myFile);
