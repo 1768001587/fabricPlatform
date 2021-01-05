@@ -34,6 +34,11 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     }
 
     @Override
+    public List<DataAuthority> findDataAuthorityByUserIdAndDataId(Integer userId,Integer dataSampleId) {
+        return dataAuthorityDao.findDataAuthorityByUserIdAndDataId(userId,dataSampleId);
+    }
+
+    @Override
     public void editDataAuthority(Integer id, Integer authorityKey) {
         dataAuthorityDao.editDataAuthority(id,authorityKey);
     }
@@ -46,5 +51,10 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     @Override
     public void addMasterDataAuthority(Integer originUserId, Integer dataSampleId) {
         dataAuthorityDao.addMasterDataAuthority(originUserId,dataSampleId);
+    }
+
+    @Override
+    public List<DataAuthority> getAllAuthority() {
+        return dataAuthorityDao.getAllAuthority();
     }
 }

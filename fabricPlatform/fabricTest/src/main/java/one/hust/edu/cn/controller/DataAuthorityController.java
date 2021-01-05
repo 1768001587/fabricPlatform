@@ -8,13 +8,15 @@ import one.hust.edu.cn.entities.User;
 import one.hust.edu.cn.service.DataAuthorityService;
 import one.hust.edu.cn.service.DataService;
 import one.hust.edu.cn.service.UserService;
+import one.hust.edu.cn.vo.AllDataUserAuthorityVO;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
-import java.util.Map;
+import java.beans.IntrospectionException;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -41,6 +43,43 @@ public class DataAuthorityController {
         dataAuthorityService.addDataAuthority(dataAuthority);
         return new CommonResult<>(200,"添加权限成功",dataAuthority);
     }
+
+    //获取所有权限，返回AllDataUserAuthorityVO类
+    @GetMapping(value = "/dataAuthority/getAllAuthority")
+    public CommonResult getAllAuthority() {
+        List<DataAuthority> list = dataAuthorityService.getAllAuthority();
+        List<AllDataUserAuthorityVO> result = new ArrayList<>();
+        Set<List<Integer>> set = new HashSet<>();//保存用户Id与对应的文件id
+        for (int i = 0; i < list.size(); i++) {
+            DataAuthority dataAuthority = list.get(i);
+            List<Integer> list2 = new ArrayList<>();//用户Id与对应的文件id
+            list2.add(dataAuthority.getUserId());
+            list2.add(dataAuthority.getDataSampleId());
+            if(!set.contains(list2)){
+                set.add(list2);
+            }
+        }
+        Iterator<List<Integer>> it = set.iterator();
+        while (it.hasNext()) {
+            List<Integer> tmp = it.next();
+            List<DataAuthority> dataAuthorities = dataAuthorityService.findDataAuthorityByUserIdAndDataId(tmp.get(0),tmp.get(1));
+            Set<Integer> authoritySet = new HashSet<>();
+            for (int i = 0; i < dataAuthorities.size(); i++) {
+                authoritySet.add(dataAuthorities.get(i).getAuthorityKey());
+            }
+            User user = userService.findUserById(tmp.get(0));
+            MyFile myFile = dataService.findDataById(tmp.get(1));
+            AllDataUserAuthorityVO allDataUserAuthorityVO = new AllDataUserAuthorityVO();
+            allDataUserAuthorityVO.setUserId(tmp.get(0));
+            allDataUserAuthorityVO.setUserName(user.getUsername());
+            allDataUserAuthorityVO.setDataId(tmp.get(1));
+            allDataUserAuthorityVO.setDataName(myFile.getDataName());
+            allDataUserAuthorityVO.setDataAuthoritySet(authoritySet);
+            result.add(allDataUserAuthorityVO);
+        }
+        return new CommonResult<>(200,"查找成功",result);
+    }
+
     //查找某一用户的所有权限
     @PostMapping(value = "/dataAuthority/findDataAuthorityByUserId")
     public CommonResult findDataAuthorityByUserId(@RequestBody Map<String, String> params) {
