@@ -37,4 +37,9 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     public void editDataAuthority(Integer id, Integer authorityKey) {
         dataAuthorityDao.editDataAuthority(id,authorityKey);
     }
+
+    @Override
+    public Integer checkDataAuthority(DataAuthority dataAuthority) {
+        return dataAuthorityDao.checkDataAuthority(dataAuthority);
+    }
 }

@@ -2,7 +2,6 @@ package one.hust.edu.cn.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.Channel;
-import one.hust.edu.cn.entities.ChannelAuthority;
 import one.hust.edu.cn.entities.CommonResult;
 import one.hust.edu.cn.service.ChannelAuthorityService;
 import one.hust.edu.cn.service.ChannelService;

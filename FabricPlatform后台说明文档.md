@@ -314,3 +314,20 @@ public CommonResult updateData(@RequestBody Map<String, String> params, HttpServ
     return new CommonResult<>(200,"id为："+dataId+"的文件更新成功",null);
 }
 ```
+
+
+
+
+
+
+上传文件：/data/uploadFile  参数：@RequestParam("file") MultipartFile file, @RequestParam("channelId") Integer channelId
+
+获取某用户可上传的通道：/channel/getAddAuthorityChannels 参数：@RequestBody Map<String, String> params
+
+添加文件权限：/channel/addDataAuthority 参数：@RequestBody DataAuthority dataAuthority
+
+查找某一用户的所有权限：/channel/findDataAuthorityByUserId 参数：@RequestBody Map<String, String> params
+
+查找某一文件的所有权限：/channel/findDataAuthorityByDataId 参数：@RequestBody Map<String, String> params
+
+根据id更改权限：/channel/editDataAuthority 参数：@RequestBody Map<String, String> params

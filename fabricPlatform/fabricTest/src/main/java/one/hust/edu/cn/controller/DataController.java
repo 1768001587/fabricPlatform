@@ -3,9 +3,11 @@ package one.hust.edu.cn.controller;
 import com.auth0.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.CommonResult;
+import one.hust.edu.cn.entities.DataAuthority;
 import one.hust.edu.cn.entities.MyFile;
 import one.hust.edu.cn.myAnnotation.CheckToken;
 import one.hust.edu.cn.service.ChannelAuthorityService;
+import one.hust.edu.cn.service.DataAuthorityService;
 import one.hust.edu.cn.service.DataService;
 import one.hust.edu.cn.utils.TxtUtil;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +31,8 @@ public class DataController{
     private DataService fileService;
     @Resource
     ChannelAuthorityService channelAuthorityService;
+    @Resource
+    DataAuthorityService dataAuthorityService;
 
     //上传文件
     @CheckToken
@@ -84,9 +88,19 @@ public class DataController{
     @ResponseBody
     public CommonResult deleteDataById(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest){
         Integer dataId = Integer.valueOf(params.get("dataId"));
-        Integer result = fileService.deleteDataById(dataId);
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();
+        //进行权限认定
+        DataAuthority dataAuthority = new DataAuthority();
+        dataAuthority.setUserId(userId);
+        dataAuthority.setDataSampleId(dataId);
+        dataAuthority.setAuthorityKey(3);//3代表有删除的权限
+        System.out.println(dataAuthorityService.checkDataAuthority(dataAuthority));
+        if(dataAuthorityService.checkDataAuthority(dataAuthority)<1){
+            return new CommonResult<>(400,"操作失败，您不存在对此文件删除的权限",null);
+        }
+        Integer result = fileService.deleteDataById(dataId);
         if(result<1){
             return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
         }
@@ -99,12 +113,22 @@ public class DataController{
     public CommonResult getData(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest){
         Integer dataId = Integer.valueOf(params.get("dataId"));
         MyFile result = fileService.findDataById(dataId);
-        // 从 http 请求头中取出 token
-        String token = httpServletRequest.getHeader("token");
+
         if(result==null){
             return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
         }
-
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();
+        //进行权限认定
+        DataAuthority dataAuthority = new DataAuthority();
+        dataAuthority.setUserId(userId);
+        dataAuthority.setDataSampleId(dataId);
+        dataAuthority.setAuthorityKey(1);//1代表有查看的权限
+        System.out.println(dataAuthorityService.checkDataAuthority(dataAuthority));
+        if(dataAuthorityService.checkDataAuthority(dataAuthority)<1){
+            return new CommonResult<>(400,"操作失败，您不存在对此文件查看的权限",null);
+        }
         String txtContent = TxtUtil.getTxtContent(result);
         return new CommonResult<>(200,"文件token为："+token,txtContent);
     }
@@ -118,6 +142,18 @@ public class DataController{
         MyFile myFile = fileService.findDataById(dataId);
         if(myFile==null){
             return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
+        }
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();
+        //进行权限认定
+        DataAuthority dataAuthority = new DataAuthority();
+        dataAuthority.setUserId(userId);
+        dataAuthority.setDataSampleId(dataId);
+        dataAuthority.setAuthorityKey(2);//2代表有修改的权限
+        System.out.println(dataAuthorityService.checkDataAuthority(dataAuthority));
+        if(dataAuthorityService.checkDataAuthority(dataAuthority)<1){
+            return new CommonResult<>(400,"操作失败，您不存在对此文件修改的权限",null);
         }
         File old_file = new File(myFile.getDataName());
         old_file.delete();

@@ -19,4 +19,6 @@ public interface DataAuthorityDao {
     List<DataAuthority> findDataAuthorityByDataId(Integer dataSampleId);
     //根据id更新文件权限
     void editDataAuthority(@Param("id")Integer id,@Param("authorityKey") Integer authorityKey);
+    //查询是否有操作权限
+    Integer checkDataAuthority(DataAuthority dataAuthority);
 }
