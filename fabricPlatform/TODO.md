@@ -1,3 +1,4 @@
 - 全局用户获取
 - 修改文件使用环绕通知
 - spring security  
+- fabric异常

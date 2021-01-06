@@ -4,7 +4,7 @@ import one.hust.edu.cn.entities.DataAuthority;
 
 /**
  * @program: fabricPlatform
- * @description: 通过fabric进行授权service
+ * @description: 通过fabric进行授权service  虽然FabricService里已有类似函数，但参数复杂，这里进行封装简化
  * @author: zwh
  * @create: 2021-01-06 09:16
  **/
