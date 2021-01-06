@@ -11,4 +11,7 @@
     <select id="getAddAuthorityChannels" resultType="java.lang.String">
         select channel_name from channel_authority,channel where channel_authority.channel_id=channel.id and channel_authority.user_id=#{userId} and channel_authority.authority_key=1;
     </select>
+    <select id="findChannelAuthorityByUserIdAndChannelId" parameterType="Map" resultMap="BaseResultMap">
+        select * from channel_authority where channel_id=#{channelId} and user_id=#{userId};
+    </select>
 </mapper>

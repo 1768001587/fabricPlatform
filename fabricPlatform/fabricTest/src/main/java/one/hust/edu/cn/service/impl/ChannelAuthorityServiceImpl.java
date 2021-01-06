@@ -17,4 +17,9 @@ public class ChannelAuthorityServiceImpl implements ChannelAuthorityService {
     public List<String> getAddAuthorityChannels(Integer userId) {
         return channelAuthorityDao.getAddAuthorityChannels(userId);
     }
+
+    @Override
+    public List<ChannelAuthority> findChannelAuthorityByUserIdAndChannelId(Integer userId, Integer channelId) {
+        return channelAuthorityDao.findChannelAuthorityByUserIdAndChannelId(userId,channelId);
+    }
 }

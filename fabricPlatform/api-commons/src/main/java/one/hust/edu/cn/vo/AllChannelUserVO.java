@@ -9,11 +9,10 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AllDataUserAuthorityVO {
+public class AllChannelUserVO {
     private Integer userId;
     private String userName;
+    private Integer channelId;
     private String channelName;
-    private Integer dataId;
-    private String dataName;
-    private Set<Integer> dataAuthoritySet;
+    private Set<Integer> channelAuthoritySet;
 }

@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class MyFile implements Serializable {
+public class DataSample implements Serializable {
     private Integer id;
     private Integer channelId;
     private String data;

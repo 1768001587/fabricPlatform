@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.CommonResult;
 import one.hust.edu.cn.entities.DataAuthority;
-import one.hust.edu.cn.entities.MyFile;
+import one.hust.edu.cn.entities.DataSample;
 import one.hust.edu.cn.myAnnotation.CheckToken;
 import one.hust.edu.cn.service.*;
 import one.hust.edu.cn.utils.TxtUtil;
@@ -54,9 +54,9 @@ public class DataController {
         try {
             //进行文件传输
             file.transferTo(new File(filePath + fileName));
-            MyFile myFile = new MyFile();
-            myFile.setChannelId(channelId);//这里后面要做出选择channel
-            myFile.setDataName(filePath + fileName);
+            DataSample dataSample = new DataSample();
+            dataSample.setChannelId(channelId);//这里后面要做出选择channel
+            dataSample.setDataName(filePath + fileName);
             //文件大小以KB作为单位
             // 首先先将.getSize()获取的Long转为String 单位为B
             Double size = Double.parseDouble(String.valueOf(file.getSize()));
@@ -64,20 +64,20 @@ public class DataController {
             // 2表示2位 ROUND_HALF_UP表明四舍五入，
             size = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             // 此时size就是保留两位小数的浮点数
-            myFile.setDataSize(size);
-            myFile.setData(TxtUtil.getTxtContent(myFile));
-            myFile.setOriginUserId(originUserId);
-            myFile.setDataType(fileName.substring(fileName.lastIndexOf(".")) + "文件");
+            dataSample.setDataSize(size);
+            dataSample.setData(TxtUtil.getTxtContent(dataSample));
+            dataSample.setOriginUserId(originUserId);
+            dataSample.setDataType(fileName.substring(fileName.lastIndexOf(".")) + "文件");
             //初次创建时将初始时间和修改时间写成一样
-            myFile.setCreatedTime(new Timestamp(new Date().getTime()));
-            myFile.setModifiedTime(new Timestamp(new Date().getTime()));
-            fileService.uploadFile(myFile);
+            dataSample.setCreatedTime(new Timestamp(new Date().getTime()));
+            dataSample.setModifiedTime(new Timestamp(new Date().getTime()));
+            fileService.uploadFile(dataSample);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////执行fabric操作
             String result = "";
             // 1. 权限申请 一次上链
             String username = "userA";
             String dstChannelName = "channel1";
-            String txId = fabricService.applyForCreateFile(username, dstChannelName, myFile.getId()+"");
+            String txId = fabricService.applyForCreateFile(username, dstChannelName, dataSample.getId()+"");
             if (txId == null || txId.isEmpty()) {
                 System.out.println("申请文件创建权限失败");
                 return new CommonResult<>(300,"文件创建权限失败",null);
@@ -86,20 +86,20 @@ public class DataController {
             result+="1.创建文件成功 txId: " + txId+"\r\n";
             //hash
             // 3. 更新链上hash 二次上链
-            String rawRes = fabricService.updateForCreateFile(TxtUtil.getTxtContent(myFile), username, dstChannelName, myFile.getId()+"", txId);
+            String rawRes = fabricService.updateForCreateFile(TxtUtil.getTxtContent(dataSample), username, dstChannelName, dataSample.getId()+"", txId);
             System.out.println("2. 更新链上hash ： " + rawRes);
             result+="2. 更新链上hash ： " + rawRes+"\r\n";
             // 4. 授予用户文件的查改权限
-            rawRes = fabricService.grantUserPermissionOnFile("channel1", myFile.getId()+"", "read", "role1", Collections.singletonList(username));
+            rawRes = fabricService.grantUserPermissionOnFile("channel1", dataSample.getId()+"", "read", "role1", Collections.singletonList(username));
             System.out.println("3.授予用户文件读取权限：" + rawRes);
             result+="3.授予用户文件读取权限：" + rawRes+"\r\n";
-            rawRes = fabricService.grantUserPermissionOnFile("channel1", myFile.getId()+"", "modify", "role1", Collections.singletonList(username));
+            rawRes = fabricService.grantUserPermissionOnFile("channel1", dataSample.getId()+"", "modify", "role1", Collections.singletonList(username));
             System.out.println("4.授予用户文件修改权限：" + rawRes);
             result+="4.授予用户文件修改权限：" + rawRes+"\r\n";
             //写入上传者权限
-            dataAuthorityService.addMasterDataAuthority(originUserId,myFile.getId());
+            dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
 
-            return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName+"\r\n"+result,myFile);
+            return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName+"\r\n"+result, dataSample);
         } catch (Exception e) {
             return new CommonResult<>(400, e.getMessage(), null);
         }
@@ -120,7 +120,7 @@ public class DataController {
             Integer dataSampleId = list.get(i).getDataSampleId();
             if(!set.contains(dataSampleId)){
                 set.add(dataSampleId);
-                temp.setMyFile(fileService.findDataById(dataSampleId));
+                temp.setDataSample(fileService.findDataById(dataSampleId));
                 Set<Integer> s = new HashSet<>();
                 for (int j = 0; j < list.size(); j++) {
                     if(list.get(j).getDataSampleId().equals(dataSampleId)){
@@ -156,7 +156,7 @@ public class DataController {
     @ResponseBody
     public CommonResult getData(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
         Integer dataId = Integer.valueOf(params.get("dataId"));
-        MyFile result = fileService.findDataById(dataId);
+        DataSample result = fileService.findDataById(dataId);
         if(result==null){
             return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
         }
@@ -173,13 +173,13 @@ public class DataController {
     public CommonResult updateData(@RequestBody Map<String, String> params){
         Integer dataId = Integer.valueOf(params.get("dataId"));
         String dataContent = params.get("dataContent");
-        MyFile myFile = fileService.findDataById(dataId);
-        if (myFile == null) {
+        DataSample dataSample = fileService.findDataById(dataId);
+        if (dataSample == null) {
             return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
         }
-        File old_file = new File(myFile.getDataName());
+        File old_file = new File(dataSample.getDataName());
         old_file.delete();
-        File new_file = new File(myFile.getDataName());
+        File new_file = new File(dataSample.getDataName());
         //创建新文件
         try {
             /* 写入Txt文件 */
@@ -192,13 +192,13 @@ public class DataController {
             e.printStackTrace();
         }
         //更新数据库
-        myFile.setData(dataContent);
+        dataSample.setData(dataContent);
         Double size = Double.parseDouble(String.valueOf(new_file.length())) / 1024;
         BigDecimal b = new BigDecimal(size);
         size = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-        myFile.setDataSize(size);
-        myFile.setModifiedTime(new Timestamp(new Date().getTime()));
-        fileService.updateFile(myFile);
+        dataSample.setDataSize(size);
+        dataSample.setModifiedTime(new Timestamp(new Date().getTime()));
+        fileService.updateFile(dataSample);
         return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功", null);
     }
 }

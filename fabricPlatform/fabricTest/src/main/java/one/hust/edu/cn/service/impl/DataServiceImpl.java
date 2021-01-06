@@ -1,7 +1,7 @@
 package one.hust.edu.cn.service.impl;
 
 import one.hust.edu.cn.dao.DataDao;
-import one.hust.edu.cn.entities.MyFile;
+import one.hust.edu.cn.entities.DataSample;
 import one.hust.edu.cn.service.DataService;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +15,12 @@ public class DataServiceImpl implements DataService
     private DataDao dataDao;
 
     @Override
-    public void uploadFile(MyFile myFile) {
-        dataDao.uploadFile(myFile);
+    public void uploadFile(DataSample dataSample) {
+        dataDao.uploadFile(dataSample);
     }
 
     @Override
-    public List<MyFile> getDataList() {
+    public List<DataSample> getDataList() {
         return dataDao.getDataList();
     }
 
@@ -30,12 +30,12 @@ public class DataServiceImpl implements DataService
     }
 
     @Override
-    public MyFile findDataById(Integer dataId) {
+    public DataSample findDataById(Integer dataId) {
         return dataDao.findDataById(dataId);
     }
 
     @Override
-    public void updateFile(MyFile myFile) {
-        dataDao.updateFile(myFile);
+    public void updateFile(DataSample dataSample) {
+        dataDao.updateFile(dataSample);
     }
 }

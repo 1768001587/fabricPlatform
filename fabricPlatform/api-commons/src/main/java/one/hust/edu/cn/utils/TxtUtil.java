@@ -1,12 +1,12 @@
 package one.hust.edu.cn.utils;
 
-import one.hust.edu.cn.entities.MyFile;
+import one.hust.edu.cn.entities.DataSample;
 
 import java.io.*;
 
 public class TxtUtil {
-    public static String getTxtContent(MyFile myFile){
-        String fileName = myFile.getDataName();
+    public static String getTxtContent(DataSample dataSample){
+        String fileName = dataSample.getDataName();
         File file = new File(fileName);
         BufferedReader reader = null;
         StringBuffer sbf = new StringBuffer();
