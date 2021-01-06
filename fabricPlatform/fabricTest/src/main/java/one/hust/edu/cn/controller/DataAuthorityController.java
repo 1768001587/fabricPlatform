@@ -5,11 +5,9 @@ import one.hust.edu.cn.entities.CommonResult;
 import one.hust.edu.cn.entities.DataAuthority;
 import one.hust.edu.cn.entities.DataSample;
 import one.hust.edu.cn.entities.User;
-import one.hust.edu.cn.service.ChannelService;
-import one.hust.edu.cn.service.DataAuthorityService;
-import one.hust.edu.cn.service.DataService;
-import one.hust.edu.cn.service.UserService;
+import one.hust.edu.cn.service.*;
 import one.hust.edu.cn.vo.AllDataUserAuthorityVO;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,14 +20,17 @@ import java.util.*;
 @RestController
 public class DataAuthorityController {
     @Resource
-    DataAuthorityService dataAuthorityService;
+    private DataAuthorityService dataAuthorityService;
     @Resource
-    UserService userService;
+    private UserService userService;
     @Resource
-    DataService dataService;
+    private DataService dataService;
     @Resource
-    ChannelService channelService;
+    private ChannelService channelService;
+    @Resource
+    private GrantPermissionService grantPermissionService;
 
+    // TODO： 身份验证
     //给用户，文件添加权限
     @PostMapping(value = "/dataAuthority/addDataAuthority")
     public CommonResult addDataAuthority(@RequestBody DataAuthority dataAuthority) {
@@ -42,10 +43,15 @@ public class DataAuthorityController {
         if(dataSample ==null) return new CommonResult<>(400,"添加权限失败，不存在dataSampleId为："+dataSampleId+"的文件",null);
         if(authorityKey!=1&&authorityKey!=2&&authorityKey!=3) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：查看文件  2：修改文件  3：删除文件",null);
+        if(!grantPermissionService.grantUserPermissionOnFile(dataAuthority)){
+            return new CommonResult<>(400,"fabric: 添加权限失败");
+        }
         dataAuthorityService.addDataAuthority(dataAuthority);
         return new CommonResult<>(200,"添加权限成功",dataAuthority);
     }
+
     //给用户，文件撤销权限
+    @Transactional
     @PostMapping(value = "/dataAuthority/deleteDataAuthority")
     public CommonResult deleteDataAuthority(@RequestBody DataAuthority dataAuthority) {
         Integer userId = dataAuthority.getUserId();
@@ -57,6 +63,9 @@ public class DataAuthorityController {
         if(dataSample ==null) return new CommonResult<>(400,"添加权限失败，不存在dataSampleId为："+dataSampleId+"的文件",null);
         if(authorityKey!=1&&authorityKey!=2&&authorityKey!=3) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：查看文件  2：修改文件  3：删除文件",null);
+        if(!grantPermissionService.revokeUserPermissionOnFile(dataAuthority)){
+            return new CommonResult<>(400,"fabric: 撤销权限失败");
+        }
         Integer count = dataAuthorityService.deleteDataAuthority(dataAuthority);
         if(count==1) return new CommonResult<>(200,"撤销权限成功",dataAuthority);
         else return new CommonResult<>(400,"撤销权限失败，请联系系统管理员",dataAuthority);

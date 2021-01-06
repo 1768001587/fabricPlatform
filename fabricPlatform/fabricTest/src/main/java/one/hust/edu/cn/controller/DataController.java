@@ -42,7 +42,7 @@ public class DataController {
     @CheckToken
     @PostMapping(value = "/data/uploadFile/{channelId}")
     @ResponseBody
-    @Transactional
+    @Transactional(rollbackFor=Exception.class) // 使用Transactional注解需要在抛出uncheck异常时才会回滚
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
@@ -174,6 +174,11 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         String txtContent = TxtUtil.getTxtContent(result);
         System.out.println("************fabric读取数据操作写入结束*****************");
+
+        // 3. 二次上链
+        String rawRes = fabricService.updateForCreateFile(txtContent, username, dstChannelName, String.valueOf(dataId), txId);
+        System.out.println("2. 二次上链 ： " + rawRes);
+
         return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, txtContent);
 
         // TODO: 二次上链？
