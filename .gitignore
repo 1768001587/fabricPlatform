@@ -21,6 +21,6 @@ buildNumber.properties
 # IntelliJ
 /out/
 
-# mpeltonen/sbt-idea plugin
+# mpeltonen/sbt-idea pluginz
 .idea_modules/
 
