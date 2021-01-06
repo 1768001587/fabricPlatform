@@ -20,7 +20,7 @@
     </insert>
     <!--获取文件列表-->
     <select id="getDataList" parameterType="Map" resultMap="BaseResultMap">
-        select id,data_name,data_type,data_size,origin_user_id,created_time,modified_time from data_sample;
+        select * from data_sample;
     </select>
     <!--根据文件id删除文件-->
     <delete id="deleteDataById" parameterType="Integer">
@@ -34,4 +34,9 @@
         update data_sample set data=#{data},data_size=#{dataSize},modified_time=#{modifiedTime}
         where id=#{id}
     </update>
+    <!--获取文件列表-->
+    <select id="getDataListByOriginUserId" parameterType="Map" resultMap="BaseResultMap">
+        select * from data_sample
+        where origin_user_id=#{originUserId};
+    </select>
 </mapper>

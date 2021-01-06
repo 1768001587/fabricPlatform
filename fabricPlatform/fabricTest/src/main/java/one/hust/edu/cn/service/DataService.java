@@ -14,4 +14,6 @@ public interface DataService {
     DataSample findDataById(Integer dataId);
     //更新文件
     void updateFile(DataSample dataSample);
+    //获取文件列表
+    List<DataSample> getDataListByOriginUserId(Integer originUserId);
 }

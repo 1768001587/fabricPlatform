@@ -5,9 +5,11 @@ one\hust\edu\cn\utils\JwtUtil.class
 one\hust\edu\cn\entities\Channel.class
 one\hust\edu\cn\myAnnotation\LoginToken.class
 one\hust\edu\cn\utils\HashUtil.class
+one\hust\edu\cn\constant\FileOptConstant.class
 one\hust\edu\cn\entities\CommonResult.class
 one\hust\edu\cn\utils\TxtUtil.class
+one\hust\edu\cn\vo\AllChannelUserVO.class
 one\hust\edu\cn\vo\DataUserAuthorityVO.class
 one\hust\edu\cn\entities\ChannelAuthority.class
 one\hust\edu\cn\myAnnotation\CheckToken.class
-one\hust\edu\cn\entities\MyFile.class
+one\hust\edu\cn\entities\DataSample.class

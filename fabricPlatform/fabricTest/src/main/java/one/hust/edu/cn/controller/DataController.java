@@ -26,7 +26,7 @@ import java.util.*;
 @RestController
 public class DataController {
     @Resource
-    private DataService fileService;
+    private DataService dataService;
     @Resource
     ChannelAuthorityService channelAuthorityService;
     @Resource
@@ -71,8 +71,8 @@ public class DataController {
             //初次创建时将初始时间和修改时间写成一样
             dataSample.setCreatedTime(new Timestamp(new Date().getTime()));
             dataSample.setModifiedTime(new Timestamp(new Date().getTime()));
-            fileService.uploadFile(dataSample);
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////执行fabric操作
+            dataService.uploadFile(dataSample);
+            System.out.println("************fabric上传数据操作写入开始*****************");
             String result = "";
             // 1. 权限申请 一次上链
             String username = "userA";
@@ -98,7 +98,7 @@ public class DataController {
             result+="4.授予用户文件修改权限：" + rawRes+"\r\n";
             //写入上传者权限
             dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
-
+            System.out.println("************fabric上传数据操作写入结束*****************");
             return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName+"\r\n"+result, dataSample);
         } catch (Exception e) {
             return new CommonResult<>(400, e.getMessage(), null);
@@ -120,7 +120,7 @@ public class DataController {
             Integer dataSampleId = list.get(i).getDataSampleId();
             if(!set.contains(dataSampleId)){
                 set.add(dataSampleId);
-                temp.setDataSample(fileService.findDataById(dataSampleId));
+                temp.setDataSample(dataService.findDataById(dataSampleId));
                 Set<Integer> s = new HashSet<>();
                 for (int j = 0; j < list.size(); j++) {
                     if(list.get(j).getDataSampleId().equals(dataSampleId)){
@@ -143,7 +143,7 @@ public class DataController {
         Integer dataId = Integer.valueOf(params.get("dataId"));
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
-        Integer result = fileService.deleteDataById(dataId);
+        Integer result = dataService.deleteDataById(dataId);
         if (result < 1) {
             return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
         }
@@ -156,14 +156,27 @@ public class DataController {
     @ResponseBody
     public CommonResult getData(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
         Integer dataId = Integer.valueOf(params.get("dataId"));
-        DataSample result = fileService.findDataById(dataId);
+        DataSample result = dataService.findDataById(dataId);
         if(result==null){
             return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
         }
+        System.out.println("************fabric读取数据操作写入开始*****************");
+        // 1. 申请读取权限
+        String username = "userA";
+        String dstChannelName = "channel1";
+        String txId = fabricService.applyForReadFile(username, dstChannelName, String.valueOf(dataId));
+        if (txId == null || txId.isEmpty()) {
+            System.out.println("申请文件读取权限失败");
+            return new CommonResult<>(300,"申请文件读取权限失败",null);
+        }
+        // 2. 读取文件
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         String txtContent = TxtUtil.getTxtContent(result);
-        return new CommonResult<>(200, "文件token为：" + token, txtContent);
+        System.out.println("************fabric读取数据操作写入结束*****************");
+        return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, txtContent);
+
+        // TODO: 二次上链？
     }
 
     //根据文件id对文件内容进行更新
@@ -173,11 +186,21 @@ public class DataController {
     public CommonResult updateData(@RequestBody Map<String, String> params){
         Integer dataId = Integer.valueOf(params.get("dataId"));
         String dataContent = params.get("dataContent");
-        DataSample dataSample = fileService.findDataById(dataId);
+        DataSample dataSample = dataService.findDataById(dataId);
         if (dataSample == null) {
             return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
         }
         File old_file = new File(dataSample.getDataName());
+        System.out.println("************fabric更新数据操作写入开始*****************");
+        // 1. 申请文件修改权限
+        String username = "userA";
+        String dstChannelName = "channel1";
+        String txId = fabricService.applyForModifyFile(username, dstChannelName, String.valueOf(dataId));
+        if (txId == null || txId.isEmpty()) {
+            System.out.println("申请文件修改权限失败");
+            return new CommonResult<>(300,"申请文件修改权限失败",null);
+        }
+        // 2. 修改文件
         old_file.delete();
         File new_file = new File(dataSample.getDataName());
         //创建新文件
@@ -198,7 +221,22 @@ public class DataController {
         size = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         dataSample.setDataSize(size);
         dataSample.setModifiedTime(new Timestamp(new Date().getTime()));
-        fileService.updateFile(dataSample);
-        return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功", null);
+        dataService.updateFile(dataSample);
+
+        // 3. 更新hash值到fabric 二次上链
+        String res = fabricService.updateForModifyFile(TxtUtil.getTxtContent(dataSample), username, dstChannelName, String.valueOf(dataId), txId);
+        System.out.println("更新hash值结果：" + res);
+        System.out.println("************fabric更新数据操作写入结束*****************");
+        return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功\r\ntxId："+txId, null);
+    }
+    //根据上传者id获取文件列表
+    @CheckToken
+    @GetMapping(value = "/data/getDataListByOriginUserId")
+    public CommonResult getDataListByOriginUserId(HttpServletRequest httpServletRequest){
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();
+        List<DataSample> list = dataService.getDataListByOriginUserId(userId);
+        return new CommonResult<>(200,"获取该用户所有文件列表成功",list);
     }
 }

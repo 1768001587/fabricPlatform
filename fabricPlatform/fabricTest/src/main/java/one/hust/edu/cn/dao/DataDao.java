@@ -17,4 +17,6 @@ public interface DataDao {
     DataSample findDataById(Integer id);
     //更新文件
     void updateFile(DataSample dataSample);
+    //根据上传者id获取文件列表
+    List<DataSample> getDataListByOriginUserId(Integer originUserId);
 }

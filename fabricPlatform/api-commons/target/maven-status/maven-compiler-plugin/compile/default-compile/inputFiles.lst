@@ -1,7 +1,8 @@
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\myAnnotation\CheckToken.java
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\utils\HashUtil.java
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\myAnnotation\LoginToken.java
-D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\entities\MyFile.java
+D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\constant\FileOptConstant.java
+D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\vo\AllChannelUserVO.java
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\entities\ChannelAuthority.java
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\vo\DataUserAuthorityVO.java
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\entities\CommonResult.java
@@ -11,3 +12,4 @@ D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代�
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\entities\Channel.java
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\entities\DataAuthority.java
 D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\vo\AllDataUserAuthorityVO.java
+D:\研究生资料\南六218实验室\代炜琦项目组文件\github同步代码\fabricPlatform\fabricPlatform\api-commons\src\main\java\one\hust\edu\cn\entities\DataSample.java

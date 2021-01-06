@@ -38,4 +38,9 @@ public class DataServiceImpl implements DataService
     public void updateFile(DataSample dataSample) {
         dataDao.updateFile(dataSample);
     }
+
+    @Override
+    public List<DataSample> getDataListByOriginUserId(Integer originUserId) {
+        return dataDao.getDataListByOriginUserId(originUserId);
+    }
 }

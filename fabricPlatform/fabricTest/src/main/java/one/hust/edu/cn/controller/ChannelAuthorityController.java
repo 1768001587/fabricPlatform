@@ -46,7 +46,7 @@ public class ChannelAuthorityController {
         List<User> users = userService.getAllUser();
         List<Channel> channels = channelService.getAllChannel();
         List<AllChannelUserVO> result = new ArrayList<>();
-        Set<List<Integer>> set = new HashSet<>();//保存用户Id与对应的文件id
+        Set<List<Integer>> set = new LinkedHashSet<>();//保存用户Id与对应的文件id
         for (int i = 0; i < users.size(); i++) {
             for (int j = 0; j < channels.size(); j++) {
                 List<Integer> list = new ArrayList<>();
