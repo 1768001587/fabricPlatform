@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.Response;
 
+import lombok.extern.slf4j.Slf4j;
+import one.hust.edu.cn.exception.FabricException;
 import one.hust.edu.cn.feign.FabricFeignService;
 import one.hust.edu.cn.service.FabricService;
 import one.hust.edu.cn.utils.HashUtil;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @Service("fabricService")
 public class FabricServiceImpl implements FabricService {
 
@@ -118,10 +121,16 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public String applyForCreateFile(String username, String dstChannelName, String fileId) {
         try {
-            return applyForOptFile(username,dstChannelName, fileId, "add");
+            String txId = applyForOptFile(username,dstChannelName, fileId, "add");
+            if(txId == null || txId.isEmpty()){
+                throw new FabricException("获取创建文件权限失败");
+            }
+            else {
+                return txId;
+            }
         } catch (IOException e) {
-            System.out.println("获取创建文件权限失败");
-            return "";
+            log.error("用户{}获取创建{}文件权限失败",username,dstChannelName);
+            throw new FabricException("获取创建文件权限失败");
         }
 
     }
@@ -129,10 +138,16 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public String applyForReadFile(String username, String dstChannelName, String fileId) {
         try {
-            return applyForOptFile(username,dstChannelName, fileId, "read");
+            String txId = applyForOptFile(username,dstChannelName, fileId, "add");
+            if(txId == null || txId.isEmpty()){
+                throw new FabricException("获取创建文件权限失败");
+            }
+            else {
+                return txId;
+            }
         } catch (IOException e) {
-            System.out.println("获取读取文件权限失败");
-            return "";
+            log.error("用户{}获取查看{}文件{}权限失败",username,dstChannelName,fileId);
+            throw new FabricException("获取查看文件权限失败");
         }
     }
 
@@ -160,6 +175,8 @@ public class FabricServiceImpl implements FabricService {
             add(fileId);
             add(opt);
         }};
+        // 如果fabric有错误，将返回什么？
+        // 成功返回Record对象json
         return dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
     }
 

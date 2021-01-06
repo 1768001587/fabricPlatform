@@ -58,7 +58,7 @@ public interface FabricService {
      * @param ccName ccName
      * @param fcn 调用函数
      * @param args 链码调用参数
-     * @return 事务号 tx_id
+     * @return 交易 tx_id
      */
     String crossAccess(String peers, String channelName, String ccName,
                            String fcn, List<String> args);
@@ -68,7 +68,7 @@ public interface FabricService {
      * @param username 申请用户
      * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
      * @param fileId 文件id
-     * @return 事务id 或 空字符串
+     * @return 交易id 或 空字符串
      */
     String applyForCreateFile(String username, String dstChannelName, String fileId);
 
@@ -77,7 +77,7 @@ public interface FabricService {
      * @param username 申请用户
      * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
      * @param fileId 文件id
-     * @return 事务id 或 空字符串
+     * @return 交易id 或 空字符串
      */
     String applyForReadFile(String username, String dstChannelName, String fileId);
 
@@ -86,7 +86,7 @@ public interface FabricService {
      * @param username 申请用户
      * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
      * @param fileId 文件id
-     * @return 事务id 或 空字符串
+     * @return 交易id 或 空字符串
      */
     String applyForModifyFile(String username, String dstChannelName, String fileId);
 
@@ -97,7 +97,7 @@ public interface FabricService {
      * @param username 操作用户
      * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
      * @param fileId 文件id
-     * @param txId 第一次上链事务id
+     * @param txId 第一次上链交易id
      * @return
      */
     String updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId);
@@ -108,7 +108,7 @@ public interface FabricService {
      * @param username 操作用户
      * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
      * @param fileId 文件id
-     * @param txId 第一次上链事务id
+     * @param txId 第一次上链交易id
      * @return
      */
     String updateForModifyFile(String fileString, String username, String dstChannelName, String fileId, String txId);
@@ -125,7 +125,7 @@ public interface FabricService {
     String createFile(String fileString, String username, String dstChannelName, String fileId) throws JsonProcessingException;
 
     /**
-     * 请求对某个文件的 增删改查 权限  操作链第一次上链 返回事务号
+     * 请求对某个文件的 增删改查 权限  操作链第一次上链 返回交易号
      */
 
     /**
@@ -135,14 +135,14 @@ public interface FabricService {
      * @param ccName ccname
      * @param fcn 调用函数
      * @param args 链码调用参数
-     * @param txId 第一次上链的事务号
+     * @param txId 第一次上链的交易号
      * @return 结果
      */
     String dataSyncRecord(String peers, String channelName, String ccName,
                        String fcn, List<String> args, String txId);
 
     /**
-     * 完成对某个文件的增删改查  第二次上链  返回事务号
+     * 完成对某个文件的增删改查  第二次上链  返回交易号
      */
 
     /**
@@ -154,8 +154,8 @@ public interface FabricService {
     String getPolicy(String obj, String opt);
 
     /**
-     * 根据事务号查询结构体信息
-     * @param txId 事务号（申请权限的事务号）
+     * 根据交易号查询结构体信息
+     * @param txId 交易号（申请权限的交易号）
      * @param order 第几次上链 1/2
      * @return 结构体JSON
      */

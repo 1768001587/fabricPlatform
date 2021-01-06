@@ -32,6 +32,7 @@ public class DataAuthorityController {
 
     // TODO： 身份验证
     //给用户，文件添加权限
+    @Transactional
     @PostMapping(value = "/dataAuthority/addDataAuthority")
     public CommonResult addDataAuthority(@RequestBody DataAuthority dataAuthority) {
         Integer userId = dataAuthority.getUserId();

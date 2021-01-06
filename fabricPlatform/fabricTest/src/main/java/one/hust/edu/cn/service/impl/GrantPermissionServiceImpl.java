@@ -54,12 +54,17 @@ public class GrantPermissionServiceImpl implements GrantPermissionService {
         String ans = fabricService.grantUserPermissionOnFile(dstChannelName, fileId, permission, role, new ArrayList<String>() {{
             add(user);
         }});
-        if (ans.contains("Success") || ans.contains("exists")){
+        if (ans.contains("Success")){
+            return true;
+        }
+        else if(ans.contains("exists")){
+            log.error("用户{}对文件{}的{}权限已存在，info:{}",user,dataService.findDataById(dataAuthority.getDataSampleId()).getDataName(),permission,ans);
+//            throw new RuntimeException("授权用户权限失败: " + ans);
             return true;
         }
         else{
             log.error("授权用户{}{}权限失败，info:{}",user,permission,ans);
-            throw new RuntimeException("授权用户权限失败");
+            throw new RuntimeException("授权用户权限失败: " + ans);
         }
     }
 

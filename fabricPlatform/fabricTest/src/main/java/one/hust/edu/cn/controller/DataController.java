@@ -28,21 +28,22 @@ public class DataController {
     @Resource
     private DataService fileService;
     @Resource
-    ChannelAuthorityService channelAuthorityService;
+    private ChannelAuthorityService channelAuthorityService;
     @Resource
-    DataAuthorityService dataAuthorityService;
+    private DataAuthorityService dataAuthorityService;
     @Resource
-    FabricService fabricService;
+    private FabricService fabricService;
     @Resource
-    UserService userService;
+    private UserService userService;
     @Resource
-    ChannelService channelService;
+    private ChannelService channelService;
+
 
     //上传文件
     @CheckToken
     @PostMapping(value = "/data/uploadFile/{channelId}")
     @ResponseBody
-    @Transactional(rollbackFor=Exception.class) // 使用Transactional注解需要在抛出uncheck异常时才会回滚
+    @Transactional(rollbackFor=Exception.class) // Transactional注解默认在抛出uncheck异常（继承自Runtime Exception或 Error ）时才会回滚 而IO SQL等异常属于check异常，所以不会回滚
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
@@ -78,10 +79,6 @@ public class DataController {
             String username = "userA";
             String dstChannelName = "channel1";
             String txId = fabricService.applyForCreateFile(username, dstChannelName, myFile.getId()+"");
-            if (txId == null || txId.isEmpty()) {
-                System.out.println("申请文件创建权限失败");
-                return new CommonResult<>(300,"文件创建权限失败",null);
-            }
             System.out.println("1.创建文件成功 txId: " + txId);
             result+="1.创建文件成功 txId: " + txId+"\r\n";
             //hash
