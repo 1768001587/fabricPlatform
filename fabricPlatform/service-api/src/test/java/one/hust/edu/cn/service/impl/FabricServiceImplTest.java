@@ -1,5 +1,6 @@
 package one.hust.edu.cn.service.impl;
 
+import one.hust.edu.cn.entities.Record;
 import one.hust.edu.cn.service.FabricService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -28,5 +29,12 @@ class FabricServiceImplTest {
     void grantUserPermission2Add() {
         Boolean ans = fabricService.grantUserPermission2Add("channel1", "role1", "userB");
         System.out.println(ans);
+    }
+
+    @Test
+    void updateForModifyFile() {
+        Record record = fabricService.updateForModifyFile("233","user432","channel1","file1","feses3432frs");
+        System.out.println(record);
+        
     }
 }

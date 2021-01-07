@@ -204,10 +204,9 @@ public class FabricServiceImpl implements FabricService {
         String response = dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
         ObjectMapper mapper = new ObjectMapper();
         try {
-            Record record = mapper.readValue(response, Record.class);
-            return record;
+            return mapper.readValue(response, Record.class);
         } catch (IOException e) {
-            log.error("二次上链更新hash失败,username:{},dstChannelName:{},fileId:{},txId:{},opt:{}", username, dstChannelName, fileId, txId, opt);
+            log.error("二次上链更新hash失败,username:{},dstChannelName:{},fileId:{},txId:{},opt:{}, response:{}", username, dstChannelName, fileId, txId, opt, response);
             throw new FabricException("二次上链更新hash失败");
         }
 
