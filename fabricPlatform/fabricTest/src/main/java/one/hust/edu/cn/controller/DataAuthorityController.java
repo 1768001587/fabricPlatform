@@ -3,7 +3,7 @@ package one.hust.edu.cn.controller;
 import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.CommonResult;
 import one.hust.edu.cn.entities.DataAuthority;
-import one.hust.edu.cn.entities.DataSample;
+import one.hust.edu.cn.entities.MyFile;
 import one.hust.edu.cn.entities.User;
 import one.hust.edu.cn.service.*;
 import one.hust.edu.cn.vo.AllDataUserAuthorityVO;
@@ -25,8 +25,8 @@ public class DataAuthorityController {
     private UserService userService;
     @Resource
     private DataService dataService;
-    @Resource
-    private ChannelService channelService;
+//    @Resource
+//    private FabricService fabricService;
     @Resource
     private GrantPermissionService grantPermissionService;
 
@@ -48,7 +48,7 @@ public class DataAuthorityController {
             return new CommonResult<>(400,"fabric: 添加权限失败");
         }
         dataAuthorityService.addDataAuthority(dataAuthority);
-        return new CommonResult<>(200,"添加权限成功",dataAuthority);
+        return new CommonResult<>(200, "添加权限成功", dataAuthority);
     }
 
     //给用户，文件撤销权限
@@ -118,6 +118,7 @@ public class DataAuthorityController {
         List<DataAuthority> result = dataAuthorityService.findDataAuthorityByUserId(userId);
         return new CommonResult<>(200,"查找成功",result);
     }
+
     //查找某一文件的所有权限
     @PostMapping(value = "/dataAuthority/findDataAuthorityByDataId")
     public CommonResult findDataAuthorityByDataId(@RequestBody Map<String, String> params) {
