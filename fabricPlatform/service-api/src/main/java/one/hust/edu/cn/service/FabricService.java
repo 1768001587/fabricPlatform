@@ -1,6 +1,7 @@
 package one.hust.edu.cn.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import one.hust.edu.cn.entities.Record;
 
 import java.util.List;
 
@@ -24,9 +25,9 @@ public interface FabricService {
      * @param dstChannelName 目标channel  授予该channel的增加文件的权限
      * @param role 角色
      * @param username 用户名
-     * @return 来自链码的授权结果
+     * @return success / throw FabricException
      */
-    String grantUserPermission2Add(String dstChannelName, String role, String username);
+    Boolean grantUserPermission2Add(String dstChannelName, String role, String username);
 
     /**
      * 授予 某角色 某些用户 某个文件的查看 修改 删除 权限
@@ -35,9 +36,9 @@ public interface FabricService {
      * @param permission 权限 删改查
      * @param role 角色
      * @param users 用户列表
-     * @return
+     * @return success / throw FabricException
      */
-    String grantUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users);
+    Boolean grantUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users);
 
 
     /**
@@ -47,9 +48,9 @@ public interface FabricService {
      * @param permission 权限 删改查
      * @param role 角色
      * @param users 用户列表
-     * @return
+     * @return success / throw FabricException
      */
-    String revokeUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users);
+    Boolean revokeUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users);
 
     /**
      * 跨链请求权限 操作链第一次上链
@@ -77,7 +78,7 @@ public interface FabricService {
      * @param username 申请用户
      * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
      * @param fileId 文件id
-     * @return 交易id 或 空字符串
+     * @return 交易id 或 throw FabricException
      */
     String applyForReadFile(String username, String dstChannelName, String fileId);
 
@@ -86,7 +87,7 @@ public interface FabricService {
      * @param username 申请用户
      * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
      * @param fileId 文件id
-     * @return 交易id 或 空字符串
+     * @return 交易id 或 throw FabricException
      */
     String applyForModifyFile(String username, String dstChannelName, String fileId);
 
@@ -100,7 +101,7 @@ public interface FabricService {
      * @param txId 第一次上链交易id
      * @return
      */
-    String updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId);
+    Record updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId);
 
     /**
      * 修改文件时 更新链上文件hash值  第二次上链
@@ -111,18 +112,8 @@ public interface FabricService {
      * @param txId 第一次上链交易id
      * @return
      */
-    String updateForModifyFile(String fileString, String username, String dstChannelName, String fileId, String txId);
-
-
-    /**
-     * 创建文件
-     * @param fileString 文件字符串  将文件内容及属性拼接为字符串
-     * @param username 用户名
-     * @param dstChannelName 所创建的文件所在channel
-     * @param fileId 文件id
-     * @return
-     */
-    String createFile(String fileString, String username, String dstChannelName, String fileId) throws JsonProcessingException;
+    Record updateForModifyFile(String fileString, String username, String dstChannelName, String fileId, String txId);
+    
 
     /**
      * 请求对某个文件的 增删改查 权限  操作链第一次上链 返回交易号

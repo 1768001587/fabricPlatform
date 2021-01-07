@@ -1,12 +1,12 @@
 package one.hust.edu.cn.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.Response;
 
 import lombok.extern.slf4j.Slf4j;
+import one.hust.edu.cn.entities.Record;
 import one.hust.edu.cn.exception.FabricException;
 import one.hust.edu.cn.feign.FabricFeignService;
 import one.hust.edu.cn.service.FabricService;
@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Slf4j
-@Service("fabricService")
+@Service
 public class FabricServiceImpl implements FabricService {
 
     @Autowired
@@ -28,7 +28,6 @@ public class FabricServiceImpl implements FabricService {
 
     @Override
     public String feignTest(int a, int b) {
-//        System.out.println(restTemplate.getForObject(URL + "add/?a="+ a + "&b=" + b,String.class));
         return fabricFeignService.add(a, b);
     }
 
@@ -40,8 +39,9 @@ public class FabricServiceImpl implements FabricService {
         return response.body().toString();
     }
 
+
     @Override
-    public String grantUserPermission2Add(String dstChannelName, String role, String username) {
+    public Boolean grantUserPermission2Add(String dstChannelName, String role, String username) {
         // 由于该例子中授权都由中心链上的org1完成 暂时写死
         String peers = "peer0.org1.example.com";
         String channelName = "centre";
@@ -53,11 +53,14 @@ public class FabricServiceImpl implements FabricService {
             add(role);
             add(username);
         }};
-        return invokeChaincode(peers, channelName, ccName, fcn, args);
+        String response = invokeChaincode(peers, channelName, ccName, fcn, args);
+
+        return handleGrantPermissionRes(response, dstChannelName, Collections.singletonList(username), "add");
+
     }
 
     @Override
-    public String grantUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users) {
+    public Boolean grantUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users) {
         // 由于该例子中授权都由中心链上的org1完成 暂时写死
         String peers = "peer0.org1.example.com";
         String channelName = "centre";
@@ -69,11 +72,26 @@ public class FabricServiceImpl implements FabricService {
             add(role);
             addAll(users);
         }};
-        return invokeChaincode(peers, channelName, ccName, fcn, args);
+        String response = invokeChaincode(peers, channelName, ccName, fcn, args);
+        return handleGrantPermissionRes(response, dstChannelName, users, permission);
+    }
+
+    private boolean handleGrantPermissionRes(String response, String dstChannelName, List<String> users, String permission) {
+
+        if (response.contains("Success")) {
+            log.info("授权用户{}在{}上{}文件的权限成功,info:{}", users, dstChannelName, permission, response);
+            return true;
+        } else if (response.contains("exists")) {
+            log.warn("授权用户{}在{}上{}文件的权限失败,info:{}", users, dstChannelName, permission, response);
+            throw new FabricException("授权失败,权限已存在,info：" + response);
+        } else {
+            log.warn("授权用户{}在{}上{}文件的权限失败,info:{}", users, dstChannelName, permission, response);
+            throw new FabricException("授权失败,info: " + response);
+        }
     }
 
     @Override
-    public String revokeUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users) {
+    public Boolean revokeUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users) {
         // 由于该例子中授权都由中心链上的org1完成 暂时写死
         String peers = "peer0.org1.example.com";
         String channelName = "centre";
@@ -86,7 +104,14 @@ public class FabricServiceImpl implements FabricService {
             add(role);
             addAll(users);
         }};
-        return invokeChaincode(peers, channelName, ccName, fcn, args);
+        String response = invokeChaincode(peers, channelName, ccName, fcn, args);
+        if (response.contains("Success")) {
+            log.info("撤销用户{}在{}上{}文件的权限成功,info:{}", users, dstChannelName, permission, response);
+            return true;
+        } else {
+            log.warn("撤销用户{}在{}上{}文件的权限失败,info:{}", users, dstChannelName, permission, response);
+            throw new FabricException("撤销权限失败,info: " + response);
+        }
     }
 
     @Override
@@ -121,15 +146,14 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public String applyForCreateFile(String username, String dstChannelName, String fileId) {
         try {
-            String txId = applyForOptFile(username,dstChannelName, fileId, "add");
-            if(txId == null || txId.isEmpty()){
+            String txId = applyForOptFile(username, dstChannelName, fileId, "add");
+            if (txId == null || txId.isEmpty()) {
                 throw new FabricException("获取创建文件权限失败");
-            }
-            else {
+            } else {
                 return txId;
             }
         } catch (IOException e) {
-            log.error("用户{}获取创建{}文件权限失败",username,dstChannelName);
+            log.error("用户{}获取创建{}文件权限失败", username, dstChannelName);
             throw new FabricException("获取创建文件权限失败");
         }
 
@@ -138,15 +162,14 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public String applyForReadFile(String username, String dstChannelName, String fileId) {
         try {
-            String txId = applyForOptFile(username,dstChannelName, fileId, "add");
-            if(txId == null || txId.isEmpty()){
+            String txId = applyForOptFile(username, dstChannelName, fileId, "add");
+            if (txId == null || txId.isEmpty()) {
                 throw new FabricException("获取创建文件权限失败");
-            }
-            else {
+            } else {
                 return txId;
             }
         } catch (IOException e) {
-            log.error("用户{}获取查看{}文件{}权限失败",username,dstChannelName,fileId);
+            log.error("用户{}获取查看{}文件{}权限失败", username, dstChannelName, fileId);
             throw new FabricException("获取查看文件权限失败");
         }
     }
@@ -154,14 +177,15 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public String applyForModifyFile(String username, String dstChannelName, String fileId) {
         try {
-            return applyForOptFile(username,dstChannelName, fileId, "modify");
+            return applyForOptFile(username, dstChannelName, fileId, "modify");
         } catch (IOException e) {
-            System.out.println("获取创建文件权限失败");
-            return "";
+            log.error("用户{}获取修改{}上的文件{}权限失败", username, dstChannelName, fileId);
+            throw new FabricException("获取修改文件权限失败");
         }
     }
 
-    private String updateForOptFile(String fileString, String username, String dstChannelName, String fileId, String txId, String opt){
+    // 二次上链
+    private Record updateForOptFile(String fileString, String username, String dstChannelName, String fileId, String txId, String opt) {
         String hashSHA1 = HashUtil.hash(fileString, "SHA1");
         String peers = "peer0.org3.example.com";
         String channelName = "channel1";
@@ -175,49 +199,32 @@ public class FabricServiceImpl implements FabricService {
             add(fileId);
             add(opt);
         }};
-        // 如果fabric有错误，将返回什么？
+        // TODO: 如果fabric有错误，将返回什么？
         // 成功返回Record对象json
-        return dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
+        String response = dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(response, Record.class);
+        } catch (IOException e) {
+            log.error("二次上链更新hash失败,username:{},dstChannelName:{},fileId:{},txId:{},opt:{}, response:{}", username, dstChannelName, fileId, txId, opt, response);
+            throw new FabricException("二次上链更新hash失败");
+        }
+
     }
 
     @Override
-    public String updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
+    public Record updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
         return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "add");
     }
 
     @Override
-    public String updateForModifyFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
+    public Record updateForModifyFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
         return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "modify");
     }
 
 
-    @Override
-    public String createFile(String fileString, String username, String dstChannelName, String fileId) {
-        // 1. 权限申请 一次上链
-        String txId = applyForCreateFile(username, dstChannelName, fileId);
-        if (txId == null || txId.isEmpty()) {
-            System.out.println("申请文件创建权限失败");
-            return "error";
-        }
-        System.out.println("1.创建文件成功 txId: " + txId);
-
-        // 2. 文件上传到本地数据库
-        System.out.println("2.修改文件。。。。");
-
-        // 3. 更新链上hash 二次上链
-        String rawRes = updateForCreateFile(fileString, username, dstChannelName, fileId, txId);
-        System.out.println("3. 更新链上hash ： " + rawRes);
-
-        // 4. 授予用户文件的查改权限
-        rawRes = grantUserPermissionOnFile("channel1", fileId, "read", "role1", Collections.singletonList(username));
-        System.out.println("4.授予用户文件读取权限：" + rawRes);
-        rawRes = grantUserPermissionOnFile("channel1", fileId, "modify", "role1", Collections.singletonList(username));
-        System.out.println("4.授予用户文件修改权限：" + rawRes);
-
-        return "createFile success";
-
-    }
-
+    
+//    todo: 处理返回结果 返回正确结果/抛异常
     @Override
     public String dataSyncRecord(String peers, String channelName, String ccName, String fcn, List<String> args, String txId) {
         Response response = fabricFeignService.dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
