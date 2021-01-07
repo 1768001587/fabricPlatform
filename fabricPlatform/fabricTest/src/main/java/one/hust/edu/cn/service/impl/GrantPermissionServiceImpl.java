@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @program: fabricPlatform
@@ -51,21 +52,7 @@ public class GrantPermissionServiceImpl implements GrantPermissionService {
                 log.info("授权用户权限失败：invalid AuthorityKey");
                 return false;
         }
-        String ans = fabricService.grantUserPermissionOnFile(dstChannelName, fileId, permission, role, new ArrayList<String>() {{
-            add(user);
-        }});
-        if (ans.contains("Success")){
-            return true;
-        }
-        else if(ans.contains("exists")){
-            log.error("用户{}对文件{}的{}权限已存在，info:{}",user,dataService.findDataById(dataAuthority.getDataSampleId()).getDataName(),permission,ans);
-//            throw new RuntimeException("授权用户权限失败: " + ans);
-            return true;
-        }
-        else{
-            log.error("授权用户{}{}权限失败，info:{}",user,permission,ans);
-            throw new RuntimeException("授权用户权限失败: " + ans);
-        }
+        return fabricService.grantUserPermissionOnFile(dstChannelName, fileId, permission, role, Collections.singletonList(user));
     }
 
     @Override
@@ -89,16 +76,9 @@ public class GrantPermissionServiceImpl implements GrantPermissionService {
                 log.info("撤销用户权限失败：invalid AuthorityKey");
                 return false;
         }
-        String ans = fabricService.revokeUserPermissionOnFile(dstChannelName, fileId, permission, role, new ArrayList<String>() {{
+        return fabricService.revokeUserPermissionOnFile(dstChannelName, fileId, permission, role, new ArrayList<String>() {{
             add(user);
         }});
-        if (ans.contains("Success") || ans.contains("exists")){
-            return true;
-        }
-        else{
-            log.error("授权用户{}{}权限失败，info:{}",user,permission,ans);
-            throw new RuntimeException("撤销用户权限失败");
-        }
     }
 }
 
