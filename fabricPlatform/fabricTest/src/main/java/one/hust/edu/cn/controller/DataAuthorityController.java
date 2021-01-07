@@ -3,7 +3,7 @@ package one.hust.edu.cn.controller;
 import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.CommonResult;
 import one.hust.edu.cn.entities.DataAuthority;
-import one.hust.edu.cn.entities.MyFile;
+import one.hust.edu.cn.entities.DataSample;
 import one.hust.edu.cn.entities.User;
 import one.hust.edu.cn.service.*;
 import one.hust.edu.cn.vo.AllDataUserAuthorityVO;
@@ -27,6 +27,8 @@ public class DataAuthorityController {
     private DataService dataService;
 //    @Resource
 //    private FabricService fabricService;
+    @Resource
+    private ChannelService channelService;
     @Resource
     private GrantPermissionService grantPermissionService;
 
