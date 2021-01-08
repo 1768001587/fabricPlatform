@@ -1,4 +1,4 @@
-package one.hust.edu.cn.exception;
+package one.hust.edu.cn.exception.fabric;
 
 /**
  * @program: fabricPlatform

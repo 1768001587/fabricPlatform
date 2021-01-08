@@ -7,7 +7,7 @@ import feign.Response;
 
 import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.Record;
-import one.hust.edu.cn.exception.FabricException;
+import one.hust.edu.cn.exception.fabric.FabricException;
 import one.hust.edu.cn.feign.FabricFeignService;
 import one.hust.edu.cn.service.FabricService;
 import one.hust.edu.cn.utils.HashUtil;

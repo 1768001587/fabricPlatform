@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.User;
 
 import java.util.Date;
@@ -17,6 +18,7 @@ import java.util.UUID;
  * @Date:Created in 14:08 2018/8/15
  * @Modified By:
  */
+@Slf4j
 public class JwtUtil {
 
     /**
@@ -30,7 +32,7 @@ public class JwtUtil {
     public static String createJWT(long ttlMillis, User user) {
         //指定签名的时候使用的签名算法，也就是header那部分，jjwt已经将这部分内容封装好了。
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
+        
         //生成JWT的时间
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);

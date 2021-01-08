@@ -174,7 +174,7 @@ public class DataController {
     }
 
     //根据文件id对文件内容进行更新
-    @CheckToken
+//    @CheckToken
     @PostMapping(value = "/data/updateData")
     @ResponseBody
     public CommonResult updateData(@RequestBody Map<String, String> params){
