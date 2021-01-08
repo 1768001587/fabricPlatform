@@ -29,15 +29,9 @@ public class DataController {
     @Resource
     private DataService dataService;
     @Resource
-    private ChannelAuthorityService channelAuthorityService;
-    @Resource
     private DataAuthorityService dataAuthorityService;
     @Resource
     private FabricService fabricService;
-    @Resource
-    private UserService userService;
-    @Resource
-    private ChannelService channelService;
 
 
     //上传文件
@@ -74,7 +68,7 @@ public class DataController {
             dataSample.setCreatedTime(new Timestamp(new Date().getTime()));
             dataSample.setModifiedTime(new Timestamp(new Date().getTime()));
             dataService.uploadFile(dataSample);
-            System.out.println("************fabric上传数据操作写入开始*****************");
+            log.info("************fabric上传文件操作记录区块链开始*****************");
             String result = "";
             // 1. 权限申请 一次上链
             String username = "userA";
@@ -96,7 +90,7 @@ public class DataController {
             result+="4.授予用户文件修改权限：" + res+"\r\n";
             //写入上传者权限
             dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
-            System.out.println("************fabric上传数据操作写入结束*****************");
+            log.info("************fabric上传文件操作记录区块链结束*****************");
             return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName+"\r\n"+result, dataSample);
         } catch (Exception e) {
             return new CommonResult<>(400, e.getMessage(), null);
@@ -158,28 +152,25 @@ public class DataController {
         if(result==null){
             return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
         }
-        System.out.println("************fabric读取数据操作写入开始*****************");
+        log.info("************fabric读取文件操作记录区块链开始*****************");
         // 1. 申请读取权限
         String username = "userA";
         String dstChannelName = "channel1";
         String txId = fabricService.applyForReadFile(username, dstChannelName, String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
-            System.out.println("申请文件读取权限失败");
+            log.info("申请文件读取权限失败");
             return new CommonResult<>(300,"申请文件读取权限失败",null);
         }
         // 2. 读取文件
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         String txtContent = TxtUtil.getTxtContent(result);
-        System.out.println("************fabric读取数据操作写入结束*****************");
 
         // 3. 二次上链
         Record record = fabricService.updateForCreateFile(txtContent, username, dstChannelName, String.valueOf(dataId), txId);
         System.out.println("2. 二次上链 ： " + record.toString());
-
+        log.info("************fabric读取文件操作记录区块链结束*****************");
         return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, txtContent);
-
-       
     }
 
     //根据文件id对文件内容进行更新
@@ -194,7 +185,7 @@ public class DataController {
             return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
         }
         File old_file = new File(dataSample.getDataName());
-        System.out.println("************fabric更新数据操作写入开始*****************");
+        log.info("************fabric更新文件操作记录区块链开始*****************");
         // 1. 申请文件修改权限
         String username = "userA";
         String dstChannelName = "channel1";
@@ -229,6 +220,7 @@ public class DataController {
         // 3. 更新hash值到fabric 二次上链
         Record record = fabricService.updateForModifyFile(TxtUtil.getTxtContent(dataSample), username, dstChannelName, String.valueOf(dataId), txId);
         System.out.println("更新hash值结果：" + record.toString());
+        log.info("************fabric更新文件操作记录区块链结束*****************");
         System.out.println("************fabric更新数据操作写入结束*****************");
         return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功\r\ntxId："+txId, null);
     }

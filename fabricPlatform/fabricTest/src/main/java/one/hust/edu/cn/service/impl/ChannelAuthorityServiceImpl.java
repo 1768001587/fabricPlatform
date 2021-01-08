@@ -22,4 +22,19 @@ public class ChannelAuthorityServiceImpl implements ChannelAuthorityService {
     public List<ChannelAuthority> findChannelAuthorityByUserIdAndChannelId(Integer userId, Integer channelId) {
         return channelAuthorityDao.findChannelAuthorityByUserIdAndChannelId(userId,channelId);
     }
+
+    @Override
+    public void addChannelAuthority(ChannelAuthority channelAuthority) {
+        channelAuthorityDao.addChannelAuthority(channelAuthority);
+    }
+
+    @Override
+    public Integer deleteChannelAuthority(ChannelAuthority channelAuthority) {
+        return channelAuthorityDao.deleteChannelAuthority(channelAuthority);
+    }
+
+    @Override
+    public List<ChannelAuthority> findChannelAuthority(ChannelAuthority channelAuthority) {
+        return channelAuthorityDao.findChannelAuthority(channelAuthority);
+    }
 }

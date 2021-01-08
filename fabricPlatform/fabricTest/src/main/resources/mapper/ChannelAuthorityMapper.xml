@@ -14,4 +14,14 @@
     <select id="findChannelAuthorityByUserIdAndChannelId" parameterType="Map" resultMap="BaseResultMap">
         select * from channel_authority where channel_id=#{channelId} and user_id=#{userId};
     </select>
+     <insert id="addChannelAuthority" parameterType="ChannelAuthority" useGeneratedKeys="true" keyProperty="id">
+        insert into channel_authority (id,channel_id,user_id,authority_key) values (null,#{channelId},#{userId},#{authorityKey});
+    </insert>
+    <delete id="deleteChannelAuthority" parameterType="ChannelAuthority">
+        delete from channel_authority where  channel_id=#{channelId} and user_id=#{userId} and authority_key=#{authorityKey};
+    </delete>
+    <select id="findChannelAuthority" parameterType="Map" resultMap="BaseResultMap">
+        select * from channel_authority where channel_id=#{channelId} and user_id=#{userId} and authority_key=#{authorityKey};
+    </select>
+
 </mapper>

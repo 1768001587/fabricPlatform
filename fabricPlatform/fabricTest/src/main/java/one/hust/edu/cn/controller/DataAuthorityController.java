@@ -25,8 +25,6 @@ public class DataAuthorityController {
     private UserService userService;
     @Resource
     private DataService dataService;
-//    @Resource
-//    private FabricService fabricService;
     @Resource
     private ChannelService channelService;
     @Resource
@@ -46,11 +44,13 @@ public class DataAuthorityController {
         if(dataSample ==null) return new CommonResult<>(400,"添加权限失败，不存在dataSampleId为："+dataSampleId+"的文件",null);
         if(authorityKey!=1&&authorityKey!=2&&authorityKey!=3) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：查看文件  2：修改文件  3：删除文件",null);
+        log.info("************fabric添加文件权限操作记录写入区块链开始*****************");
         if(!grantPermissionService.grantUserPermissionOnFile(dataAuthority)){
             return new CommonResult<>(400,"fabric: 添加权限失败");
         }
         dataAuthorityService.addDataAuthority(dataAuthority);
-        return new CommonResult<>(200, "添加权限成功", dataAuthority);
+        log.info("************fabric添加文件权限操作记录写入区块链结束*****************");
+        return new CommonResult<>(200, "dataAuthority添加权限成功", dataAuthority);
     }
 
     //给用户，文件撤销权限
@@ -66,11 +66,13 @@ public class DataAuthorityController {
         if(dataSample ==null) return new CommonResult<>(400,"添加权限失败，不存在dataSampleId为："+dataSampleId+"的文件",null);
         if(authorityKey!=1&&authorityKey!=2&&authorityKey!=3) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：查看文件  2：修改文件  3：删除文件",null);
+        log.info("************fabric撤销文件权限操作记录区块链开始*****************");
         if(!grantPermissionService.revokeUserPermissionOnFile(dataAuthority)){
             return new CommonResult<>(400,"fabric: 撤销权限失败");
         }
         Integer count = dataAuthorityService.deleteDataAuthority(dataAuthority);
-        if(count==1) return new CommonResult<>(200,"撤销权限成功",dataAuthority);
+        log.info("************fabric撤销文件权限操作记录区块链结束*****************");
+        if(count>=1) return new CommonResult<>(200,"dataAuthority撤销权限成功",dataAuthority);
         else return new CommonResult<>(400,"撤销权限失败，请联系系统管理员",dataAuthority);
     }
 
