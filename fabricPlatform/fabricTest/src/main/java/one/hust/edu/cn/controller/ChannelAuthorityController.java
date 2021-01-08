@@ -3,6 +3,7 @@ package one.hust.edu.cn.controller;
 import com.auth0.jwt.JWT;
 import lombok.extern.slf4j.Slf4j;
 import one.hust.edu.cn.entities.*;
+import one.hust.edu.cn.exception.FabricException;
 import one.hust.edu.cn.myAnnotation.CheckToken;
 import one.hust.edu.cn.service.ChannelAuthorityService;
 import one.hust.edu.cn.service.ChannelService;
@@ -95,8 +96,7 @@ public class ChannelAuthorityController {
         if(authorityKey!=1) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：在该channel上上传文件权限",null);
         log.info("************fabric添加管道权限操作记录区块链开始*****************");
-        fabricService.grantUserPermission2Add(channel.getChannelName(),"AAA",user.getUsername());
-//        log.info(fabricResult);
+       // fabricService.grantUserPermission2Add(channel.getChannelName(),"AAA",user.getUsername());
         channelAuthorityService.addChannelAuthority(channelAuthority);
         log.info("************fabric添加管道权限操作记录区块链结束*****************");
         return new CommonResult<>(200, "channelAuthority添加权限成功", channelAuthority);

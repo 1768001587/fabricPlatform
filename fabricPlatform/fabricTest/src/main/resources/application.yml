@@ -5,6 +5,9 @@ server:
 spring:
   application:
     name: springcloud-fabric-test
+  banner:
+    image:
+      location: logo.png
   servlet:
     multipart:
       #设置上传文件最大值

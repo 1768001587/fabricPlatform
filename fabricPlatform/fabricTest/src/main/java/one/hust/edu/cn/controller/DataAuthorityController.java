@@ -5,6 +5,7 @@ import one.hust.edu.cn.entities.CommonResult;
 import one.hust.edu.cn.entities.DataAuthority;
 import one.hust.edu.cn.entities.DataSample;
 import one.hust.edu.cn.entities.User;
+import one.hust.edu.cn.exception.FabricException;
 import one.hust.edu.cn.service.*;
 import one.hust.edu.cn.vo.AllDataUserAuthorityVO;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +46,11 @@ public class DataAuthorityController {
         if(authorityKey!=1&&authorityKey!=2&&authorityKey!=3) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：查看文件  2：修改文件  3：删除文件",null);
         log.info("************fabric添加文件权限操作记录写入区块链开始*****************");
-        if(!grantPermissionService.grantUserPermissionOnFile(dataAuthority)){
-            return new CommonResult<>(400,"fabric: 添加权限失败");
+        try{
+            grantPermissionService.grantUserPermissionOnFile(dataAuthority);
+        }catch (FabricException e){
+            log.info(e.getMessage());
+            return new CommonResult<>(400,e.getMessage());
         }
         dataAuthorityService.addDataAuthority(dataAuthority);
         log.info("************fabric添加文件权限操作记录写入区块链结束*****************");
