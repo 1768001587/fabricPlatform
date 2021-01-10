@@ -1,0 +1,45 @@
+server:
+  port: 8080
+  connection-timeout: 18000000
+
+spring:
+  application:
+    name: springcloud-fabric-test
+  banner:
+    location: banner.txt
+  #    image:
+#      location: logo.png    
+  servlet:
+    multipart:
+      #设置上传文件最大值
+      max-file-size: 100000MB
+      max-request-size: 100000MB
+  datasource:
+    # 当前数据源操作类型
+    type: com.alibaba.druid.pool.DruidDataSource      #当前数据源操作类型
+    # mysql驱动类
+    driver-class-name: org.gjt.mm.mysql.Driver
+    url: jdbc:mysql://211.69.198.53:3307/Key-R-D-based-on-fabric?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+    username: dev
+    password: dev
+    #数据源配置信息
+    druid:
+      filters: stat
+      initialSize: 2
+      maxActive: 300
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: false
+      maxPoolPreparedStatementPerConnectionSize: 200
+  thymeleaf:
+    check-template: true
+    suffix: .html
+    cache: false
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.hust.keyRD.commons.entities #所有Entity别名类所在的包
