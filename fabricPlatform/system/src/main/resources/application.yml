@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-    name: springcloud-fabric-test
+    name: fabric-system
   banner:
     location: banner.txt
   #    image:
