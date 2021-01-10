@@ -74,10 +74,9 @@ public class JwtUtil {
     /**
      * Token的解密
      * @param token 加密后的token
-     * @param user  用户的对象
      * @return
      */
-    public static Claims parseJWT(String token, User user) {
+    public static Claims parseJWT(String token) {
         //签名秘钥，和生成的签名的秘钥一模一样
         String key = "onehusteducn";
 
@@ -89,6 +88,23 @@ public class JwtUtil {
                 .parseClaimsJws(token).getBody();
         return claims;
     }
+
+    /**
+     * 从token中获取用户名
+     * @param token
+     * @return
+     */
+    public String getUserNameFromToken(String token){
+        String username;
+        try{
+            Claims claims = parseJWT(token);
+            username = claims.get("username", String.class);
+        }catch (Exception e){
+            return null;
+        }
+        return username;
+    }
+    
 
 
     /**
