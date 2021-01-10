@@ -41,7 +41,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            
+
             <!--spring cloud Hoxton.SR1-->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
@@ -50,7 +50,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            
+
             <!--spring cloud alibaba 2.1.0.RELEASE-->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
@@ -124,31 +124,4 @@
         </pluginManagement>
     </build>
 
-    <!--<repository>-->
-    <!--    <id>alimaven</id>-->
-    <!--    <name>aliyun maven</name>-->
-    <!--    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>-->
-    <!--</repository>-->
-
-    <!--<pluginRepositories>-->
-    <!--    <pluginRepository>-->
-    <!--        <id>alimaven spring plugin</id>-->
-    <!--        <name>alimaven spring plugin</name>-->
-    <!--        <url>https://maven.aliyun.com/repository/spring-plugin</url>-->
-    <!--    </pluginRepository>-->
-    <!--</pluginRepositories>-->
-
-    <!--<build>-->
-    <!--    <plugins>-->
-    <!--        <plugin>-->
-    <!--            <groupId>org.springframework.boot</groupId>-->
-    <!--            <artifactId>spring-boot-maven-plugin</artifactId>-->
-    <!--            <configuration>-->
-    <!--                <fork>true</fork>-->
-    <!--                <addResources>true</addResources>-->
-    <!--            </configuration>-->
-    <!--        </plugin>-->
-    <!--   -->
-    <!--    </plugins>-->
-    <!--</build>-->
 </project>

@@ -94,7 +94,7 @@ public class ChannelAuthorityController {
         if(authorityKey!=1) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：在该channel上上传文件权限",null);
         log.info("************fabric添加管道权限操作记录区块链开始*****************");
-       // fabricService.grantUserPermission2Add(channel.getChannelName(),"AAA",user.getUsername());
+        fabricService.grantUserPermission2Add(channel.getChannelName(),"AAA",user.getUsername());
         channelAuthorityService.addChannelAuthority(channelAuthority);
         log.info("************fabric添加管道权限操作记录区块链结束*****************");
         return new CommonResult<>(200, "channelAuthority添加权限成功", channelAuthority);
