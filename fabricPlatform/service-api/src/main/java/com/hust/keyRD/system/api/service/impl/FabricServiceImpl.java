@@ -222,12 +222,44 @@ public class FabricServiceImpl implements FabricService {
     }
 
 
-    
-//    todo: 处理返回结果 返回正确结果/抛异常
+    //    todo: 处理返回结果 返回正确结果/抛异常
     @Override
     public String dataSyncRecord(String peers, String channelName, String ccName, String fcn, List<String> args, String txId) {
         Response response = fabricFeignService.dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
         return response.body().toString();
+    }
+
+    private Record parseRecordFromResponse (String response) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(response);
+        JsonNode txInfo = root.path("tx_info");
+        String recordJson = txInfo.toString().replaceAll("\\\\","");
+        recordJson = recordJson.substring(1,recordJson.length()-1);
+        return mapper.readValue(recordJson, Record.class);
+    }
+    
+    @Override
+    public Record traceBackward(String fileId) {
+        String response = fabricFeignService.traceBackward(fileId).body().toString();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return parseRecordFromResponse(response);
+        } catch (IOException e) {
+            log.error("溯源失败,fileId:{}, response:{}", fileId,  response);
+            throw new FabricException("溯源失败: fileId:" + fileId);
+        }
+    }
+
+    @Override
+    public Record traceBackward(String fileId, String txId) {
+        String response = fabricFeignService.traceBackward(fileId, txId).body().toString();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return parseRecordFromResponse(response);
+        } catch (IOException e) {
+            log.error("溯源失败,fileId:{},txId:{}, response:{}", fileId, txId, response);
+            throw new FabricException("溯源失败: fileId:" + fileId + ", txId: " + txId);
+        }
     }
 
     @Override

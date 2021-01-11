@@ -8,7 +8,7 @@ spring:
   banner:
     location: banner.txt
   #    image:
-#      location: logo.png    
+  #      location: logo.png    
   servlet:
     multipart:
       #设置上传文件最大值
@@ -43,3 +43,11 @@ spring:
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
   type-aliases-package: com.hust.keyRD.commons.entities #所有Entity别名类所在的包
+
+feign:
+  client:
+    default:
+      connectTimeout: 5000
+      readTimeout: 5000   # 读超时时间
+      loggerLevel: full # 日志级别
+      
