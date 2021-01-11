@@ -26,16 +26,11 @@ public class FabricServiceImpl implements FabricService {
     @Autowired
     private FabricFeignService fabricFeignService;
 
-    @Override
-    public String feignTest(int a, int b) {
-        return fabricFeignService.add(a, b);
-    }
 
     @Override
     public String invokeChaincode(String peers, String channelName, String ccName,
                                   String fcn, List<String> args) {
         Response response = fabricFeignService.invokeChaincodeTest(peers, channelName, ccName, fcn, args);
-//        System.out.println(response);
         return response.body().toString();
     }
 

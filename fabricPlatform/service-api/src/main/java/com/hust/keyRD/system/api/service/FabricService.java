@@ -5,7 +5,6 @@ import com.hust.keyRD.commons.entities.Record;
 import java.util.List;
 
 public interface FabricService {
-    String feignTest(int a, int b);
 
     /**
      * 调用链码  这里是指使用中心链上org1来进行权限管理
