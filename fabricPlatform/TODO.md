@@ -3,4 +3,5 @@
 - ~~fabric异常  后台不应该包RuntimeException~~
 - python django rest规范 返回response
 - mongo
-- swagger
+- ~~swagger~~
+- event

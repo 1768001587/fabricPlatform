@@ -27,6 +27,12 @@ public interface FabricFeignService {
     Response dataSyncRecord(@RequestParam("peers") String peers, @RequestParam("channel_name") String channelName, @RequestParam("cc_name") String ccName,
                          @RequestParam("fcn") String fcn, @RequestParam("args") List<String> args, @RequestParam("tx_id") String txId);
 
+    @PostMapping("/traceBackward")
+    Response traceBackward(@RequestParam("data_id") String dataId, @RequestParam("tx_id") String txId);
+
+    @PostMapping("/traceBackward")
+    Response traceBackward(@RequestParam("data_id") String dataId);
+    
     /*
         查询权限 如channel1上add的权限  由于权限管理由中心链完成，所以在本例中使用中心链上的org1来查询
      */

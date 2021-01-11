@@ -131,6 +131,22 @@ public interface FabricService {
     String dataSyncRecord(String peers, String channelName, String ccName,
                        String fcn, List<String> args, String txId);
 
+
+    /**
+     * 溯源 查找fileId文件最新的交易记录
+     * @param fileId 文件id
+     * @return 上一次record实例  
+     */
+    Record traceBackward(String fileId);
+
+    /**
+     * 溯源 查找fileId文件txId交易的上一次交易记录  继续溯源的话使用Record.lastTxId和原fileId作为参数 将进行下一次溯源
+     * @param fileId 文件id
+     * @param txId 交易id
+     * @return 上一次record实例
+     */
+    Record traceBackward(String fileId, String txId);
+    
     /**
      * 完成对某个文件的增删改查  第二次上链  返回交易号
      */
