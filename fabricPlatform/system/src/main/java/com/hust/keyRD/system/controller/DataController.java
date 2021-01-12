@@ -43,7 +43,7 @@ public class DataController {
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
-        String filePath = "D:/研究生资料/南六218实验室/代炜琦项目组文件/github同步代码/uploadFilePackage/";
+        String filePath = "F:\\tem\\";
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
@@ -83,10 +83,10 @@ public class DataController {
             log.info("2. 更新链上hash ： " + record.toString());
             result+="2. 更新链上hash ： " + record.toString()+"\r\n";
             // 4. 授予用户文件的查改权限
-            Boolean res = fabricService.grantUserPermissionOnFile("channel1", dataSample.getId()+"", "read", "role1", Collections.singletonList(username));
+            Boolean res = fabricService.grantUserPermissionOnFile(dataSample.getId()+"", "read", "role1", Collections.singletonList(username));
             log.info("3.授予用户文件读取权限：" + res);
             result+="3.授予用户文件读取权限：" + res+"\r\n";
-            res = fabricService.grantUserPermissionOnFile("channel1", dataSample.getId()+"", "modify", "role1", Collections.singletonList(username));
+            res = fabricService.grantUserPermissionOnFile(dataSample.getId()+"", "modify", "role1", Collections.singletonList(username));
             log.info("4.授予用户文件修改权限：" + res);
             result+="4.授予用户文件修改权限：" + res+"\r\n";
             //写入上传者权限
