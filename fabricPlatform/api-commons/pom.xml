@@ -48,12 +48,16 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.6.1</version>
+<<<<<<< HEAD
+        </dependency><dependency><groupId>org.springframework</groupId><artifactId>spring-web</artifactId><version>5.2.9.RELEASE</version><scope>compile</scope></dependency>
+=======
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>5.2.2.RELEASE</version>
         </dependency>
+>>>>>>> dc819f09a458d8c87a9451ffb6bcc634d15fd8e6
     </dependencies>
 
 </project>

@@ -113,6 +113,7 @@
     </dependencyManagement>
 
     <build>
+
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -124,31 +125,4 @@
         </pluginManagement>
     </build>
 
-    <!--<repository>-->
-    <!--    <id>alimaven</id>-->
-    <!--    <name>aliyun maven</name>-->
-    <!--    <url>http://maven.aliyun.com/nexus/content/groups/public/</url>-->
-    <!--</repository>-->
-
-    <!--<pluginRepositories>-->
-    <!--    <pluginRepository>-->
-    <!--        <id>alimaven spring plugin</id>-->
-    <!--        <name>alimaven spring plugin</name>-->
-    <!--        <url>https://maven.aliyun.com/repository/spring-plugin</url>-->
-    <!--    </pluginRepository>-->
-    <!--</pluginRepositories>-->
-
-    <!--<build>-->
-    <!--    <plugins>-->
-    <!--        <plugin>-->
-    <!--            <groupId>org.springframework.boot</groupId>-->
-    <!--            <artifactId>spring-boot-maven-plugin</artifactId>-->
-    <!--            <configuration>-->
-    <!--                <fork>true</fork>-->
-    <!--                <addResources>true</addResources>-->
-    <!--            </configuration>-->
-    <!--        </plugin>-->
-    <!--   -->
-    <!--    </plugins>-->
-    <!--</build>-->
 </project>

@@ -859,6 +859,8 @@ public CommonResult deleteChannelAuthority(@RequestBody ChannelAuthority channel
 
 
 
+
+
 后台已完成与fabric对接操作：
 
 文件操作：
@@ -868,6 +870,8 @@ public CommonResult deleteChannelAuthority(@RequestBody ChannelAuthority channel
 2.读取文件操作记录
 
 3.更新文件操作记录
+
+4.溯源文件记录
 
 文件权限操作：
 
@@ -895,7 +899,7 @@ channel权限操作：
 
 2.追踪文件记录
 
-3.溯源文件记录
+
 
 channel权限操作：
 

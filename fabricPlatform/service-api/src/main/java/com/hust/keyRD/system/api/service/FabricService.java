@@ -22,7 +22,7 @@ public interface FabricService {
     /**
      * 增加policy
      * @param obj channelName 或 fileId
-     * @param permission 权限 
+     * @param permission 权限
      * @param role  角色
      * @param users 用户list
      * @return
@@ -39,7 +39,7 @@ public interface FabricService {
      * @return success/fail
      */
     Boolean updatePolicy(String obj, String permission, String func, String role, List<String> users);
-    
+
 
     /**
      * 授予 某角色 某些用户 某个channel的（文件）add权限
@@ -132,6 +132,17 @@ public interface FabricService {
      * @return
      */
     Record updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId);
+
+    /**
+     * 查看文件时 更新链上文件hash值  第二次上链
+     * @param fileString 文件字符串
+     * @param username 操作用户
+     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
+     * @param fileId 文件id
+     * @param txId 第一次上链交易id
+     * @return
+     */
+    Record updateForReadFile(String fileString, String username, String dstChannelName, String fileId, String txId);
 
     /**
      * 修改文件时 更新链上文件hash值  第二次上链

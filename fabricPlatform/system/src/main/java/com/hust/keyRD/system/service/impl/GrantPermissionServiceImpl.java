@@ -33,6 +33,7 @@ public class GrantPermissionServiceImpl implements GrantPermissionService {
 
     @Override
     public Boolean grantUserPermissionOnFile(DataAuthority dataAuthority) {
+        String dstChannelName = "channel" + dataService.findDataById(dataAuthority.getDataSampleId()).getChannelId();
         String fileId = String.valueOf(dataAuthority.getDataSampleId());
         String role = "role1";
         String user = userService.findUserById(dataAuthority.getUserId()).getUsername();

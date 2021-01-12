@@ -1,12 +1,9 @@
 package com.hust.keyRD.system.controller;
 
 import com.auth0.jwt.JWT;
+import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.system.api.service.FabricService;
 import lombok.extern.slf4j.Slf4j;
-import com.hust.keyRD.commons.entities.CommonResult;
-import com.hust.keyRD.commons.entities.DataAuthority;
-import com.hust.keyRD.commons.entities.DataSample;
-import com.hust.keyRD.commons.entities.Record;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.system.service.*;
 import com.hust.keyRD.commons.utils.TxtUtil;
@@ -33,6 +30,10 @@ public class DataController {
     private DataAuthorityService dataAuthorityService;
     @Resource
     private FabricService fabricService;
+    @Resource
+    UserService userService;
+    @Resource
+    ChannelService channelService;
 
 
     //上传文件
@@ -43,11 +44,12 @@ public class DataController {
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
-        String filePath = "F:\\tem\\";
+        String filePath = "D:/研究生资料/南六218实验室/代炜琦项目组文件/github同步代码/uploadFilePackage/";
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
-
+        User user = userService.findUserById(originUserId);
+        Channel channel = channelService.findChannelById(channelId);
         try {
             //进行文件传输
             file.transferTo(new File(filePath + fileName));
@@ -72,8 +74,8 @@ public class DataController {
             log.info("************fabric上传文件操作记录区块链开始*****************");
             String result = "";
             // 1. 权限申请 一次上链
-            String username = "userA";
-            String dstChannelName = "channel1";
+            String username = user.getUsername();
+            String dstChannelName = channel.getChannelName();
             String txId = fabricService.applyForCreateFile(username, dstChannelName, dataSample.getId()+"");
             log.info("1.创建文件成功 txId: " + txId);
             result+="1.创建文件成功 txId: " + txId+"\r\n";
@@ -83,10 +85,10 @@ public class DataController {
             log.info("2. 更新链上hash ： " + record.toString());
             result+="2. 更新链上hash ： " + record.toString()+"\r\n";
             // 4. 授予用户文件的查改权限
-            Boolean res = fabricService.grantUserPermissionOnFile(dataSample.getId()+"", "read", "role1", Collections.singletonList(username));
+            Boolean res = fabricService.grantUserPermissionOnFile( dataSample.getId()+"", "read", "role1", Collections.singletonList(username));
             log.info("3.授予用户文件读取权限：" + res);
             result+="3.授予用户文件读取权限：" + res+"\r\n";
-            res = fabricService.grantUserPermissionOnFile(dataSample.getId()+"", "modify", "role1", Collections.singletonList(username));
+            res = fabricService.grantUserPermissionOnFile( dataSample.getId()+"", "modify", "role1", Collections.singletonList(username));
             log.info("4.授予用户文件修改权限：" + res);
             result+="4.授予用户文件修改权限：" + res+"\r\n";
             //写入上传者权限
@@ -149,36 +151,44 @@ public class DataController {
     @ResponseBody
     public CommonResult getData(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
         Integer dataId = Integer.valueOf(params.get("dataId"));
+        DataSample dataSample = dataService.findDataById(dataId);
         DataSample result = dataService.findDataById(dataId);
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer originUserId = JWT.decode(token).getClaim("id").asInt();
+        User user = userService.findUserById(originUserId);
         if(result==null){
             return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
         }
         log.info("************fabric读取文件操作记录区块链开始*****************");
         // 1. 申请读取权限
-        String username = "userA";
-        String dstChannelName = "channel1";
+        String username = user.getUsername();
+        String dstChannelName = channelService.findChannelById(dataSample.getChannelId()).getChannelName();
         String txId = fabricService.applyForReadFile(username, dstChannelName, String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
             log.info("申请文件读取权限失败");
             return new CommonResult<>(300,"申请文件读取权限失败",null);
         }
         // 2. 读取文件
-        // 从 http 请求头中取出 token
-        String token = httpServletRequest.getHeader("token");
         String txtContent = TxtUtil.getTxtContent(result);
 
         // 3. 二次上链
-        Record record = fabricService.updateForCreateFile(txtContent, username, dstChannelName, String.valueOf(dataId), txId);
+        Record record = fabricService.updateForReadFile(txtContent, username, dstChannelName, String.valueOf(dataId), txId);
         log.info("2. 二次上链 ： " + record.toString());
         log.info("************fabric读取文件操作记录区块链结束*****************");
         return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, txtContent);
     }
 
     //根据文件id对文件内容进行更新
-//    @CheckToken
+    @CheckToken
     @PostMapping(value = "/data/updateData")
     @ResponseBody
-    public CommonResult updateData(@RequestBody Map<String, String> params){
+    @Transactional
+    public CommonResult updateData(@RequestBody Map<String, String> params,HttpServletRequest httpServletRequest){
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer originUserId = JWT.decode(token).getClaim("id").asInt();
+        User user = userService.findUserById(originUserId);
         Integer dataId = Integer.valueOf(params.get("dataId"));
         String dataContent = params.get("dataContent");
         DataSample dataSample = dataService.findDataById(dataId);
@@ -188,8 +198,8 @@ public class DataController {
         File old_file = new File(dataSample.getDataName());
         log.info("************fabric更新文件操作记录区块链开始*****************");
         // 1. 申请文件修改权限
-        String username = "userA";
-        String dstChannelName = "channel1";
+        String username = user.getUsername();
+        String dstChannelName = channelService.findChannelById(dataSample.getChannelId()).getChannelName();
         String txId = fabricService.applyForModifyFile(username, dstChannelName, String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
             log.info("申请文件修改权限失败");

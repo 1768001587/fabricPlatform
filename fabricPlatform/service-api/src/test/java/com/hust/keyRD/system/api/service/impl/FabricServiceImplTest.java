@@ -16,7 +16,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
@@ -36,7 +35,7 @@ class FabricServiceImplTest {
 
     @Test
     void testTraceBackward() {
-        String fileId = "file1453432";
+        String fileId = "file1";
         String txId = "28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba";
         Record record = fabricService.traceBackward(fileId);
         System.out.println(record);
@@ -51,23 +50,5 @@ class FabricServiceImplTest {
 ////            log.error("溯源失败,fileId:{},txId:{}, response:{}", fileId, txId, response);
 //            throw new FabricException("溯源失败: fileId:" + fileId + ", txId: " + txId);
 //        }
-    }
-
-    @Test
-    void grantUserPermission2Add() {
-        Boolean aBoolean = fabricService.grantUserPermission2Add("channel3", "role123", "rick");
-        System.out.println(aBoolean);
-    }
-
-    @Test
-    void getPolicy() {
-        String ans = fabricService.getPolicy("channel1", "add");
-        System.out.println(ans);
-    }
-
-    @Test
-    void grantUserPermissionOnFile() {
-        Boolean aBoolean = fabricService.grantUserPermissionOnFile("file333", "read", "role1", Collections.singletonList("rick"));
-        System.out.println(aBoolean);
     }
 }

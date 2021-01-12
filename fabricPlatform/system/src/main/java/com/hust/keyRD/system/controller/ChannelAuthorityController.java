@@ -1,6 +1,7 @@
 package com.hust.keyRD.system.controller;
 
 import com.auth0.jwt.JWT;
+import com.hust.keyRD.commons.exception.fabric.FabricException;
 import com.hust.keyRD.system.api.service.FabricService;
 import lombok.extern.slf4j.Slf4j;
 import com.hust.keyRD.commons.entities.*;
@@ -94,7 +95,7 @@ public class ChannelAuthorityController {
         if(authorityKey!=1) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：在该channel上上传文件权限",null);
         log.info("************fabric添加管道权限操作记录区块链开始*****************");
-       // fabricService.grantUserPermission2Add(channel.getChannelName(),"AAA",user.getUsername());
+        fabricService.grantUserPermission2Add(channel.getChannelName(),"AAA",user.getUsername());
         channelAuthorityService.addChannelAuthority(channelAuthority);
         log.info("************fabric添加管道权限操作记录区块链结束*****************");
         return new CommonResult<>(200, "channelAuthority添加权限成功", channelAuthority);
@@ -113,9 +114,9 @@ public class ChannelAuthorityController {
         if(authorityKey!=1) return new CommonResult<>(400,"authorityKey请选择：" +
                 "1：在该channel上上传文件权限",null);
 
-        Integer count = channelAuthorityService.deleteChannelAuthority(channelAuthority);
+        //Integer count = channelAuthorityService.deleteChannelAuthority(channelAuthority);
 
-        if(count>=1) return new CommonResult<>(200, "channelAuthority撤销权限成功", channelAuthority);
-        else return new CommonResult<>(200, "不存在该权限", channelAuthority);
+        //if(count>=1) return new CommonResult<>(200, "channelAuthority撤销权限成功", channelAuthority);
+        return new CommonResult<>(400, "不可撤销，因为fabric没有此接口", channelAuthority);
     }
 }

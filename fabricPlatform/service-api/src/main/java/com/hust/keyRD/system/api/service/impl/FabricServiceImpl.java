@@ -95,7 +95,7 @@ public class FabricServiceImpl implements FabricService {
             log.error("授权用户{}在{}上{}文件的权限失败,info:{}", username, dstChannelName, "add", response);
             throw e;
         }
-           
+
 
     }
 
@@ -262,6 +262,11 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public Record updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
         return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "add");
+    }
+
+    @Override
+    public Record updateForReadFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
+        return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "read");
     }
 
     @Override
