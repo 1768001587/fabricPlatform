@@ -18,6 +18,29 @@ public interface FabricService {
     String invokeChaincode(String peers, String channelName, String ccName,
                            String fcn, List<String> args);
 
+
+    /**
+     * 增加policy
+     * @param obj channelName 或 fileId
+     * @param permission 权限 
+     * @param role  角色
+     * @param users 用户list
+     * @return
+     */
+    Boolean addPolicy(String obj, String permission, String role, List<String> users);
+
+    /**
+     * 更新policy 即更新state <obj+permission, Map<String role, String[] users>的value
+     * @param obj channelName 或 fileId
+     * @param permission 权限
+     * @param func addrole, deleterole, adduser, deleteuser
+     * @param role 角色
+     * @param users 用户list
+     * @return success/fail
+     */
+    Boolean updatePolicy(String obj, String permission, String func, String role, List<String> users);
+    
+
     /**
      * 授予 某角色 某些用户 某个channel的（文件）add权限
      * @param dstChannelName 目标channel  授予该channel的增加文件的权限
@@ -29,14 +52,14 @@ public interface FabricService {
 
     /**
      * 授予 某角色 某些用户 某个文件的查看 修改 删除 权限
-     * @param dstChannelName 目标channel  授予该channel文件的权限
+     * @param_Remove dstChannelName 目标channel  授予该channel文件的权限  由于目前写死了，目标channel只能是channel1
      * @param fileId 文件id
      * @param permission 权限 删改查
      * @param role 角色
      * @param users 用户列表
      * @return success / throw FabricException
      */
-    Boolean grantUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users);
+    Boolean grantUserPermissionOnFile(String fileId, String permission, String role, List<String> users);
 
 
     /**
@@ -154,7 +177,7 @@ public interface FabricService {
      * 查询权限 如channel1上add的权限  由于权限管理由中心链完成，所以在本例中使用中心链上的org1来查询
      * @param obj channel name
      * @param opt 操作名 如 add
-     * @return 权限对应的role和user
+     * @return policy实体
      */
     String getPolicy(String obj, String opt);
 

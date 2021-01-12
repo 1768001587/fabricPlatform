@@ -5,6 +5,7 @@ import com.hust.keyRD.commons.entities.CommonResult;
 import com.hust.keyRD.commons.exception.fabric.FabricException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -21,6 +22,7 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(code = HttpStatus.FORBIDDEN)
     @ExceptionHandler(FabricException.class)
+    @ResponseBody
     public String handleFabricException(FabricException e) {
 //        log.error(e.getMessage());
 //        return new CommonResult<>(HttpStatus.FORBIDDEN.value(), "fabric error: " + e.getMessage());
