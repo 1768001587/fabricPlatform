@@ -85,10 +85,10 @@ public class DataController {
             log.info("2. 更新链上hash ： " + record.toString());
             result+="2. 更新链上hash ： " + record.toString()+"\r\n";
             // 4. 授予用户文件的查改权限
-            Boolean res = fabricService.grantUserPermissionOnFile("channel1", dataSample.getId()+"", "read", "role1", Collections.singletonList(username));
+            Boolean res = fabricService.grantUserPermissionOnFile( dataSample.getId()+"", "read", "role1", Collections.singletonList(username));
             log.info("3.授予用户文件读取权限：" + res);
             result+="3.授予用户文件读取权限：" + res+"\r\n";
-            res = fabricService.grantUserPermissionOnFile("channel1", dataSample.getId()+"", "modify", "role1", Collections.singletonList(username));
+            res = fabricService.grantUserPermissionOnFile( dataSample.getId()+"", "modify", "role1", Collections.singletonList(username));
             log.info("4.授予用户文件修改权限：" + res);
             result+="4.授予用户文件修改权限：" + res+"\r\n";
             //写入上传者权限
