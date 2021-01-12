@@ -156,6 +156,11 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
+    public Boolean revokeUserPermission2Add(String dstChannelName, String role, String username) {
+        return null;
+    }
+
+    @Override
     public String crossAccess(String peers, String channelName, String ccName, String fcn, List<String> args) {
         Response response = fabricFeignService.crossAccess(peers, channelName, ccName, fcn, args);
         return response.body().toString();
