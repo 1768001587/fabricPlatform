@@ -37,7 +37,7 @@ public class ChannelAuthorityController {
 
 
     @CheckToken
-    @GetMapping(value = "/channel/getAddAuthorityChannels")
+    @GetMapping(value = "/channelAuthority/getAddAuthorityChannels")
     public CommonResult getAddAuthorityChannels(HttpServletRequest httpServletRequest) {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
@@ -52,7 +52,7 @@ public class ChannelAuthorityController {
     }
 
     //获取所有权限，返回AllDataUserAuthorityVO类
-    @GetMapping(value = "/channel/getAllAuthorityChannels")
+    @GetMapping(value = "/channelAuthority/getAllAuthorityChannels")
     public CommonResult getAllAuthorityChannels() {
         List<User> users = userService.getAllUser();
         List<Channel> channels = channelService.getAllChannel();
@@ -89,7 +89,7 @@ public class ChannelAuthorityController {
 
     //给用户添加管道权限
     @Transactional
-    @PostMapping(value = "/channel/addChannelAuthority")
+    @PostMapping(value = "/channelAuthority/addChannelAuthority")
     public CommonResult addDataAuthority(@RequestBody ChannelAuthority channelAuthority) {
         Integer channelId = channelAuthority.getChannelId();
         Integer userId = channelAuthority.getUserId();
@@ -111,7 +111,7 @@ public class ChannelAuthorityController {
 
     //撤销某个用户可以上传文件至某通道的权限
     @Transactional
-    @PostMapping(value = "/channel/deleteChannelAuthority")
+    @PostMapping(value = "/channelAuthority/deleteChannelAuthority")
     public CommonResult deleteChannelAuthority(@RequestBody ChannelAuthority channelAuthority) {
         Integer channelId = channelAuthority.getChannelId();
         Integer userId = channelAuthority.getUserId();

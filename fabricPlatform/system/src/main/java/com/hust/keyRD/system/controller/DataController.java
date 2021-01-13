@@ -44,7 +44,7 @@ public class DataController {
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
-        String filePath = "F:/tem/";
+        String filePath = "D:/研究生资料/南六218实验室/代炜琦项目组文件/github同步代码/uploadFilePackage/";
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
@@ -115,7 +115,10 @@ public class DataController {
             Integer dataSampleId = list.get(i).getDataSampleId();
             if(!set.contains(dataSampleId)){
                 set.add(dataSampleId);
-                temp.setDataSample(dataService.findDataById(dataSampleId));
+                DataSample dataSample = dataService.findDataById(dataSampleId);
+                Channel channel = channelService.findChannelById(dataSample.getChannelId());
+                temp.setDataSample(dataSample);
+                temp.setChannelName(channel.getChannelName());
                 Set<Integer> s = new HashSet<>();
                 for (int j = 0; j < list.size(); j++) {
                     if(list.get(j).getDataSampleId().equals(dataSampleId)){

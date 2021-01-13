@@ -1,5 +1,8 @@
 package com.hust.keyRD.system.controller;
 
+import com.auth0.jwt.JWT;
+import com.hust.keyRD.commons.myAnnotation.CheckToken;
+import com.hust.keyRD.commons.vo.SharedDataVO;
 import lombok.extern.slf4j.Slf4j;
 import com.hust.keyRD.commons.entities.CommonResult;
 import com.hust.keyRD.commons.entities.DataAuthority;
@@ -8,6 +11,9 @@ import com.hust.keyRD.commons.entities.User;
 import com.hust.keyRD.commons.exception.fabric.FabricException;
 import com.hust.keyRD.system.service.*;
 import com.hust.keyRD.commons.vo.AllDataUserAuthorityVO;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @Slf4j
@@ -30,6 +37,8 @@ public class DataAuthorityController {
     private ChannelService channelService;
     @Resource
     private GrantPermissionService grantPermissionService;
+    @Resource
+    RabbitTemplate rabbitTemplate;//rabbitmq进行消息操作
 
     // TODO： 身份验证
     //给用户，文件添加权限
@@ -131,5 +140,43 @@ public class DataAuthorityController {
         if(dataSample ==null) return new CommonResult<>(400,"不存在dataSampleId为："+dataSampleId+"的文件",null);
         List<DataAuthority> result = dataAuthorityService.findDataAuthorityByDataId(dataSampleId);
         return new CommonResult<>(200,"查找成功",result);
+    }
+
+    //某一用户授权给另一用户查看文件的权限
+    @CheckToken
+    @PostMapping(value = "/dataAuthority/sharedDataAuthorityOnSeeing")
+    public CommonResult shareDataAuthorityOnSeeing(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();//授权者Id
+        Integer sharedUserId = Integer.valueOf(params.get("sharedUserId"));//被授权者用户Id
+        Integer sharedDataId = Integer.valueOf(params.get("sharedDataId"));//授权文件Id
+        /**
+         * 以下将消息传入到消息队列中，等待管理员同意
+         */
+        //用单播模式
+        SharedDataVO sharedDataVO = new SharedDataVO();
+        sharedDataVO.setShareUserId(userId);
+        sharedDataVO.setSharedUserId(sharedUserId);
+        sharedDataVO.setDataSample(dataService.findDataById(sharedDataId));
+        rabbitTemplate.convertAndSend("fabric.shareDataAuthorityOnSeeing","shareDataAuthorityMsg",sharedDataVO);
+        return new CommonResult<>(200,"发送请求成功",null);
+    }
+
+    private List<SharedDataVO> allSharedDataMsg = new LinkedList<>();
+    @RabbitListener(queues = "shareDataAuthorityMsg") //监听消息，存入全局变量中
+    public void receive(SharedDataVO sharedDataVO){
+        System.out.println("接收到来自rabbitmq的消息："+sharedDataVO);
+        allSharedDataMsg.add(sharedDataVO);
+    }
+    //管理员对 用户授权给另一用户查看文件的权限 消息进行接收
+    @GetMapping(value = "/dataAuthority/receiveAllSharedDataMsg")
+    public CommonResult receiveSharedDataMsg() {
+        try {
+            List<SharedDataVO> result = allSharedDataMsg;
+            return new CommonResult<>(200,"接收所有请求成功",result);
+        }catch (Exception e){
+            return new CommonResult<>(200,"接收有误，请联系系统管理员",null);
+        }
     }
 }
