@@ -169,14 +169,36 @@ public class DataAuthorityController {
         System.out.println("接收到来自rabbitmq的消息："+sharedDataVO);
         allSharedDataMsg.add(sharedDataVO);
     }
+
     //管理员对 用户授权给另一用户查看文件的权限 消息进行接收
     @GetMapping(value = "/dataAuthority/receiveAllSharedDataMsg")
     public CommonResult receiveSharedDataMsg() {
         try {
-            List<SharedDataVO> result = allSharedDataMsg;
+            List<SharedDataVO> result = new LinkedList<>(allSharedDataMsg); //这里不能直接引用
+            allSharedDataMsg.clear();//这里要将全局变量清空
             return new CommonResult<>(200,"接收所有请求成功",result);
         }catch (Exception e){
-            return new CommonResult<>(200,"接收有误，请联系系统管理员",null);
+            return new CommonResult<>(500,"接收有误，请联系系统管理员",null);
+        }
+    }
+
+    //管理员是否同意该授权
+    @PostMapping(value = "/dataAuthority/confirmSharedDataMsgOrNot")
+    public CommonResult confirmSharedDataMsgOrNot(@RequestBody Map<String, String> params){
+        Integer sharedUserId = Integer.valueOf(params.get("sharedUserId"));//被授权者用户Id
+        Integer sharedDataId = Integer.valueOf(params.get("sharedDataId"));//授权文件Id
+        Integer confirmOrNot = Integer.valueOf(params.get("confirmOrNot"));//是否同意授权，同意为1，不同意为0
+        if(confirmOrNot==1){
+            //写入数据库
+            DataAuthority dataAuthority = new DataAuthority();
+            dataAuthority.setUserId(sharedUserId);
+            dataAuthority.setDataSampleId(sharedDataId);
+            dataAuthority.setAuthorityKey(1);//查看id
+            dataAuthorityService.addDataAuthority(dataAuthority);
+            return new CommonResult<>(200,"增加权限成功",null);
+        }else{
+            //TODO:点击不同意后如何处理？
+            return null;
         }
     }
 }
