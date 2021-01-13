@@ -131,28 +131,45 @@ public class FabricServiceImpl implements FabricService {
         }
     }
 
-    @Override
-    public Boolean revokeUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users) {
+    /**
+     * 撤销用户权限
+     * @param obj channelName或fileId
+     * @param opt 权限
+     * @param role 角色
+     * @param users users
+     * @return
+     */
+    private Boolean revokeUserPermission(String obj, String opt, String role, List<String> users){
         // 由于该例子中授权都由中心链上的org1完成 暂时写死
         String peers = "peer0.org1.example.com";
         String channelName = "centre";
         String ccName = "audit";
         String fcn = "UpdatePolicy";
         List<String> args = new ArrayList<String>() {{
-            add(fileId);
-            add(permission);
+            add(obj);
+            add(opt);
             add("deleteuser");
             add(role);
             addAll(users);
         }};
         String response = invokeChaincode(peers, channelName, ccName, fcn, args);
         if (response.contains("Success")) {
-            log.info("撤销用户{}在{}上{}文件的权限成功,info:{}", users, dstChannelName, permission, response);
+            log.info("撤销用户{}在{}上的{}权限成功,info:{}", users, obj, opt, response);
             return true;
         } else {
-            log.warn("撤销用户{}在{}上{}文件的权限失败,info:{}", users, dstChannelName, permission, response);
+            log.warn("撤销用户{}在{}上的{}权限失败,info:{}", users, obj, opt, response);
             throw new FabricException("撤销权限失败,info: " + response);
         }
+    }
+
+    @Override
+    public Boolean revokeUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users) {
+        return revokeUserPermission(fileId, permission, role, users);
+    }
+
+    @Override
+    public Boolean revokeUserPermission2Add(String dstChannelName, String role, String username) {
+        return revokeUserPermission(dstChannelName, "add", role, Collections.singletonList(username));
     }
 
     @Override
@@ -202,7 +219,7 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public String applyForReadFile(String username, String dstChannelName, String fileId) {
         try {
-            String txId = applyForOptFile(username, dstChannelName, fileId, "add");
+            String txId = applyForOptFile(username, dstChannelName, fileId, "read");
             if (txId == null || txId.isEmpty()) {
                 throw new FabricException("获取创建文件权限失败");
             } else {

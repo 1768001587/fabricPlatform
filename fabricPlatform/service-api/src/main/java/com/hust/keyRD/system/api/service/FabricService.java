@@ -74,6 +74,15 @@ public interface FabricService {
     Boolean revokeUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users);
 
     /**
+     * 撤销 某角色 某些用户 某个channel的（文件）add权限
+     * @param dstChannelName 目标channel  授予该channel的增加文件的权限
+     * @param role 角色
+     * @param username 用户名
+     * @return success / throw FabricException
+     */
+    Boolean revokeUserPermission2Add(String dstChannelName, String role, String username);
+
+    /**
      * 跨链请求权限 操作链第一次上链
      * @param peers peer list
      * @param channelName channel名
