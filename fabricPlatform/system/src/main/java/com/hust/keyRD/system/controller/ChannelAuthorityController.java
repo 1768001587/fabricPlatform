@@ -51,18 +51,24 @@ public class ChannelAuthorityController {
         return new CommonResult<>(200, "获取所有该用户可上传文件channel成功", result);
     }
 
-    //获取所有权限，返回AllDataUserAuthorityVO类
+    //获取本管理员所管理的通道的所有权限，返回AllChannelUserVO类
+    @CheckToken
     @GetMapping(value = "/channelAuthority/getAllAuthorityChannels")
-    public CommonResult getAllAuthorityChannels() {
+    public CommonResult getAllAuthorityChannels(HttpServletRequest httpServletRequest) {
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();//管理员的id号
+        User admin = userService.findUserById(userId);
         List<User> users = userService.getAllUser();
-        List<Channel> channels = channelService.getAllChannel();
+        Channel channel = channelService.findChannelById(admin.getChannelId());
         List<AllChannelUserVO> result = new ArrayList<>();
         Set<List<Integer>> set = new LinkedHashSet<>();//保存用户Id与对应的文件id
         for (int i = 0; i < users.size(); i++) {
-            for (int j = 0; j < channels.size(); j++) {
+            User user = users.get(i);
+            if(!user.getId().equals(admin.getId())&&user.getChannelId().equals(channel.getId())){
                 List<Integer> list = new ArrayList<>();
-                list.add(users.get(i).getId());
-                list.add(channels.get(j).getId());
+                list.add(user.getId());
+                list.add(channel.getId());
                 set.add(list);
             }
         }
@@ -75,12 +81,12 @@ public class ChannelAuthorityController {
                 authoritySet.add(channelAuthorities.get(i).getAuthorityKey());
             }
             User user = userService.findUserById(tmp.get(0));
-            Channel channel = channelService.findChannelById(tmp.get(1));
+            Channel channel2 = channelService.findChannelById(tmp.get(1));
             AllChannelUserVO allChannelUserVO = new AllChannelUserVO();
             allChannelUserVO.setUserId(tmp.get(0));
             allChannelUserVO.setUserName(user.getUsername());
-            allChannelUserVO.setChannelId(channel.getId());
-            allChannelUserVO.setChannelName(channel.getChannelName());
+            allChannelUserVO.setChannelId(channel2.getId());
+            allChannelUserVO.setChannelName(channel2.getChannelName());
             allChannelUserVO.setChannelAuthoritySet(authoritySet);
             result.add(allChannelUserVO);
         }

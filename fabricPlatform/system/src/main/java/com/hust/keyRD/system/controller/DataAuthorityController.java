@@ -1,13 +1,10 @@
 package com.hust.keyRD.system.controller;
 
 import com.auth0.jwt.JWT;
+import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.commons.vo.SharedDataVO;
 import lombok.extern.slf4j.Slf4j;
-import com.hust.keyRD.commons.entities.CommonResult;
-import com.hust.keyRD.commons.entities.DataAuthority;
-import com.hust.keyRD.commons.entities.DataSample;
-import com.hust.keyRD.commons.entities.User;
 import com.hust.keyRD.commons.exception.fabric.FabricException;
 import com.hust.keyRD.system.service.*;
 import com.hust.keyRD.commons.vo.AllDataUserAuthorityVO;
@@ -39,6 +36,8 @@ public class DataAuthorityController {
     private GrantPermissionService grantPermissionService;
     @Resource
     RabbitTemplate rabbitTemplate;//rabbitmq进行消息操作
+    @Resource
+    SharedDataAuthorityService sharedDataAuthorityService;
 
     // TODO： 身份验证
     //给用户，文件添加权限
@@ -155,27 +154,45 @@ public class DataAuthorityController {
          * 以下将消息传入到消息队列中，等待管理员同意
          */
         //用单播模式
-        SharedDataVO sharedDataVO = new SharedDataVO();
-        sharedDataVO.setShareUserId(userId);
-        sharedDataVO.setSharedUserId(sharedUserId);
-        sharedDataVO.setDataSample(dataService.findDataById(sharedDataId));
-        rabbitTemplate.convertAndSend("fabric.shareDataAuthorityOnSeeing","shareDataAuthorityMsg",sharedDataVO);
+//        SharedDataVO sharedDataVO = new SharedDataVO();
+//        sharedDataVO.setShareUserId(userId);
+//        sharedDataVO.setSharedUserId(sharedUserId);
+//        sharedDataVO.setDataSample(dataService.findDataById(sharedDataId));
+        //rabbitTemplate.convertAndSend("fabric.shareDataAuthorityOnSeeing","shareDataAuthorityMsg",sharedDataVO);
+        SharedDataAuthority sharedDataAuthority = new SharedDataAuthority();
+        sharedDataAuthority.setShareUserId(userId);
+        sharedDataAuthority.setSharedUserId(sharedUserId);
+        sharedDataAuthority.setSharedDataId(sharedDataId);
+        sharedDataAuthority.setAuthorityKey(1);
+        sharedDataAuthorityService.addSharedDataAuthority(sharedDataAuthority);
         return new CommonResult<>(200,"发送请求成功",null);
     }
 
-    private List<SharedDataVO> allSharedDataMsg = new LinkedList<>();
-    @RabbitListener(queues = "shareDataAuthorityMsg") //监听消息，存入全局变量中
-    public void receive(SharedDataVO sharedDataVO){
-        System.out.println("接收到来自rabbitmq的消息："+sharedDataVO);
-        allSharedDataMsg.add(sharedDataVO);
-    }
-
     //管理员对 用户授权给另一用户查看文件的权限 消息进行接收
+    @CheckToken
     @GetMapping(value = "/dataAuthority/receiveAllSharedDataMsg")
-    public CommonResult receiveSharedDataMsg() {
+    public CommonResult receiveSharedDataMsg(HttpServletRequest httpServletRequest) {
         try {
-            List<SharedDataVO> result = new LinkedList<>(allSharedDataMsg); //这里不能直接引用
-            allSharedDataMsg.clear();//这里要将全局变量清空
+//            List<SharedDataVO> result = new LinkedList<>(); //这里不能直接引用
+//            SharedDataVO tmp = (SharedDataVO) rabbitTemplate.receiveAndConvert("shareDataAuthorityMsg");
+//            while(tmp!=null){
+//                result.add(tmp);
+//                tmp = (SharedDataVO) rabbitTemplate.receiveAndConvert("shareDataAuthorityMsg");
+//            }
+            // 从 http 请求头中取出 token
+            String token = httpServletRequest.getHeader("token");
+            Integer adminId = JWT.decode(token).getClaim("id").asInt();//
+            List<SharedDataAuthority> list = sharedDataAuthorityService.receiveAllSharedDataMsg();
+            List<SharedDataAuthority> result = new ArrayList<>();
+            //只显示他管理的channel分享请求
+            for (int i = 0; i < list.size(); i++) {
+                SharedDataAuthority sharedDataAuthority = list.get(i);
+                Integer channelId = dataService.findDataById(sharedDataAuthority.getSharedDataId()).getChannelId();
+                User admin = userService.findUserById(adminId);
+                if(channelId.equals(admin.getChannelId())){
+                    result.add(sharedDataAuthority);
+                }
+            }
             return new CommonResult<>(200,"接收所有请求成功",result);
         }catch (Exception e){
             return new CommonResult<>(500,"接收有误，请联系系统管理员",null);

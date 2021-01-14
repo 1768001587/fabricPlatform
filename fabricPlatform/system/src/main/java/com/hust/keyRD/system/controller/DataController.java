@@ -245,6 +245,20 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
         List<DataSample> list = dataService.getDataListByOriginUserId(userId);
-        return new CommonResult<>(200,"获取该用户所有文件列表成功",list);
+        List<DataUserAuthorityVO> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            DataSample dataSample = list.get(i);
+            DataUserAuthorityVO dataUserAuthorityVO = new DataUserAuthorityVO();
+            dataUserAuthorityVO.setDataSample(dataSample);
+            dataUserAuthorityVO.setChannelName(channelService.findChannelById(dataSample.getChannelId()).getChannelName());
+            List<DataAuthority> list1 = dataAuthorityService.findDataAuthorityByDataId(dataSample.getId());
+            Set<Integer> authorities = new HashSet<>();
+            for (int j = 0; j < list1.size(); j++) {
+                authorities.add(list1.get(j).getAuthorityKey());
+            }
+            dataUserAuthorityVO.setAuthoritySet(authorities);
+            result.add(dataUserAuthorityVO);
+        }
+        return new CommonResult<>(200,"获取该用户所有文件列表成功",result);
     }
 }
