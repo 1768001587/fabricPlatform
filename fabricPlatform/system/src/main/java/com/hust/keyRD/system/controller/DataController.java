@@ -2,22 +2,27 @@ package com.hust.keyRD.system.controller;
 
 import com.auth0.jwt.JWT;
 import com.hust.keyRD.commons.entities.*;
+import com.hust.keyRD.commons.exception.mongoDB.MongoDBException;
+import com.hust.keyRD.commons.utils.MD5Util;
 import com.hust.keyRD.system.api.service.FabricService;
+import com.hust.keyRD.system.file.model.FileModel;
+import com.hust.keyRD.system.file.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.system.service.*;
 import com.hust.keyRD.commons.utils.TxtUtil;
 import com.hust.keyRD.commons.vo.DataUserAuthorityVO;
+import org.bson.types.Binary;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.*;
 
@@ -31,9 +36,11 @@ public class DataController {
     @Resource
     private FabricService fabricService;
     @Resource
-    UserService userService;
+    private UserService userService;
     @Resource
-    ChannelService channelService;
+    private ChannelService channelService;
+    @Resource
+    private FileService fileService;
 
 
     //上传文件
@@ -44,18 +51,22 @@ public class DataController {
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
-        String filePath = "F:/tem/";
+//        String filePath = "F:/tem/";
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
         User user = userService.findUserById(originUserId);
         Channel channel = channelService.findChannelById(channelId);
         try {
-            //进行文件传输
-            file.transferTo(new File(filePath + fileName));
+            // 文件保存到mongoDB
+            FileModel f = new FileModel(file.getOriginalFilename(), file.getContentType(), file.getSize(),
+                    new Binary(file.getBytes()));
+            f.setMd5(MD5Util.getMD5(file.getInputStream()));
+            fileService.saveFile(f);
+            
             DataSample dataSample = new DataSample();
             dataSample.setChannelId(channelId);//这里后面要做出选择channel
-            dataSample.setDataName(filePath + fileName);
+            dataSample.setDataName(fileName);
             //文件大小以KB作为单位
             // 首先先将.getSize()获取的Long转为String 单位为B
             Double size = Double.parseDouble(String.valueOf(file.getSize()));
@@ -64,7 +75,7 @@ public class DataController {
             size = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
             // 此时size就是保留两位小数的浮点数
             dataSample.setDataSize(size);
-            dataSample.setData(TxtUtil.getTxtContent(dataSample));
+            dataSample.setMongoId(f.getId());
             dataSample.setOriginUserId(originUserId);
             dataSample.setDataType(fileName.substring(fileName.lastIndexOf(".")) + "文件");
             //初次创建时将初始时间和修改时间写成一样
@@ -81,7 +92,7 @@ public class DataController {
             result+="1.创建文件成功 txId: " + txId+"\r\n";
             //hash
             // 3. 更新链上hash 二次上链
-            Record record = fabricService.updateForCreateFile(TxtUtil.getTxtContent(dataSample), username, dstChannelName, dataSample.getId()+"", txId);
+            Record record = fabricService.updateForCreateFile(new String(file.getBytes()), username, dstChannelName, dataSample.getId()+"", txId);
             log.info("2. 更新链上hash ： " + record.toString());
             result+="2. 更新链上hash ： " + record.toString()+"\r\n";
             // 4. 授予用户文件的查改权限
@@ -94,7 +105,7 @@ public class DataController {
             //写入上传者权限
             dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
             log.info("************fabric上传文件操作记录区块链结束*****************");
-            return new CommonResult<>(200,"上传成功，文件位于："+filePath+fileName+"\r\n"+result, dataSample);
+            return new CommonResult<>(200,"上传成功，文件位于："+fileName+"\r\n"+result, dataSample);
         } catch (Exception e) {
             return new CommonResult<>(400, e.getMessage(), null);
         }
@@ -170,13 +181,16 @@ public class DataController {
             return new CommonResult<>(300,"申请文件读取权限失败",null);
         }
         // 2. 读取文件
-        String txtContent = TxtUtil.getTxtContent(result);
-
+        String fileContent = new String(Objects.requireNonNull(fileService.getFileById(dataSample.getMongoId())
+                .map(FileModel::getContent)
+                .map(Binary::getData)
+                .orElse(null))
+        );
         // 3. 二次上链
-        Record record = fabricService.updateForReadFile(txtContent, username, dstChannelName, String.valueOf(dataId), txId);
+        Record record = fabricService.updateForReadFile(fileContent, username, dstChannelName, String.valueOf(dataId), txId);
         log.info("2. 二次上链 ： " + record.toString());
         log.info("************fabric读取文件操作记录区块链结束*****************");
-        return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, txtContent);
+        return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, fileContent);
     }
 
     //根据文件id对文件内容进行更新
@@ -206,22 +220,19 @@ public class DataController {
             return new CommonResult<>(300,"申请文件修改权限失败",null);
         }
         // 2. 修改文件
-        old_file.delete();
-        File new_file = new File(dataSample.getDataName());
-        //创建新文件
+        // 更新mongoDB
+        FileModel fileModel = fileService.getFileById(dataSample.getMongoId()).orElseThrow(MongoDBException::new);
+        fileModel.setContent(new Binary(dataContent.getBytes()));
+        fileModel.setSize(dataContent.getBytes().length);
         try {
-            /* 写入Txt文件 */
-            new_file.createNewFile(); // 创建新文件
-            BufferedWriter out = new BufferedWriter(new FileWriter(new_file));
-            out.write(dataContent); // \r\n即为换行
-            out.flush(); // 把缓存区内容压入文件
-            out.close(); // 最后记得关闭文件
-        } catch (Exception e) {
+            fileModel.setMd5(MD5Util.getMD5(new ByteArrayInputStream(dataContent.getBytes())));
+        } catch (NoSuchAlgorithmException | IOException e) {
+            log.error("获取文件md出错");
             e.printStackTrace();
         }
+        fileService.saveFile(fileModel);
         //更新数据库
-        dataSample.setData(dataContent);
-        Double size = Double.parseDouble(String.valueOf(new_file.length())) / 1024;
+        Double size = (double) (dataContent.getBytes().length / 1024);
         BigDecimal b = new BigDecimal(size);
         size = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
         dataSample.setDataSize(size);
@@ -229,7 +240,7 @@ public class DataController {
         dataService.updateFile(dataSample);
 
         // 3. 更新hash值到fabric 二次上链
-        Record record = fabricService.updateForModifyFile(TxtUtil.getTxtContent(dataSample), username, dstChannelName, String.valueOf(dataId), txId);
+        Record record = fabricService.updateForModifyFile(dataContent, username, dstChannelName, String.valueOf(dataId), txId);
         log.info("更新hash值结果：" + record.toString());
         log.info("************fabric更新文件操作记录区块链结束*****************");
         return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功\r\ntxId："+txId, null);
