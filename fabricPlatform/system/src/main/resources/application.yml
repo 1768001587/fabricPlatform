@@ -1,4 +1,5 @@
 server:
+  address: 0.0.0.0
   port: 8080
   connection-timeout: 18000000
 
@@ -43,13 +44,20 @@ spring:
       testOnReturn: false
       poolPreparedStatements: false
       maxPoolPreparedStatementPerConnectionSize: 200
+  data:
+    mongodb:
+      host: 211.69.198.53
+      port: 27017
+      database: fabricDoc
+      username: root
+      password: fabric
   thymeleaf:
     check-template: true
     suffix: .html
     cache: false
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
-  type-aliases-package: com.hust.keyRD.commons.entities #所有Entity别名类所在的包
+  type-aliases-package: com.hust.keyRD.commons.entities, com.hust.keyRD.commons.Dto #所有Entity别名类所在的包
 
 feign:
   client:
@@ -57,5 +65,3 @@ feign:
       connectTimeout: 5000
       readTimeout: 5000   # 读超时时间
       loggerLevel: full # 日志级别
-
-

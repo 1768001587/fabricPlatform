@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 public class DataSample implements Serializable {
     private Integer id;
     private Integer channelId;
-    private String data;
+    private String mongoId;
     private String dataName;
     private String dataType;
     private Double dataSize;

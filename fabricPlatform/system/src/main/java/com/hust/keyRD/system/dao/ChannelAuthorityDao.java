@@ -1,5 +1,6 @@
 package com.hust.keyRD.system.dao;
 
+import com.hust.keyRD.commons.Dto.UserChannelAuthDto;
 import com.hust.keyRD.commons.entities.ChannelAuthority;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,4 +19,7 @@ public interface ChannelAuthorityDao {
     Integer deleteChannelAuthority(ChannelAuthority channelAuthority);
     //查找通道权限
     List<ChannelAuthority> findChannelAuthority(ChannelAuthority channelAuthority);
+    
+    // 根据管理员id和channelId查找该管理员所在channel的所有用户（不包括管理员）的channel权限
+    List<UserChannelAuthDto> findUsersChannelAuthority(@Param("adminId") Integer adminId, @Param("adminChannelId") Integer adminChannelId);
 }
