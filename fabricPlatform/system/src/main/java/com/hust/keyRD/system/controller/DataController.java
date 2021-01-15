@@ -51,7 +51,6 @@ public class DataController {
     public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
         //获取文件名
         String fileName = file.getOriginalFilename();
-//        String filePath = "F:/tem/";
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
@@ -126,7 +125,10 @@ public class DataController {
             Integer dataSampleId = list.get(i).getDataSampleId();
             if(!set.contains(dataSampleId)){
                 set.add(dataSampleId);
-                temp.setDataSample(dataService.findDataById(dataSampleId));
+                DataSample dataSample = dataService.findDataById(dataSampleId);
+                Channel channel = channelService.findChannelById(dataSample.getChannelId());
+                temp.setDataSample(dataSample);
+                temp.setChannelName(channel.getChannelName());
                 Set<Integer> s = new HashSet<>();
                 for (int j = 0; j < list.size(); j++) {
                     if(list.get(j).getDataSampleId().equals(dataSampleId)){
@@ -253,6 +255,20 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
         List<DataSample> list = dataService.getDataListByOriginUserId(userId);
-        return new CommonResult<>(200,"获取该用户所有文件列表成功",list);
+        List<DataUserAuthorityVO> result = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            DataSample dataSample = list.get(i);
+            DataUserAuthorityVO dataUserAuthorityVO = new DataUserAuthorityVO();
+            dataUserAuthorityVO.setDataSample(dataSample);
+            dataUserAuthorityVO.setChannelName(channelService.findChannelById(dataSample.getChannelId()).getChannelName());
+            List<DataAuthority> list1 = dataAuthorityService.findDataAuthorityByDataId(dataSample.getId());
+            Set<Integer> authorities = new HashSet<>();
+            for (int j = 0; j < list1.size(); j++) {
+                authorities.add(list1.get(j).getAuthorityKey());
+            }
+            dataUserAuthorityVO.setAuthoritySet(authorities);
+            result.add(dataUserAuthorityVO);
+        }
+        return new CommonResult<>(200,"获取该用户所有文件列表成功",result);
     }
 }

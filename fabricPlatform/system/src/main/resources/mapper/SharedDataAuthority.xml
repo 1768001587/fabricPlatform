@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hust.keyRD.system.dao.SharedDataAuthorityDao">
+    <resultMap id="BaseResultMap" type="com.hust.keyRD.commons.entities.SharedDataAuthority">
+        <!--映射column为数据库字段，property为实体类属性-->
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="share_user_id" property="shareUserId" jdbcType="INTEGER"/>
+        <id column="shared_user_id" property="sharedUserId" jdbcType="INTEGER"/>
+        <id column="share_data_id" property="sharedDataId" jdbcType="INTEGER"/>
+        <id column="authority_key" property="authorityKey" jdbcType="INTEGER"/>
+    </resultMap>
+    <insert id="addSharedDataAuthority" parameterType="SharedDataAuthority" useGeneratedKeys="true" keyProperty="id">
+        insert into shared_data_authority (id,share_user_id,shared_user_id,shared_data_id,authority_key) values (null,#{shareUserId},#{sharedUserId},#{sharedDataId},#{authorityKey});
+    </insert>
+    <delete id="deleteSharedDataAuthority" parameterType="SharedDataAuthority">
+        delete from shared_data_authority where share_user_id=#{shareUserId} and shared_user_id=#{sharedDataId} and shared_data_id=#{sharedUserId} and authority_key=#{authorityKey};
+    </delete>
+    <select id="receiveAllSharedDataMsg" parameterType="Map" resultMap="BaseResultMap">
+        select * from shared_data_authority;
+    </select>
+</mapper>

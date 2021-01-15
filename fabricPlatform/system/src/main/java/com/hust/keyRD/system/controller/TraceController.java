@@ -8,11 +8,14 @@ import com.hust.keyRD.commons.vo.RecordVO;
 import com.hust.keyRD.system.api.service.FabricService;
 
 import com.hust.keyRD.system.service.DataService;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -49,4 +52,20 @@ public class TraceController {
         recordVO.setFileName(dataSample.getDataName());
         return new CommonResult<>(200,"溯源成功",recordVO);
     }
+    //一次性获取指定文件所有溯源操作记录
+    @PostMapping(value = "/trace/traceBackwardForAll")
+    public CommonResult traceBackwardForAll(@RequestBody Map<String, String> params){
+        String dataId = params.get("dataId");
+        List<Record> result = new LinkedList<>();
+        Record record = fabricService.traceBackward(dataId);//这是最新一次的操作记录
+        result.add(record);
+        Record tmp = record;
+        while(!tmp.getLastTxId().equals("0")){
+            String thisTxId = tmp.getThisTxId();
+            tmp = fabricService.traceBackward(dataId,thisTxId);
+            result.add(tmp);
+        }
+        return new CommonResult<>(200,"获取该文件的所有溯源记录成功",result);
+    }
+
 }
