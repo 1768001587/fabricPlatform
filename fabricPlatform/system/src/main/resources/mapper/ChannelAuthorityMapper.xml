@@ -23,5 +23,19 @@
     <select id="findChannelAuthority" parameterType="Map" resultMap="BaseResultMap">
         select * from channel_authority where channel_id=#{channelId} and user_id=#{userId} and authority_key=#{authorityKey};
     </select>
+    <!--<select id="findUsersChannelAuthority" parameterType="Map" resultType="UserChannelAuthDto" >-->
+    <!--    select user.id as user_id,user.user_name as userName,user.channel_id as channelId,channel.channel_name as channelName,channel_authority.authority_key as authorityKey-->
+    <!--    from user join channel_authority on user.id = channel_authority.user_id and user.channel_id = channel_authority.channel_id join channel on user.channel_id = channel.id-->
+    <!--    where user.id != #{adminId} and user.channel_id = #{adminChannelId}-->
+    
+    <!--</select>-->
+    <select id="findUsersChannelAuthority" parameterType="Map" resultType="UserChannelAuthDto" >
+        select user.id as userId,user.user_name as userName,user.channel_id as channelId,channel.channel_name as channelName,group_concat(channel_authority.authority_key) as authSet
+        from user join channel_authority on user.id = channel_authority.user_id and user.channel_id = channel_authority.channel_id join channel on user.channel_id = channel.id
+        where user.id != #{adminId} and user.channel_id = #{adminChannelId}
+        group by user.id
 
+    </select>
+
+    
 </mapper>

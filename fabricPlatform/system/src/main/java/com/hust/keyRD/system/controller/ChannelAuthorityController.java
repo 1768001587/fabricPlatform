@@ -1,12 +1,15 @@
 package com.hust.keyRD.system.controller;
 
 import com.auth0.jwt.JWT;
+import com.hust.keyRD.commons.Dto.UserChannelAuthDto;
 import com.hust.keyRD.commons.entities.Channel;
 import com.hust.keyRD.commons.entities.ChannelAuthority;
 import com.hust.keyRD.commons.entities.CommonResult;
 import com.hust.keyRD.commons.entities.User;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.commons.vo.AllChannelUserVO;
+import com.hust.keyRD.commons.vo.AllDataUserAuthorityVO;
+import com.hust.keyRD.commons.vo.mapper.AllDataUserAuthorityVOMapper;
 import com.hust.keyRD.system.api.service.FabricService;
 import com.hust.keyRD.system.service.ChannelAuthorityService;
 import com.hust.keyRD.system.service.ChannelService;
@@ -22,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -59,37 +63,8 @@ public class ChannelAuthorityController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();//管理员的id号
         User admin = userService.findUserById(userId);
-        List<User> users = userService.getAllUser();
-        Channel channel = channelService.findChannelById(admin.getChannelId());
-        List<AllChannelUserVO> result = new ArrayList<>();
-        Set<List<Integer>> set = new LinkedHashSet<>();//保存用户Id与对应的文件id
-        for (int i = 0; i < users.size(); i++) {
-            User user = users.get(i);
-            if(!user.getId().equals(admin.getId())&&user.getChannelId().equals(channel.getId())){
-                List<Integer> list = new ArrayList<>();
-                list.add(user.getId());
-                list.add(channel.getId());
-                set.add(list);
-            }
-        }
-        Iterator<List<Integer>> it = set.iterator();
-        while (it.hasNext()) {
-            List<Integer> tmp = it.next();
-            List<ChannelAuthority> channelAuthorities = channelAuthorityService.findChannelAuthorityByUserIdAndChannelId(tmp.get(0), tmp.get(1));
-            Set<Integer> authoritySet = new HashSet<>();
-            for (int i = 0; i < channelAuthorities.size(); i++) {
-                authoritySet.add(channelAuthorities.get(i).getAuthorityKey());
-            }
-            User user = userService.findUserById(tmp.get(0));
-            Channel channel2 = channelService.findChannelById(tmp.get(1));
-            AllChannelUserVO allChannelUserVO = new AllChannelUserVO();
-            allChannelUserVO.setUserId(tmp.get(0));
-            allChannelUserVO.setUserName(user.getUsername());
-            allChannelUserVO.setChannelId(channel2.getId());
-            allChannelUserVO.setChannelName(channel2.getChannelName());
-            allChannelUserVO.setChannelAuthoritySet(authoritySet);
-            result.add(allChannelUserVO);
-        }
+        List<UserChannelAuthDto> usersChannelAuthorityList = channelAuthorityService.findUsersChannelAuthority(userId, admin.getChannelId());
+        List<AllDataUserAuthorityVO> result = usersChannelAuthorityList.stream().map(AllDataUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toList());
         return new CommonResult<>(200, "查找成功", result);
     }
 

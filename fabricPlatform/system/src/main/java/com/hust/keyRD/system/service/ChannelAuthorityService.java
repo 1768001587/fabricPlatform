@@ -1,6 +1,7 @@
 package com.hust.keyRD.system.service;
 
 
+import com.hust.keyRD.commons.Dto.UserChannelAuthDto;
 import com.hust.keyRD.commons.entities.ChannelAuthority;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface ChannelAuthorityService {
     Integer deleteChannelAuthority(ChannelAuthority channelAuthority);
     //查找通道权限
     List<ChannelAuthority> findChannelAuthority(ChannelAuthority channelAuthority);
+    // 根据管理员id和channelId查找该管理员所在channel的所有用户（不包括管理员）的channel权限
+    List<UserChannelAuthDto> findUsersChannelAuthority(Integer adminId, Integer adminChannelId);
 }

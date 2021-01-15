@@ -57,7 +57,7 @@ spring:
     cache: false
 mybatis:
   mapper-locations: classpath*:mapper/*.xml
-  type-aliases-package: com.hust.keyRD.commons.entities #所有Entity别名类所在的包
+  type-aliases-package: com.hust.keyRD.commons.entities, com.hust.keyRD.commons.Dto #所有Entity别名类所在的包
 
 feign:
   client:

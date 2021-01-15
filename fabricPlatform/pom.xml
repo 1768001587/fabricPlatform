@@ -27,6 +27,7 @@
         <mybatis.spring.boot.version>1.3.0</mybatis.spring.boot.version>
         <jackson.version>2.9.3</jackson.version>
         <swagger.version>2.9.2</swagger.version>
+        <mapstruct.version>1.2.0.Final</mapstruct.version>
     </properties>
     <!--子模块继承之后，提供作用：锁定版本+子模块module不用写groupId和version-->
     <!--dependencyManagement只是定义依赖，而不引入依赖，在子项目中也要指定依赖，不用指定版本号（父项目已经指定）-->
@@ -115,6 +116,18 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-mongodb</artifactId>
                 <version>2.2.2.RELEASE</version>
+            </dependency>
+
+            <!--MapStruct映射工具-->
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
