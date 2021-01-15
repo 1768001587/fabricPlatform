@@ -6,7 +6,7 @@
         <id column="id" property="id" jdbcType="INTEGER"/>
         <id column="share_user_id" property="shareUserId" jdbcType="INTEGER"/>
         <id column="shared_user_id" property="sharedUserId" jdbcType="INTEGER"/>
-        <id column="share_data_id" property="sharedDataId" jdbcType="INTEGER"/>
+        <id column="shared_data_id" property="sharedDataId" jdbcType="INTEGER"/>
         <id column="authority_key" property="authorityKey" jdbcType="INTEGER"/>
     </resultMap>
     <insert id="addSharedDataAuthority" parameterType="SharedDataAuthority" useGeneratedKeys="true" keyProperty="id">
@@ -18,4 +18,8 @@
     <select id="receiveAllSharedDataMsg" parameterType="Map" resultMap="BaseResultMap">
         select * from shared_data_authority;
     </select>
+    <select id="checkSharedData"  parameterType="SharedDataAuthority" resultType="Integer">
+        select count(*) from shared_data_authority where share_user_id=#{shareUserId} and shared_user_id=#{sharedDataId} and shared_data_id=#{sharedUserId} and authority_key=#{authorityKey}
+    </select>
+
 </mapper>

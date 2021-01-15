@@ -13,4 +13,6 @@ public interface SharedDataAuthorityDao {
     void deleteSharedDataAuthority(SharedDataAuthority sharedDataAuthority);
     //获取所有请求分享信息
     List<SharedDataAuthority> receiveAllSharedDataMsg();
+    //检查是否有请求分享的信息
+    Integer checkSharedData(SharedDataAuthority sharedDataAuthority);
 }

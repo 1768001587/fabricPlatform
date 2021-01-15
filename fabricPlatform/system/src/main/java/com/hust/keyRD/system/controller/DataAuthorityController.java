@@ -168,11 +168,10 @@ public class DataAuthorityController {
         return new CommonResult<>(200,"发送请求成功",null);
     }
 
-    //管理员对 用户授权给另一用户查看文件的权限 消息进行接收
+    //管理员对 用户授权给另一用户查看文件的权限 消息进行接收  只接收该管理员管理的channel
     @CheckToken
     @GetMapping(value = "/dataAuthority/receiveAllSharedDataMsg")
     public CommonResult receiveSharedDataMsg(HttpServletRequest httpServletRequest) {
-        try {
 //            List<SharedDataVO> result = new LinkedList<>(); //这里不能直接引用
 //            SharedDataVO tmp = (SharedDataVO) rabbitTemplate.receiveAndConvert("shareDataAuthorityMsg");
 //            while(tmp!=null){
@@ -183,39 +182,55 @@ public class DataAuthorityController {
             String token = httpServletRequest.getHeader("token");
             Integer adminId = JWT.decode(token).getClaim("id").asInt();//
             List<SharedDataAuthority> list = sharedDataAuthorityService.receiveAllSharedDataMsg();
-            List<SharedDataAuthority> result = new ArrayList<>();
+            List<SharedDataVO> result = new ArrayList<>();
             //只显示他管理的channel分享请求
             for (int i = 0; i < list.size(); i++) {
                 SharedDataAuthority sharedDataAuthority = list.get(i);
                 Integer channelId = dataService.findDataById(sharedDataAuthority.getSharedDataId()).getChannelId();
                 User admin = userService.findUserById(adminId);
                 if(channelId.equals(admin.getChannelId())){
-                    result.add(sharedDataAuthority);
+                    SharedDataVO sharedDataVO = new SharedDataVO();
+                    sharedDataVO.setShareUserName(userService.findUserById(sharedDataAuthority.getShareUserId()).getUsername());
+                    sharedDataVO.setShareUserChannelName(channelService.findChannelById(userService.findUserById(sharedDataAuthority.getShareUserId()).getChannelId()).getChannelName());
+                    sharedDataVO.setSharedUserName(userService.findUserById(sharedDataAuthority.getSharedUserId()).getUsername());
+                    sharedDataVO.setSharedUserChannelName(channelService.findChannelById(userService.findUserById(sharedDataAuthority.getSharedUserId()).getChannelId()).getChannelName());
+                    sharedDataVO.setDataSample(dataService.findDataById(sharedDataAuthority.getSharedDataId()));
+                    sharedDataVO.setDataSampleChannelName(channelService.findChannelById(dataService.findDataById(sharedDataAuthority.getSharedDataId()).getChannelId()).getChannelName());
+                    sharedDataVO.setAuthorityKey(sharedDataAuthority.getAuthorityKey());
+                    result.add(sharedDataVO);
                 }
             }
             return new CommonResult<>(200,"接收所有请求成功",result);
-        }catch (Exception e){
-            return new CommonResult<>(500,"接收有误，请联系系统管理员",null);
-        }
     }
 
     //管理员是否同意该授权
     @PostMapping(value = "/dataAuthority/confirmSharedDataMsgOrNot")
     public CommonResult confirmSharedDataMsgOrNot(@RequestBody Map<String, String> params){
+        Integer shareUserId = Integer.valueOf(params.get("shareUserId"));//被授权者用户Id
         Integer sharedUserId = Integer.valueOf(params.get("sharedUserId"));//被授权者用户Id
         Integer sharedDataId = Integer.valueOf(params.get("sharedDataId"));//授权文件Id
+        Integer authorityKey = Integer.valueOf(params.get("authorityKey"));//授权文件Id
         Integer confirmOrNot = Integer.valueOf(params.get("confirmOrNot"));//是否同意授权，同意为1，不同意为0
+        SharedDataAuthority sharedDataAuthority = new SharedDataAuthority();
+        sharedDataAuthority.setShareUserId(shareUserId);
+        sharedDataAuthority.setSharedUserId(sharedUserId);
+        sharedDataAuthority.setSharedDataId(sharedDataId);
+        sharedDataAuthority.setAuthorityKey(authorityKey);
         if(confirmOrNot==1){
             //写入数据库
             DataAuthority dataAuthority = new DataAuthority();
             dataAuthority.setUserId(sharedUserId);
             dataAuthority.setDataSampleId(sharedDataId);
-            dataAuthority.setAuthorityKey(1);//查看id
+            dataAuthority.setAuthorityKey(authorityKey);//查看id
+            log.info("************fabric添加文件权限操作记录写入区块链开始*****************");
+            grantPermissionService.grantUserPermissionOnFile(dataAuthority);
             dataAuthorityService.addDataAuthority(dataAuthority);
+            log.info("************fabric添加文件权限操作记录写入区块链结束*****************");
+            sharedDataAuthorityService.deleteSharedDataAuthority(sharedDataAuthority);
             return new CommonResult<>(200,"增加权限成功",null);
         }else{
-            //TODO:点击不同意后如何处理？
-            return null;
+            sharedDataAuthorityService.deleteSharedDataAuthority(sharedDataAuthority);
+            return new CommonResult<>(200,"不同意成功",null);
         }
     }
 }

@@ -26,4 +26,9 @@ public class SharedDataAuthorityServiceImpl implements SharedDataAuthorityServic
     public List<SharedDataAuthority> receiveAllSharedDataMsg() {
         return sharedDataAuthorityDao.receiveAllSharedDataMsg();
     }
+
+    @Override
+    public Integer checkSharedData(SharedDataAuthority sharedDataAuthority) {
+        return sharedDataAuthorityDao.checkSharedData(sharedDataAuthority);
+    }
 }
