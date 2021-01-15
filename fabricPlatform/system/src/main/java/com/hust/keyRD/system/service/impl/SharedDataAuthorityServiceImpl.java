@@ -18,8 +18,8 @@ public class SharedDataAuthorityServiceImpl implements SharedDataAuthorityServic
     }
 
     @Override
-    public void deleteSharedDataAuthority(SharedDataAuthority sharedDataAuthority) {
-        sharedDataAuthorityDao.deleteSharedDataAuthority(sharedDataAuthority);
+    public void optOnSharedDataAuthority(SharedDataAuthority sharedDataAuthority) {
+        sharedDataAuthorityDao.optOnSharedDataAuthority(sharedDataAuthority);
     }
 
     @Override

@@ -164,6 +164,7 @@ public class DataAuthorityController {
         sharedDataAuthority.setSharedUserId(sharedUserId);
         sharedDataAuthority.setSharedDataId(sharedDataId);
         sharedDataAuthority.setAuthorityKey(1);
+        sharedDataAuthority.setAcceptOrNot(0);
         sharedDataAuthorityService.addSharedDataAuthority(sharedDataAuthority);
         return new CommonResult<>(200,"发送请求成功",null);
     }
@@ -180,7 +181,7 @@ public class DataAuthorityController {
 //            }
             // 从 http 请求头中取出 token
             String token = httpServletRequest.getHeader("token");
-            Integer adminId = JWT.decode(token).getClaim("id").asInt();//
+            Integer adminId = JWT.decode(token).getClaim("id").asInt();
             List<SharedDataAuthority> list = sharedDataAuthorityService.receiveAllSharedDataMsg();
             List<SharedDataVO> result = new ArrayList<>();
             //只显示他管理的channel分享请求
@@ -189,14 +190,20 @@ public class DataAuthorityController {
                 Integer channelId = dataService.findDataById(sharedDataAuthority.getSharedDataId()).getChannelId();
                 User admin = userService.findUserById(adminId);
                 if(channelId.equals(admin.getChannelId())){
+                    User shareUser = userService.findUserById(sharedDataAuthority.getShareUserId());
+                    User sharedUser = userService.findUserById(sharedDataAuthority.getSharedUserId());
+                    DataSample dataSample = dataService.findDataById(sharedDataAuthority.getSharedDataId());
                     SharedDataVO sharedDataVO = new SharedDataVO();
-                    sharedDataVO.setShareUserName(userService.findUserById(sharedDataAuthority.getShareUserId()).getUsername());
-                    sharedDataVO.setShareUserChannelName(channelService.findChannelById(userService.findUserById(sharedDataAuthority.getShareUserId()).getChannelId()).getChannelName());
-                    sharedDataVO.setSharedUserName(userService.findUserById(sharedDataAuthority.getSharedUserId()).getUsername());
-                    sharedDataVO.setSharedUserChannelName(channelService.findChannelById(userService.findUserById(sharedDataAuthority.getSharedUserId()).getChannelId()).getChannelName());
-                    sharedDataVO.setDataSample(dataService.findDataById(sharedDataAuthority.getSharedDataId()));
-                    sharedDataVO.setDataSampleChannelName(channelService.findChannelById(dataService.findDataById(sharedDataAuthority.getSharedDataId()).getChannelId()).getChannelName());
+                    sharedDataVO.setShareUserId(shareUser.getId());
+                    sharedDataVO.setShareUserName(shareUser.getUsername());
+                    sharedDataVO.setShareUserChannelName(channelService.findChannelById(shareUser.getChannelId()).getChannelName());
+                    sharedDataVO.setSharedUserId(sharedUser.getId());
+                    sharedDataVO.setSharedUserName(sharedUser.getUsername());
+                    sharedDataVO.setSharedUserChannelName(channelService.findChannelById(sharedUser.getChannelId()).getChannelName());
+                    sharedDataVO.setDataSample(dataSample);
+                    sharedDataVO.setDataSampleChannelName(channelService.findChannelById(dataSample.getChannelId()).getChannelName());
                     sharedDataVO.setAuthorityKey(sharedDataAuthority.getAuthorityKey());
+                    sharedDataVO.setAcceptOrNot(sharedDataAuthority.getAcceptOrNot());
                     result.add(sharedDataVO);
                 }
             }
@@ -209,7 +216,7 @@ public class DataAuthorityController {
         Integer shareUserId = Integer.valueOf(params.get("shareUserId"));//被授权者用户Id
         Integer sharedUserId = Integer.valueOf(params.get("sharedUserId"));//被授权者用户Id
         Integer sharedDataId = Integer.valueOf(params.get("sharedDataId"));//授权文件Id
-        Integer authorityKey = Integer.valueOf(params.get("authorityKey"));//授权文件Id
+        Integer authorityKey = Integer.valueOf(params.get("authorityKey"));//权限key
         Integer confirmOrNot = Integer.valueOf(params.get("confirmOrNot"));//是否同意授权，同意为1，不同意为0
         SharedDataAuthority sharedDataAuthority = new SharedDataAuthority();
         sharedDataAuthority.setShareUserId(shareUserId);
@@ -226,10 +233,12 @@ public class DataAuthorityController {
             grantPermissionService.grantUserPermissionOnFile(dataAuthority);
             dataAuthorityService.addDataAuthority(dataAuthority);
             log.info("************fabric添加文件权限操作记录写入区块链结束*****************");
-            sharedDataAuthorityService.deleteSharedDataAuthority(sharedDataAuthority);
+            sharedDataAuthority.setAcceptOrNot(1);
+            sharedDataAuthorityService.optOnSharedDataAuthority(sharedDataAuthority);
             return new CommonResult<>(200,"增加权限成功",null);
         }else{
-            sharedDataAuthorityService.deleteSharedDataAuthority(sharedDataAuthority);
+            sharedDataAuthority.setAcceptOrNot(0);
+            sharedDataAuthorityService.optOnSharedDataAuthority(sharedDataAuthority);
             return new CommonResult<>(200,"不同意成功",null);
         }
     }

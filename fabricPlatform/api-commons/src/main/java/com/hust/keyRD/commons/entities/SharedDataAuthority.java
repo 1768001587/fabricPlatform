@@ -15,4 +15,5 @@ public class SharedDataAuthority {
     private Integer sharedUserId;
     private Integer sharedDataId;
     private Integer authorityKey;
+    private Integer acceptOrNot;
 }
