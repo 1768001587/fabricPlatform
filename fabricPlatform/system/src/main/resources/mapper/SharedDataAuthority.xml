@@ -13,13 +13,13 @@
         insert into shared_data_authority (id,share_user_id,shared_user_id,shared_data_id,authority_key) values (null,#{shareUserId},#{sharedUserId},#{sharedDataId},#{authorityKey});
     </insert>
     <delete id="deleteSharedDataAuthority" parameterType="SharedDataAuthority">
-        delete from shared_data_authority where share_user_id=#{shareUserId} and shared_user_id=#{sharedDataId} and shared_data_id=#{sharedUserId} and authority_key=#{authorityKey};
+        delete from shared_data_authority where share_user_id=#{shareUserId} and shared_user_id=#{sharedUserId} and shared_data_id=#{sharedDataId} and authority_key=#{authorityKey};
     </delete>
     <select id="receiveAllSharedDataMsg" parameterType="Map" resultMap="BaseResultMap">
         select * from shared_data_authority;
     </select>
     <select id="checkSharedData"  parameterType="SharedDataAuthority" resultType="Integer">
-        select count(*) from shared_data_authority where share_user_id=#{shareUserId} and shared_user_id=#{sharedDataId} and shared_data_id=#{sharedUserId} and authority_key=#{authorityKey}
+        select count(*) from shared_data_authority where share_user_id=#{shareUserId} and shared_user_id=#{sharedUserId} and shared_data_id=#{sharedDataId} and authority_key=#{authorityKey}
     </select>
 
 </mapper>

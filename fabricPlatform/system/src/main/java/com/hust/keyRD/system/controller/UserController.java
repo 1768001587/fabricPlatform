@@ -109,6 +109,7 @@ public class UserController{
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
+        //System.out.println("userId"+userId);
         Integer sharedDataId = Integer.valueOf(params.get("sharedDataId"));//授权文件Id
         List<User> users = userService.getAllUser();
         List<UserChannelVO> result  = new ArrayList<>();
@@ -126,6 +127,8 @@ public class UserController{
                 sharedDataAuthority.setSharedDataId(sharedDataId);
                 sharedDataAuthority.setAuthorityKey(1);//这里暂时写死
                 Integer count2 = sharedDataAuthorityService.checkSharedData(sharedDataAuthority);
+                //System.out.println("count"+count);
+                //System.out.println("count2"+count2);
                 if(count==0&&count2==0){//之前没有此权限  两个表都没有权限
                     UserChannelVO userChannelVO = new UserChannelVO();
                     userChannelVO.setUser(users.get(i));
