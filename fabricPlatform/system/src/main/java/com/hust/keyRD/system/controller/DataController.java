@@ -117,12 +117,14 @@ public class DataController {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
+        List<DataSample> allList = dataService.getDataList();
         List<DataAuthority> list = dataAuthorityService.findDataAuthorityByUserId(userId);//获取该用户的所有权限
         List<DataUserAuthorityVO> result = new ArrayList<>();
         Set<Integer> set = new HashSet<>();
         for (int i = 0; i < list.size(); i++) {
             DataUserAuthorityVO temp = new DataUserAuthorityVO();
-            Integer dataSampleId = list.get(i).getDataSampleId();
+            DataAuthority dataAuthority = list.get(i);
+            Integer dataSampleId = dataAuthority.getDataSampleId();
             if(!set.contains(dataSampleId)){
                 set.add(dataSampleId);
                 DataSample dataSample = dataService.findDataById(dataSampleId);
@@ -137,6 +139,21 @@ public class DataController {
                 }
                 temp.setAuthoritySet(s);
                 result.add(temp);
+            }
+        }
+        Set<Integer> hasDataAuthorityId = new HashSet<>();
+        for (int i = 0; i < result.size(); i++) {
+            DataUserAuthorityVO dataUserAuthorityVO = result.get(i);
+            hasDataAuthorityId.add(dataUserAuthorityVO.getDataSample().getId());
+        }
+        for (int i = 0; i < allList.size(); i++) {
+            DataSample dataSample = allList.get(i);
+            if(!hasDataAuthorityId.contains(dataSample.getId())){
+                DataUserAuthorityVO dataUserAuthorityVO = new DataUserAuthorityVO();
+                dataUserAuthorityVO.setDataSample(dataSample);
+                dataUserAuthorityVO.setChannelName(channelService.findChannelById(dataSample.getChannelId()).getChannelName());
+                dataUserAuthorityVO.setAuthoritySet(new HashSet<>());
+                result.add(dataUserAuthorityVO);
             }
         }
         return new CommonResult<>(200,"获取该用户所有文件权限列表成功",result);
