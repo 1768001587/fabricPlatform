@@ -47,22 +47,23 @@ public class DataController {
     @CheckToken
     @PostMapping(value = "/data/uploadFile/{channelId}")
     @ResponseBody
-    @Transactional(rollbackFor=Exception.class) // Transactional注解默认在抛出uncheck异常（继承自Runtime Exception或 Error ）时才会回滚 而IO SQL等异常属于check异常，所以不会回滚
-    public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest){
+    @Transactional(rollbackFor = Exception.class)
+    // Transactional注解默认在抛出uncheck异常（继承自Runtime Exception或 Error ）时才会回滚 而IO SQL等异常属于check异常，所以不会回滚
+    public CommonResult uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("channelId") Integer channelId, HttpServletRequest httpServletRequest) {
         //获取文件名
         String fileName = file.getOriginalFilename();
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
         User user = userService.findUserById(originUserId);
-        Channel channel = channelService.findChannelById(channelId);
+        Channel dstChannel = channelService.findChannelById(channelId);
         try {
             // 文件保存到mongoDB
             FileModel f = new FileModel(file.getOriginalFilename(), file.getContentType(), file.getSize(),
                     new Binary(file.getBytes()));
             f.setMd5(MD5Util.getMD5(file.getInputStream()));
             fileService.saveFile(f);
-            
+
             DataSample dataSample = new DataSample();
             dataSample.setChannelId(channelId);//这里后面要做出选择channel
             dataSample.setDataName(fileName);
@@ -85,26 +86,27 @@ public class DataController {
             String result = "";
             // 1. 权限申请 一次上链
             String username = user.getUsername();
-            String dstChannelName = channel.getChannelName();
-            String txId = fabricService.applyForCreateFile(username, dstChannelName, dataSample.getId()+"");
+            String dstChannelName = dstChannel.getChannelName();
+            String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
+            String txId = fabricService.applyForCreateFile("", srcChannelName, username, dstChannelName, dataSample.getId() + "");
             log.info("1.创建文件成功 txId: " + txId);
-            result+="1.创建文件成功 txId: " + txId+"\r\n";
+            result += "1.创建文件成功 txId: " + txId + "\r\n";
             //hash
             // 3. 更新链上hash 二次上链
-            Record record = fabricService.updateForCreateFile(new String(file.getBytes()), username, dstChannelName, dataSample.getId()+"", txId);
+            Record record = fabricService.updateForCreateFile(new String(file.getBytes()), srcChannelName,username, dstChannelName, dataSample.getId() + "", txId);
             log.info("2. 更新链上hash ： " + record.toString());
-            result+="2. 更新链上hash ： " + record.toString()+"\r\n";
+            result += "2. 更新链上hash ： " + record.toString() + "\r\n";
             // 4. 授予用户文件的查改权限
-            Boolean res = fabricService.grantUserPermissionOnFile( dataSample.getId()+"", "read", "role1", Collections.singletonList(username));
+            Boolean res = fabricService.grantUserPermissionOnFile(dataSample.getId() + "", dstChannelName, "read", "role1", Collections.singletonList(username));
             log.info("3.授予用户文件读取权限：" + res);
-            result+="3.授予用户文件读取权限：" + res+"\r\n";
-            res = fabricService.grantUserPermissionOnFile( dataSample.getId()+"", "modify", "role1", Collections.singletonList(username));
+            result += "3.授予用户文件读取权限：" + res + "\r\n";
+            res = fabricService.grantUserPermissionOnFile(dataSample.getId() + "", dstChannelName, "modify", "role1", Collections.singletonList(username));
             log.info("4.授予用户文件修改权限：" + res);
-            result+="4.授予用户文件修改权限：" + res+"\r\n";
+            result += "4.授予用户文件修改权限：" + res + "\r\n";
             //写入上传者权限
             dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
             log.info("************fabric上传文件操作记录区块链结束*****************");
-            return new CommonResult<>(200,"上传成功，文件位于："+fileName+"\r\n"+result, dataSample);
+            return new CommonResult<>(200, "上传成功，文件位于：" + fileName + "\r\n" + result, dataSample);
         } catch (Exception e) {
             return new CommonResult<>(400, e.getMessage(), null);
         }
@@ -113,7 +115,7 @@ public class DataController {
     //获取文件列表
     @CheckToken
     @GetMapping(value = "/data/getDataList")
-    public CommonResult getDataList(HttpServletRequest httpServletRequest){
+    public CommonResult getDataList(HttpServletRequest httpServletRequest) {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
@@ -123,7 +125,7 @@ public class DataController {
         for (int i = 0; i < list.size(); i++) {
             DataUserAuthorityVO temp = new DataUserAuthorityVO();
             Integer dataSampleId = list.get(i).getDataSampleId();
-            if(!set.contains(dataSampleId)){
+            if (!set.contains(dataSampleId)) {
                 set.add(dataSampleId);
                 DataSample dataSample = dataService.findDataById(dataSampleId);
                 Channel channel = channelService.findChannelById(dataSample.getChannelId());
@@ -131,7 +133,7 @@ public class DataController {
                 temp.setChannelName(channel.getChannelName());
                 Set<Integer> s = new HashSet<>();
                 for (int j = 0; j < list.size(); j++) {
-                    if(list.get(j).getDataSampleId().equals(dataSampleId)){
+                    if (list.get(j).getDataSampleId().equals(dataSampleId)) {
                         s.add(list.get(j).getAuthorityKey());
                     }
                 }
@@ -139,7 +141,7 @@ public class DataController {
                 result.add(temp);
             }
         }
-        return new CommonResult<>(200,"获取该用户所有文件权限列表成功",result);
+        return new CommonResult<>(200, "获取该用户所有文件权限列表成功", result);
     }
 
     //根据文件id删除文件
@@ -170,17 +172,18 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
         User user = userService.findUserById(originUserId);
-        if(result==null){
-            return new CommonResult<>(400,"不存在id为："+dataId+"的文件",null);
+        if (result == null) {
+            return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
         }
         log.info("************fabric读取文件操作记录区块链开始*****************");
         // 1. 申请读取权限
         String username = user.getUsername();
         String dstChannelName = channelService.findChannelById(dataSample.getChannelId()).getChannelName();
-        String txId = fabricService.applyForReadFile(username, dstChannelName, String.valueOf(dataId));
+        String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
+        String txId = fabricService.applyForReadFile("", srcChannelName, username, dstChannelName, String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
             log.info("申请文件读取权限失败");
-            return new CommonResult<>(300,"申请文件读取权限失败",null);
+            return new CommonResult<>(300, "申请文件读取权限失败", null);
         }
         // 2. 读取文件
         String fileContent = new String(Objects.requireNonNull(fileService.getFileById(dataSample.getMongoId())
@@ -189,7 +192,7 @@ public class DataController {
                 .orElse(null))
         );
         // 3. 二次上链
-        Record record = fabricService.updateForReadFile(fileContent, username, dstChannelName, String.valueOf(dataId), txId);
+        Record record = fabricService.updateForReadFile(fileContent, srcChannelName, username, dstChannelName, String.valueOf(dataId), txId);
         log.info("2. 二次上链 ： " + record.toString());
         log.info("************fabric读取文件操作记录区块链结束*****************");
         return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, fileContent);
@@ -200,7 +203,7 @@ public class DataController {
     @PostMapping(value = "/data/updateData")
     @ResponseBody
     @Transactional
-    public CommonResult updateData(@RequestBody Map<String, String> params,HttpServletRequest httpServletRequest){
+    public CommonResult updateData(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
@@ -216,10 +219,11 @@ public class DataController {
         // 1. 申请文件修改权限
         String username = user.getUsername();
         String dstChannelName = channelService.findChannelById(dataSample.getChannelId()).getChannelName();
-        String txId = fabricService.applyForModifyFile(username, dstChannelName, String.valueOf(dataId));
+        String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
+        String txId = fabricService.applyForModifyFile("", srcChannelName, username, dstChannelName, String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
             log.info("申请文件修改权限失败");
-            return new CommonResult<>(300,"申请文件修改权限失败",null);
+            return new CommonResult<>(300, "申请文件修改权限失败", null);
         }
         // 2. 修改文件
         // 更新mongoDB
@@ -242,15 +246,16 @@ public class DataController {
         dataService.updateFile(dataSample);
 
         // 3. 更新hash值到fabric 二次上链
-        Record record = fabricService.updateForModifyFile(dataContent, username, dstChannelName, String.valueOf(dataId), txId);
+        Record record = fabricService.updateForModifyFile(dataContent,srcChannelName, username, dstChannelName, String.valueOf(dataId), txId);
         log.info("更新hash值结果：" + record.toString());
         log.info("************fabric更新文件操作记录区块链结束*****************");
-        return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功\r\ntxId："+txId, null);
+        return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功\r\ntxId：" + txId, null);
     }
+
     //根据上传者id获取文件列表
     @CheckToken
     @GetMapping(value = "/data/getDataListByOriginUserId")
-    public CommonResult getDataListByOriginUserId(HttpServletRequest httpServletRequest){
+    public CommonResult getDataListByOriginUserId(HttpServletRequest httpServletRequest) {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
@@ -269,6 +274,6 @@ public class DataController {
             dataUserAuthorityVO.setAuthoritySet(authorities);
             result.add(dataUserAuthorityVO);
         }
-        return new CommonResult<>(200,"获取该用户所有文件列表成功",result);
+        return new CommonResult<>(200, "获取该用户所有文件列表成功", result);
     }
 }

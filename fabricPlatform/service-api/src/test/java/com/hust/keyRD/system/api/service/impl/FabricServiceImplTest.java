@@ -38,7 +38,7 @@ class FabricServiceImplTest {
     void testTraceBackward() {
         String fileId = "file1";
         String txId = "28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba";
-        Record record = fabricService.traceBackward(fileId);
+        Record record = fabricService.traceBackward(fileId,"channel1");
         System.out.println(record);
 //        String response = "{\"next_tx\": \"28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba\", \"tx_info\":\n" +
 //                "\"{\\\"data_id\\\":\\\"file1\\\",\\\"dst_chain\\\":\\\"channel1\\\",\\\"hash_data\\\":\\\"456\\\",\\\"last_tx_id\\\":\\\"cbcf5226f0aaf8754859b6b22fa8a14116bc84191ab8d720011abaa6ea846a47\\\",\\\"src_chain\\\":\\\"channel2\\\",\\\"this_tx_id\\\":\\\"28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba\\\",\\\"type_tx\\\":\\\"delete\\\",\\\"user\\\":\\\"userC\\\"}\"}";
@@ -67,13 +67,13 @@ class FabricServiceImplTest {
 
     @Test
     void grantUserPermissionOnFile() {
-        Boolean aBoolean = fabricService.grantUserPermissionOnFile("file333", "read", "role1", Collections.singletonList("rick"));
+        Boolean aBoolean = fabricService.grantUserPermissionOnFile("file333", "channel1","read", "role1", Collections.singletonList("rick"));
         System.out.println(aBoolean);
     }
 
     @Test
     void applyForReadFile() {
-        String txId = fabricService.applyForReadFile("userD", "channel1", "218");
+        String txId = fabricService.applyForReadFile("", "channel1","userD", "channel1", "218");
         System.out.println(txId);
     }
 }
