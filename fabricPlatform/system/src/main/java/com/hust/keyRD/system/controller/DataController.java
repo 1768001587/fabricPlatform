@@ -110,7 +110,7 @@ public class DataController {
         }
     }
 
-    //获取文件列表
+    //获取文件列表  //这里获取所有通道的所有文件
     @CheckToken
     @GetMapping(value = "/data/getDataList")
     public CommonResult getDataList(HttpServletRequest httpServletRequest){
@@ -119,9 +119,9 @@ public class DataController {
         Integer userId = JWT.decode(token).getClaim("id").asInt();
         List<DataSample> allList = dataService.getDataList();
         List<DataAuthority> list = dataAuthorityService.findDataAuthorityByUserId(userId);//获取该用户的所有权限
-        List<DataUserAuthorityVO> result = new ArrayList<>();
+        List<DataUserAuthorityVO> dataUserAuthorityVOS = new ArrayList<>();
         Set<Integer> set = new HashSet<>();
-        for (int i = 0; i < list.size(); i++) {
+        for (int i = 0; i < list.size(); i++) {//首先获取该用户拥有权限的文件
             DataUserAuthorityVO temp = new DataUserAuthorityVO();
             DataAuthority dataAuthority = list.get(i);
             Integer dataSampleId = dataAuthority.getDataSampleId();
@@ -138,23 +138,36 @@ public class DataController {
                     }
                 }
                 temp.setAuthoritySet(s);
-                result.add(temp);
+                dataUserAuthorityVOS.add(temp);
             }
         }
         Set<Integer> hasDataAuthorityId = new HashSet<>();
-        for (int i = 0; i < result.size(); i++) {
-            DataUserAuthorityVO dataUserAuthorityVO = result.get(i);
+        for (int i = 0; i < dataUserAuthorityVOS.size(); i++) {//将有文件的id取出来，在下面进行对比，找出没有权限的
+            DataUserAuthorityVO dataUserAuthorityVO = dataUserAuthorityVOS.get(i);
             hasDataAuthorityId.add(dataUserAuthorityVO.getDataSample().getId());
         }
-        for (int i = 0; i < allList.size(); i++) {
+        for (int i = 0; i < allList.size(); i++) {//所有文件中没有权限的文件进行添加
             DataSample dataSample = allList.get(i);
             if(!hasDataAuthorityId.contains(dataSample.getId())){
                 DataUserAuthorityVO dataUserAuthorityVO = new DataUserAuthorityVO();
                 dataUserAuthorityVO.setDataSample(dataSample);
                 dataUserAuthorityVO.setChannelName(channelService.findChannelById(dataSample.getChannelId()).getChannelName());
                 dataUserAuthorityVO.setAuthoritySet(new HashSet<>());
-                result.add(dataUserAuthorityVO);
+                dataUserAuthorityVOS.add(dataUserAuthorityVO);
             }
+        }
+        Map<Channel,List<DataUserAuthorityVO>> result = new HashMap<>();
+        List<Channel> channels = channelService.getAllChannel();
+        for (int i = 0; i < channels.size(); i++) {//按照channel进行划分
+            Channel channel = channels.get(i);
+            List<DataUserAuthorityVO> dataUserAuthorityVOList = new ArrayList<>();
+            for (int j = 0; j < dataUserAuthorityVOS.size(); j++) {
+                DataUserAuthorityVO dataUserAuthorityVO = dataUserAuthorityVOS.get(j);
+                if(channel.getId().equals(dataUserAuthorityVO.getDataSample().getChannelId())){
+                    dataUserAuthorityVOList.add(dataUserAuthorityVO);
+                }
+            }
+            result.put(channel,dataUserAuthorityVOList);
         }
         return new CommonResult<>(200,"获取该用户所有文件权限列表成功",result);
     }
