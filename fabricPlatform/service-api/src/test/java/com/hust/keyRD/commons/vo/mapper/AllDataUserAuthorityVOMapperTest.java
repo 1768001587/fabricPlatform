@@ -1,6 +1,7 @@
 package com.hust.keyRD.commons.vo.mapper;
 
 import com.hust.keyRD.commons.Dto.UserChannelAuthDto;
+import com.hust.keyRD.commons.vo.AllChannelUserVO;
 import com.hust.keyRD.commons.vo.AllDataUserAuthorityVO;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +24,7 @@ class AllDataUserAuthorityVOMapperTest {
     @Test
     void toAllDataUserAuthorityVO() {
         UserChannelAuthDto userChannelAuthDto = new UserChannelAuthDto(1,"name",2,"channelName","1,2,3");
-        AllDataUserAuthorityVO allDataUserAuthorityVO = AllDataUserAuthorityVOMapper.INSTANCE.toAllDataUserAuthorityVO(userChannelAuthDto);
+        AllChannelUserVO allDataUserAuthorityVO = AllDataUserAuthorityVOMapper.INSTANCE.toAllDataUserAuthorityVO(userChannelAuthDto);
         System.out.println(allDataUserAuthorityVO);
     }
 }

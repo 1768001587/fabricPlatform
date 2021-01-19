@@ -1,6 +1,7 @@
 package com.hust.keyRD.commons.vo.mapper;
 
 import com.hust.keyRD.commons.Dto.UserChannelAuthDto;
+import com.hust.keyRD.commons.vo.AllChannelUserVO;
 import com.hust.keyRD.commons.vo.AllDataUserAuthorityVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,6 +17,6 @@ import org.mapstruct.factory.Mappers;
 public interface AllDataUserAuthorityVOMapper {
     AllDataUserAuthorityVOMapper INSTANCE = Mappers.getMapper(AllDataUserAuthorityVOMapper.class);
 
-    @Mapping( target = "dataAuthoritySet",expression = "java(com.hust.keyRD.commons.vo.AllDataUserAuthorityVO.stringToSet(userChannelAuthDto.getAuthSet()))")
-    AllDataUserAuthorityVO toAllDataUserAuthorityVO(UserChannelAuthDto userChannelAuthDto);
+    @Mapping( target = "channelAuthoritySet",expression = "java(com.hust.keyRD.commons.vo.AllDataUserAuthorityVO.stringToSet(userChannelAuthDto.getAuthSet()))")
+    AllChannelUserVO toAllDataUserAuthorityVO(UserChannelAuthDto userChannelAuthDto);
 }
