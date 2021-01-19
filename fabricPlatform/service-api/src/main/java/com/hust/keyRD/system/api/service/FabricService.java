@@ -171,10 +171,6 @@ public interface FabricService {
 
 
     /**
-     * 请求对某个文件的 增删改查 权限  操作链第一次上链 返回交易号
-     */
-
-    /**
      * 第二次上链，更新链上数据hash值，实现与链下数据的同步
      *
      * @param peers       peer list
@@ -189,10 +185,10 @@ public interface FabricService {
                           String fcn, List<String> args, String txId);
 
 
- 
     /**
      * 溯源 查找fileId文件最新的交易记录
-     * @param fileId 文件id
+     *
+     * @param fileId          文件id
      * @param fileChannelName 文件所在channel  授予该channel文件的权限
      * @return
      */
@@ -201,26 +197,33 @@ public interface FabricService {
     /**
      * 溯源 查找fileId文件txId交易的上一次交易记录  继续溯源的话使用Record.lastTxId和原fileId作为参数 将进行下一次溯源
      *
-     * @param fileId 文件id
+     * @param fileId          文件id
      * @param fileChannelName 文件所在channel  授予该channel文件的权限
-     * @param txId   交易id
+     * @param txId            交易id
      * @return 上一次record实例
      */
-    
-    Record traceBackward(String fileId,String fileChannelName, String txId);
 
-    /**
-     * 完成对某个文件的增删改查  第二次上链  返回交易号
-     */
+    Record traceBackward(String fileId, String fileChannelName, String txId);
+
 
     /**
      * 查询权限 如channel1上add的权限  由于权限管理由中心链完成，所以在本例中使用中心链上的org1来查询
      *
-     * @param obj channel name
-     * @param opt 操作名 如 add
+     * @param channelName channel name
+     * @param opt         操作名 如 add
      * @return policy实体
      */
-    String getPolicy(String obj, String opt);
+    String getPolicy(String channelName, String opt);
+
+    /**
+     * 查询权限 channel1上文件的read或modify权限  由于权限管理由中心链完成，所以在本例中使用中心链上的org1来查询
+     *
+     * @param fileId      要查询的fileId
+     * @param channelName channelName
+     * @param opt         操作 read / modify
+     * @return
+     */
+    String getPolicy(String fileId, String channelName, String opt);
 
     /**
      * 根据交易号查询结构体信息

@@ -18,3 +18,7 @@
 设计： 原obj为fileId  改为  fileId#channelName  
 具体的，python server不改，只改后端传入python server的fileId为 fileId#channelName
 由于第一次上链是进行权限审计，所以传入的fileHash暂时全为0
+
+## 文件共享read权限
+## 所有用户对所有文件有溯源权限
+## channel的划分

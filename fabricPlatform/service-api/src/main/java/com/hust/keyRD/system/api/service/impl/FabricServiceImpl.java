@@ -329,8 +329,15 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public String getPolicy(String obj, String opt) {
-        Response response = fabricFeignService.getPolicy(obj, opt);
+    public String getPolicy(String channelName, String opt) {
+        Response response = fabricFeignService.getPolicy(channelName, opt);
+        return response.body().toString();
+    }
+
+    @Override
+    public String getPolicy(String fileId, String channelName, String opt) {
+        String obj = fileId + FabricConstant.Separator + channelName;
+        Response response = fabricFeignService.getPolicy(channelName, opt);
         return response.body().toString();
     }
 
