@@ -65,6 +65,24 @@ public class ChannelAuthorityController {
         User admin = userService.findUserById(userId);
         List<UserChannelAuthDto> usersChannelAuthorityList = channelAuthorityService.findUsersChannelAuthority(userId, admin.getChannelId());
         List<AllChannelUserVO> result = usersChannelAuthorityList.stream().map(AllDataUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toList());
+        //这里要返回除了管理员的所有用户，而不是只有权限的用户，这样管理员才可以添加权限
+        List<User> users = userService.getAllUser();
+        Set<Integer> hasAuth = new HashSet<>();
+        for (AllChannelUserVO a: result) {
+            hasAuth.add(a.getUserId());
+        }
+        for (int i = 0; i < users.size(); i++) {
+            if(!hasAuth.contains(users.get(i).getId())){
+                User u = users.get(i);
+                Channel c = channelService.findChannelById(u.getChannelId());
+                AllChannelUserVO allChannelUserVO = new AllChannelUserVO();
+                allChannelUserVO.setUserId(u.getId());
+                allChannelUserVO.setUserName(u.getUsername());
+                allChannelUserVO.setChannelId(c.getId());
+                allChannelUserVO.setChannelName(c.getChannelName());
+                result.add(allChannelUserVO);
+            }
+        }
         return new CommonResult<>(200, "查找成功", result);
     }
 
