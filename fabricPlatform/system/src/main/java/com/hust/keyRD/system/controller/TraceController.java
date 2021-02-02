@@ -5,6 +5,7 @@ import com.hust.keyRD.commons.entities.DataSample;
 import com.hust.keyRD.commons.entities.Record;
 import com.hust.keyRD.commons.exception.fabric.FabricException;
 import com.hust.keyRD.commons.vo.RecordVO;
+import com.hust.keyRD.system.api.Constants.FabricConstant;
 import com.hust.keyRD.system.api.service.FabricService;
 
 import com.hust.keyRD.system.service.ChannelService;
@@ -37,7 +38,8 @@ public class TraceController {
         Record record = fabricService.traceBackward(dataId, channelName);
         RecordVO recordVO = new RecordVO();
         recordVO.setRecord(record);
-        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId()));
+        int i = record.getDataId().indexOf(FabricConstant.Separator);
+        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId().substring(0,i)));
         recordVO.setFileName(dataSample.getDataName());
         return new CommonResult<>(200,"溯源成功",recordVO);
     }
@@ -55,7 +57,8 @@ public class TraceController {
         Record record = fabricService.traceBackward(dataId,channelName,txId);
         RecordVO recordVO = new RecordVO();
         recordVO.setRecord(record);
-        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId()));
+        int i = record.getDataId().indexOf(FabricConstant.Separator);
+        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId().substring(0,i)));
         recordVO.setFileName(dataSample.getDataName());
         return new CommonResult<>(200,"溯源成功",recordVO);
     }

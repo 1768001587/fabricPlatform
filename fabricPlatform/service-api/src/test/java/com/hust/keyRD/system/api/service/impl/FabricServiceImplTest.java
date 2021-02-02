@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
@@ -75,5 +76,18 @@ class FabricServiceImplTest {
     void applyForReadFile() {
         String txId = fabricService.applyForReadFile("", "channel1","userD", "channel1", "218");
         System.out.println(txId);
+    }
+
+    @Test
+    void traceBackwardAll() {
+        List<Record> recordList = fabricService.traceBackwardAll("16", "channel1");
+        recordList.forEach(System.out::println);
+    }
+
+    @Test
+    void testTraceBackwardAll() {
+        String txId = "e7be475651db57661993abb91e1f406ef12033e1e7e91e2538a68d632afd7fff";
+        List<Record> recordList = fabricService.traceBackwardAll("16", "channel1", txId);
+        recordList.forEach(System.out::println);
     }
 }

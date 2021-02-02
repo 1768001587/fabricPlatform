@@ -242,7 +242,7 @@ public class FabricServiceImpl implements FabricService {
     private Record updateForOptFile(String fileString, String srcChannelName, String username, String dstChannelName, String fileId, String txId, String opt) {
         String hashSHA1 = HashUtil.hash(fileString, "SHA1");
         String peers;
-        if (srcChannelName.equals("channel1")) {
+        if (dstChannelName.equals("channel1")) {
             peers = "peer0.org3.example.com";
         } else {
             peers = "peer0.org5.example.com";
@@ -307,7 +307,7 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public Record traceBackward(String fileId, String fileChannelName) {
         String fileIdFinal = fileId + FabricConstant.Separator + fileChannelName;
-        String response = fabricFeignService.traceBackward(fileIdFinal).body().toString();
+        String response = fabricFeignService.traceBackward(fileIdFinal, fileChannelName).body().toString();
         try {
             return parseRecordFromResponse(response);
         } catch (IOException e) {
@@ -319,13 +319,34 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public Record traceBackward(String fileId, String fileChannelName, String txId) {
         String fileIdFinal = fileId + FabricConstant.Separator + fileChannelName;
-        String response = fabricFeignService.traceBackward(fileIdFinal, txId).body().toString();
+        String response = fabricFeignService.traceBackward(fileIdFinal, fileChannelName, txId).body().toString();
         try {
             return parseRecordFromResponse(response);
         } catch (IOException e) {
             log.error("溯源失败,fileId:{},txId:{}, response:{}", fileId, txId, response);
             throw new FabricException("溯源失败: fileId:" + fileId + ", txId: " + txId);
         }
+    }
+
+    @Override
+    public List<Record> traceBackwardAll(String fileId, String fileChannelName) {
+        List<Record> ans = new ArrayList<>();
+        Record record = traceBackward(fileId, fileChannelName);
+        ans.add(record);
+        ans.addAll(traceBackwardAll(fileId, fileChannelName, record.getThisTxId()));
+        return ans;
+    }
+
+    @Override
+    public List<Record> traceBackwardAll(String fileId, String fileChannelName, String txId) {
+        List<Record> ans = new ArrayList<>();
+        Record record = traceBackward(fileId, fileChannelName, txId);
+        ans.add(record);
+        while(!record.getLastTxId().equals("0")){
+            record = traceBackward(fileId, fileChannelName, record.getThisTxId());
+            ans.add(record);
+        }
+        return ans;
     }
 
     @Override
@@ -337,7 +358,7 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public String getPolicy(String fileId, String channelName, String opt) {
         String obj = fileId + FabricConstant.Separator + channelName;
-        Response response = fabricFeignService.getPolicy(channelName, opt);
+        Response response = fabricFeignService.getPolicy(obj, opt);
         return response.body().toString();
     }
 

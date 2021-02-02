@@ -3,14 +3,9 @@ package com.hust.keyRD.system.controller;
 import com.auth0.jwt.JWT;
 import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
-import com.hust.keyRD.commons.vo.SharedDataVO;
-import lombok.extern.slf4j.Slf4j;
-import com.hust.keyRD.commons.exception.fabric.FabricException;
-import com.hust.keyRD.system.service.*;
 import com.hust.keyRD.commons.vo.AllDataUserAuthorityVO;
-import org.springframework.amqp.rabbit.annotation.EnableRabbit;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import com.hust.keyRD.system.service.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,8 +29,6 @@ public class DataAuthorityController {
     private ChannelService channelService;
     @Resource
     private GrantPermissionService grantPermissionService;
-    @Resource
-    RabbitTemplate rabbitTemplate;//rabbitmq进行消息操作
     @Resource
     SharedDataAuthorityService sharedDataAuthorityService;
 

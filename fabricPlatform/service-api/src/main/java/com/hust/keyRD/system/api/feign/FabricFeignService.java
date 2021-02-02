@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "fabric", url = "http://211.69.198.55:8000")
+@FeignClient(name = "fabric", url = "http://8.140.117.111:8000")
 public interface FabricFeignService {
     @GetMapping("/add/")
     String add(@RequestParam("a") int a, @RequestParam("b") int b);
@@ -28,10 +28,10 @@ public interface FabricFeignService {
                          @RequestParam("fcn") String fcn, @RequestParam("args") List<String> args, @RequestParam("tx_id") String txId);
 
     @PostMapping("/traceBackward")
-    Response traceBackward(@RequestParam("data_id") String dataId, @RequestParam("tx_id") String txId);
+    Response traceBackward(@RequestParam("data_id") String dataId, @RequestParam("file_channel") String fileChannel, @RequestParam("tx_id") String txId);
 
     @PostMapping("/traceBackward")
-    Response traceBackward(@RequestParam("data_id") String dataId);
+    Response traceBackward(@RequestParam("data_id") String dataId, @RequestParam("file_channel") String fileChannel);
     
     /*
         查询权限 如channel1上add的权限  由于权限管理由中心链完成，所以在本例中使用中心链上的org1来查询

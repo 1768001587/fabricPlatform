@@ -88,7 +88,7 @@ public class DataController {
             String username = user.getUsername();
             String dstChannelName = dstChannel.getChannelName();
             String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
-            String txId = fabricService.applyForCreateFile("", srcChannelName, username, dstChannelName, dataSample.getId() + "");
+            String txId = fabricService.applyForCreateFile("null", srcChannelName, username, dstChannelName, dataSample.getId() + "");
             log.info("1.创建文件成功 txId: " + txId);
             result += "1.创建文件成功 txId: " + txId + "\r\n";
             //hash
@@ -180,7 +180,7 @@ public class DataController {
         String username = user.getUsername();
         String dstChannelName = channelService.findChannelById(dataSample.getChannelId()).getChannelName();
         String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
-        String txId = fabricService.applyForReadFile("", srcChannelName, username, dstChannelName, String.valueOf(dataId));
+        String txId = fabricService.applyForReadFile("null", srcChannelName, username, dstChannelName, String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
             log.info("申请文件读取权限失败");
             return new CommonResult<>(300, "申请文件读取权限失败", null);
@@ -220,7 +220,7 @@ public class DataController {
         String username = user.getUsername();
         String dstChannelName = channelService.findChannelById(dataSample.getChannelId()).getChannelName();
         String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
-        String txId = fabricService.applyForModifyFile("", srcChannelName, username, dstChannelName, String.valueOf(dataId));
+        String txId = fabricService.applyForModifyFile("null", srcChannelName, username, dstChannelName, String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
             log.info("申请文件修改权限失败");
             return new CommonResult<>(300, "申请文件修改权限失败", null);
