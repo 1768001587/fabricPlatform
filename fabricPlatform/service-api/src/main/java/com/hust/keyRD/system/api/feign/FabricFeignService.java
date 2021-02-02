@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "fabric", url = "=bad3f13c0abb.ngrok.io/")
+@FeignClient(name = "fabric", url = "8.140.117.111:8000")
 public interface FabricFeignService {
     @GetMapping("/add/")
     String add(@RequestParam("a") int a, @RequestParam("b") int b);

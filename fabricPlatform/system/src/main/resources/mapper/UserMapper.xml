@@ -28,6 +28,6 @@
     </select>
     <!--用户注册-->
     <insert id="register"  parameterType="User" useGeneratedKeys="true" keyProperty="id">
-        insert into user(id,user_name,password,channel_id,fabric_user_id) values(null,#{username},#{password},#{channelId},0);
+        insert into user(id,user_name,password,channel_id,fabric_user_id,is_admin) values(null,#{username},#{password},#{channelId},0,0);
     </insert>
 </mapper>

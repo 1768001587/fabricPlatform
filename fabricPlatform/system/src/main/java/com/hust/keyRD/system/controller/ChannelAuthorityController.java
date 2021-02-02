@@ -71,8 +71,8 @@ public class ChannelAuthorityController {
         for (AllChannelUserVO a: result) {
             hasAuth.add(a.getUserId());
         }
-        for (int i = 0; i < users.size(); i++) {
-            if(!hasAuth.contains(users.get(i).getId())){
+        for (int i = 0; i < users.size(); i++) {//以下添加的是既没有权限的，且属于该管理员通道的用户
+            if(!hasAuth.contains(users.get(i).getId())&&users.get(i).getChannelId().equals(admin.getChannelId())){
                 User u = users.get(i);
                 Channel c = channelService.findChannelById(u.getChannelId());
                 AllChannelUserVO allChannelUserVO = new AllChannelUserVO();
