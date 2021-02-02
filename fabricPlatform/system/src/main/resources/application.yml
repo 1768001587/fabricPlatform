@@ -27,9 +27,9 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource      #当前数据源操作类型
     # mysql驱动类
     driver-class-name: org.gjt.mm.mysql.Driver
-    url: jdbc:mysql://39.105.213.171:3306/key-r-d-based-on-fabric?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
-    username: root
-    password: 123456
+    url: jdbc:mysql://8.129.13.73:3307/Key-R-D-based-on-fabric?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=GMT%2B8
+    username: dev
+    password: dev
     #数据源配置信息
     druid:
       filters: stat
@@ -46,7 +46,7 @@ spring:
       maxPoolPreparedStatementPerConnectionSize: 200
   data:
     mongodb:
-      host: localhost
+      host: 8.129.13.73
       port: 27017
       database: fabricDoc
       username: root
