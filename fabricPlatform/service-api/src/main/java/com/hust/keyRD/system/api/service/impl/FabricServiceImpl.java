@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hust.keyRD.commons.entities.Record;
 import com.hust.keyRD.commons.exception.fabric.FabricException;
 import com.hust.keyRD.commons.utils.HashUtil;
+import com.hust.keyRD.system.api.Constants.FabricConstant;
 import com.hust.keyRD.system.api.feign.FabricFeignService;
 import com.hust.keyRD.system.api.service.FabricService;
 import feign.Response;
@@ -100,15 +101,16 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public Boolean grantUserPermissionOnFile(String fileId, String permission, String role, List<String> users) {
-        String response = getPolicy(fileId, permission);
+    public Boolean grantUserPermissionOnFile(String fileId, String fileChannelName, String permission, String role, List<String> users) {
+        String obj = fileId + FabricConstant.Separator + fileChannelName;
+        String response = getPolicy(obj, permission);
         try {
             if (response.contains("user_history")) {
                 // 正常获得policy，即policy已存在
-                return updatePolicy(fileId, permission, "adduser", role, users);
+                return updatePolicy(obj, permission, "adduser", role, users);
             } else {
                 // policy不存在 增加policy
-                return addPolicy(fileId, permission, role, users);
+                return addPolicy(obj, permission, role, users);
 
             }
         } catch (FabricException e) {
@@ -117,29 +119,17 @@ public class FabricServiceImpl implements FabricService {
         }
     }
 
-    private boolean handleGrantPermissionRes(String response, String dstChannelName, List<String> users, String permission) {
-
-        if (response.contains("Success")) {
-            log.info("授权用户{}在{}上{}文件的权限成功,info:{}", users, dstChannelName, permission, response);
-            return true;
-        } else if (response.contains("exists")) {
-            log.warn("授权用户{}在{}上{}文件的权限失败,info:{}", users, dstChannelName, permission, response);
-            throw new FabricException("授权失败,权限已存在,info：" + response);
-        } else {
-            log.warn("授权用户{}在{}上{}文件的权限失败,info:{}", users, dstChannelName, permission, response);
-            throw new FabricException("授权失败,info: " + response);
-        }
-    }
 
     /**
      * 撤销用户权限
-     * @param obj channelName或fileId
-     * @param opt 权限
-     * @param role 角色
+     *
+     * @param obj   channelName或fileId
+     * @param opt   权限
+     * @param role  角色
      * @param users users
      * @return
      */
-    private Boolean revokeUserPermission(String obj, String opt, String role, List<String> users){
+    private Boolean revokeUserPermission(String obj, String opt, String role, List<String> users) {
         // 由于该例子中授权都由中心链上的org1完成 暂时写死
         String peers = "peer0.org1.example.com";
         String channelName = "centre";
@@ -163,8 +153,9 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public Boolean revokeUserPermissionOnFile(String dstChannelName, String fileId, String permission, String role, List<String> users) {
-        return revokeUserPermission(fileId, permission, role, users);
+    public Boolean revokeUserPermissionOnFile(String fileId, String fileChannelName, String permission, String role, List<String> users) {
+        String obj = fileId + FabricConstant.Separator + fileChannelName;
+        return revokeUserPermission(obj, permission, role, users);
     }
 
     @Override
@@ -178,19 +169,25 @@ public class FabricServiceImpl implements FabricService {
         return response.body().toString();
     }
 
-    private String applyForOptFile(String username, String dstChannelName, String fileId, String opt) throws IOException {
+    private String applyForOptFile(String fileHash, String srcChannelName, String username, String dstChannelName, String fileId, String opt) throws IOException {
         // 由于该例子中一次上链都由org5发起 暂时写死
-        String peers = "peer0.org5.example.com";
-        String channelName = "channel2";
+        String peers;
+        if (srcChannelName.equals("channel1")) {
+            peers = "peer0.org3.example.com";
+        } else {
+            peers = "peer0.org5.example.com";
+        }
+        String channelName = srcChannelName; // 第一次上链由源链节点调用链码 更新源链记录并通过代理更新目标链记录
         String ccName = "record";
         String fcn = "srcAuditRecord";
         //args:  hashdata, srcchain, user, dstchain, dataid, typetx
+        final String fileIdFinal = fileId + FabricConstant.Separator + dstChannelName;
         List<String> args = new ArrayList<String>() {{
-            add("null");
-            add("channel2");
+            add(fileHash);
+            add(srcChannelName);
             add(username);
             add(dstChannelName);
-            add(fileId);
+            add(fileIdFinal);
             add(opt);
         }};
         String rawRes = crossAccess(peers, channelName, ccName, fcn, args);
@@ -201,9 +198,9 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public String applyForCreateFile(String username, String dstChannelName, String fileId) {
+    public String applyForCreateFile(String fileHash, String srcChannelName, String username, String dstChannelName, String fileId) {
         try {
-            String txId = applyForOptFile(username, dstChannelName, fileId, "add");
+            String txId = applyForOptFile(fileHash, srcChannelName, username, dstChannelName, fileId, "add");
             if (txId == null || txId.isEmpty()) {
                 throw new FabricException("获取创建文件权限失败");
             } else {
@@ -217,9 +214,9 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public String applyForReadFile(String username, String dstChannelName, String fileId) {
+    public String applyForReadFile(String fileHash, String srcChannelName, String username, String dstChannelName, String fileId) {
         try {
-            String txId = applyForOptFile(username, dstChannelName, fileId, "read");
+            String txId = applyForOptFile(fileHash, srcChannelName, username, dstChannelName, fileId, "read");
             if (txId == null || txId.isEmpty()) {
                 throw new FabricException("获取创建文件权限失败");
             } else {
@@ -232,9 +229,9 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public String applyForModifyFile(String username, String dstChannelName, String fileId) {
+    public String applyForModifyFile(String fileHash, String srcChannelName, String username, String dstChannelName, String fileId) {
         try {
-            return applyForOptFile(username, dstChannelName, fileId, "modify");
+            return applyForOptFile(fileHash, srcChannelName, username, dstChannelName, fileId, "modify");
         } catch (IOException e) {
             log.error("用户{}获取修改{}上的文件{}权限失败", username, dstChannelName, fileId);
             throw new FabricException("获取修改文件权限失败");
@@ -242,22 +239,27 @@ public class FabricServiceImpl implements FabricService {
     }
 
     // 二次上链
-    private Record updateForOptFile(String fileString, String username, String dstChannelName, String fileId, String txId, String opt) {
+    private Record updateForOptFile(String fileString, String srcChannelName, String username, String dstChannelName, String fileId, String txId, String opt) {
         String hashSHA1 = HashUtil.hash(fileString, "SHA1");
-        String peers = "peer0.org3.example.com";
-        String channelName = "channel1";
+        String peers;
+        if (dstChannelName.equals("channel1")) {
+            peers = "peer0.org3.example.com";
+        } else {
+            peers = "peer0.org5.example.com";
+        }
+        String channelName = dstChannelName; // 第二次上链由目标链节点调用链码 更新目标链记录 
         String ccName = "record";
         String fcn = "dataSyncRecord";
+        final String fileIdFinal = fileId + FabricConstant.Separator + dstChannelName;
         List<String> args = new ArrayList<String>() {{
             add(hashSHA1);
-            add("channel2");
+            add(srcChannelName);
             add(username);
             add(dstChannelName);
-            add(fileId);
+            add(fileIdFinal);
             add(opt);
         }};
-        // TODO: 如果fabric有错误，将返回什么？
-        // 成功返回Record对象json
+        // 成功返回Record对象json  失败就无法正常进行json解析
         String response = dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -272,22 +274,21 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public Record updateForCreateFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
-        return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "add");
+    public Record updateForCreateFile(String fileString, String srcChannelName, String username, String dstChannelName, String fileId, String txId) {
+        return updateForOptFile(fileString, srcChannelName, username, dstChannelName, fileId, txId, "add");
     }
 
     @Override
-    public Record updateForReadFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
-        return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "read");
+    public Record updateForReadFile(String fileString, String srcChannelName, String username, String dstChannelName, String fileId, String txId) {
+        return updateForOptFile(fileString, srcChannelName, username, dstChannelName, fileId, txId, "read");
     }
 
     @Override
-    public Record updateForModifyFile(String fileString, String username, String dstChannelName, String fileId, String txId) {
-        return updateForOptFile(fileString, username, dstChannelName, fileId, txId, "modify");
+    public Record updateForModifyFile(String fileString, String srcChannelName, String username, String dstChannelName, String fileId, String txId) {
+        return updateForOptFile(fileString, srcChannelName, username, dstChannelName, fileId, txId, "modify");
     }
 
 
-    //    todo: 处理返回结果 返回正确结果/抛异常
     @Override
     public String dataSyncRecord(String peers, String channelName, String ccName, String fcn, List<String> args, String txId) {
         Response response = fabricFeignService.dataSyncRecord(peers, channelName, ccName, fcn, args, txId);
@@ -304,8 +305,9 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public Record traceBackward(String fileId) {
-        String response = fabricFeignService.traceBackward(fileId).body().toString();
+    public Record traceBackward(String fileId, String fileChannelName) {
+        String fileIdFinal = fileId + FabricConstant.Separator + fileChannelName;
+        String response = fabricFeignService.traceBackward(fileIdFinal, fileChannelName).body().toString();
         try {
             return parseRecordFromResponse(response);
         } catch (IOException e) {
@@ -315,8 +317,9 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public Record traceBackward(String fileId, String txId) {
-        String response = fabricFeignService.traceBackward(fileId, txId).body().toString();
+    public Record traceBackward(String fileId, String fileChannelName, String txId) {
+        String fileIdFinal = fileId + FabricConstant.Separator + fileChannelName;
+        String response = fabricFeignService.traceBackward(fileIdFinal, fileChannelName, txId).body().toString();
         try {
             return parseRecordFromResponse(response);
         } catch (IOException e) {
@@ -326,7 +329,35 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public String getPolicy(String obj, String opt) {
+    public List<Record> traceBackwardAll(String fileId, String fileChannelName) {
+        List<Record> ans = new ArrayList<>();
+        Record record = traceBackward(fileId, fileChannelName);
+        ans.add(record);
+        ans.addAll(traceBackwardAll(fileId, fileChannelName, record.getThisTxId()));
+        return ans;
+    }
+
+    @Override
+    public List<Record> traceBackwardAll(String fileId, String fileChannelName, String txId) {
+        List<Record> ans = new ArrayList<>();
+        Record record = traceBackward(fileId, fileChannelName, txId);
+        ans.add(record);
+        while(!record.getLastTxId().equals("0")){
+            record = traceBackward(fileId, fileChannelName, record.getThisTxId());
+            ans.add(record);
+        }
+        return ans;
+    }
+
+    @Override
+    public String getPolicy(String channelName, String opt) {
+        Response response = fabricFeignService.getPolicy(channelName, opt);
+        return response.body().toString();
+    }
+
+    @Override
+    public String getPolicy(String fileId, String channelName, String opt) {
+        String obj = fileId + FabricConstant.Separator + channelName;
         Response response = fabricFeignService.getPolicy(obj, opt);
         return response.body().toString();
     }

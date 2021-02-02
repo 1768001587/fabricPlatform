@@ -5,8 +5,10 @@ import com.hust.keyRD.commons.entities.DataSample;
 import com.hust.keyRD.commons.entities.Record;
 import com.hust.keyRD.commons.exception.fabric.FabricException;
 import com.hust.keyRD.commons.vo.RecordVO;
+import com.hust.keyRD.system.api.Constants.FabricConstant;
 import com.hust.keyRD.system.api.service.FabricService;
 
+import com.hust.keyRD.system.service.ChannelService;
 import com.hust.keyRD.system.service.DataService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,18 +23,23 @@ import java.util.Map;
 @RestController
 public class TraceController {
     @Resource
-    FabricService fabricService;
+    private FabricService fabricService;
     @Resource
     private DataService dataService;
+    @Resource
+    private ChannelService channelService;
 
     //根据文件id获取该文件的最新操作
     @PostMapping(value = "/trace/traceBackward")
     public CommonResult traceBackward(@RequestBody Map<String, String> params){
         String dataId = params.get("dataId");
-        Record record = fabricService.traceBackward(dataId);
+        Integer channelId = dataService.findDataById(Integer.valueOf(dataId)).getChannelId();
+        String channelName = channelService.findChannelById(channelId).getChannelName();
+        Record record = fabricService.traceBackward(dataId, channelName);
         RecordVO recordVO = new RecordVO();
         recordVO.setRecord(record);
-        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId()));
+        int i = record.getDataId().indexOf(FabricConstant.Separator);
+        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId().substring(0,i)));
         recordVO.setFileName(dataSample.getDataName());
         return new CommonResult<>(200,"溯源成功",recordVO);
     }
@@ -41,14 +48,17 @@ public class TraceController {
     @PostMapping(value = "/trace/traceBackwardAgain")
     public CommonResult traceBackwardAgain(@RequestBody Map<String, String> params){
         String dataId = params.get("dataId");
+        Integer channelId = dataService.findDataById(Integer.valueOf(dataId)).getChannelId();
+        String channelName = channelService.findChannelById(channelId).getChannelName();
         String txId = params.get("txId");
         if(txId.equals("0")) {
             return new CommonResult<>(404,"该记录已经是最早的记录，无更早的记录",null);
         }
-        Record record = fabricService.traceBackward(dataId,txId);
+        Record record = fabricService.traceBackward(dataId,channelName,txId);
         RecordVO recordVO = new RecordVO();
         recordVO.setRecord(record);
-        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId()));
+        int i = record.getDataId().indexOf(FabricConstant.Separator);
+        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId().substring(0,i)));
         recordVO.setFileName(dataSample.getDataName());
         return new CommonResult<>(200,"溯源成功",recordVO);
     }
@@ -57,7 +67,9 @@ public class TraceController {
     public CommonResult traceBackwardForAll(@RequestBody Map<String, String> params){
         String dataId = params.get("dataId");
         List<Record> result = new LinkedList<>();
-        Record record = fabricService.traceBackward(dataId);//这是最新一次的操作记录
+        Integer channelId = dataService.findDataById(Integer.valueOf(dataId)).getChannelId();
+        String channelName = channelService.findChannelById(channelId).getChannelName();
+        Record record = fabricService.traceBackward(dataId, channelName);//这是最新一次的操作记录
         result.add(record);
         Record tmp = record;
         while(!tmp.getLastTxId().equals("0")){
