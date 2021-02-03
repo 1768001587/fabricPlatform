@@ -8,8 +8,7 @@ import com.hust.keyRD.commons.entities.CommonResult;
 import com.hust.keyRD.commons.entities.User;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.commons.vo.AllChannelUserVO;
-import com.hust.keyRD.commons.vo.AllDataUserAuthorityVO;
-import com.hust.keyRD.commons.vo.mapper.AllDataUserAuthorityVOMapper;
+import com.hust.keyRD.commons.vo.mapper.AllChannelUserAuthorityVOMapper;
 import com.hust.keyRD.system.api.service.FabricService;
 import com.hust.keyRD.system.service.ChannelAuthorityService;
 import com.hust.keyRD.system.service.ChannelService;
@@ -23,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -64,7 +62,7 @@ public class ChannelAuthorityController {
         Integer userId = JWT.decode(token).getClaim("id").asInt();//管理员的id号
         User admin = userService.findUserById(userId);
         List<UserChannelAuthDto> usersChannelAuthorityList = channelAuthorityService.findUsersChannelAuthority(userId, admin.getChannelId());
-        List<AllChannelUserVO> result = usersChannelAuthorityList.stream().map(AllDataUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toList());
+        List<AllChannelUserVO> result = usersChannelAuthorityList.stream().map(AllChannelUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toList());
         //这里要返回除了管理员的所有用户，而不是只有权限的用户，这样管理员才可以添加权限
         List<User> users = userService.getAllUser();
         Set<Integer> hasAuth = new HashSet<>();

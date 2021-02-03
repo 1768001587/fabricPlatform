@@ -1,10 +1,12 @@
 package com.hust.keyRD.system.controller;
 
 import com.auth0.jwt.JWT;
+import com.hust.keyRD.commons.Dto.UserDataAuthDto;
 import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.commons.vo.AllDataUserAuthorityVO;
 import com.hust.keyRD.commons.vo.SharedDataVO;
+import com.hust.keyRD.commons.vo.mapper.AllDataUserAuthorityVOMapper;
 import com.hust.keyRD.system.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -81,37 +84,8 @@ public class DataAuthorityController {
     //获取所有权限，返回AllDataUserAuthorityVO类
     @GetMapping(value = "/dataAuthority/getAllAuthority")
     public CommonResult getAllAuthority() {
-        List<AllDataUserAuthorityVO> result = new ArrayList<>();
-        Set<List<Integer>> set = new LinkedHashSet<>();//保存用户Id与对应的文件id
-        List<User> users = userService.getAllUser();
-        List<DataSample> dataSamples = dataService.getDataList();
-        for (int i = 0; i < users.size(); i++) {
-            for (int j = 0; j < dataSamples.size(); j++) {
-                List<Integer> s = new ArrayList<>();
-                s.add(users.get(i).getId());
-                s.add(dataSamples.get(j).getId());
-                set.add(s);
-            }
-        }
-        Iterator<List<Integer>> it = set.iterator();
-        while (it.hasNext()) {
-            List<Integer> tmp = it.next();
-            List<DataAuthority> dataAuthorities = dataAuthorityService.findDataAuthorityByUserIdAndDataId(tmp.get(0),tmp.get(1));
-            Set<Integer> authoritySet = new HashSet<>();
-            for (int i = 0; i < dataAuthorities.size(); i++) {
-                authoritySet.add(dataAuthorities.get(i).getAuthorityKey());
-            }
-            User user = userService.findUserById(tmp.get(0));
-            DataSample dataSample = dataService.findDataById(tmp.get(1));
-            AllDataUserAuthorityVO allDataUserAuthorityVO = new AllDataUserAuthorityVO();
-            allDataUserAuthorityVO.setUserId(tmp.get(0));
-            allDataUserAuthorityVO.setUserName(user.getUsername());
-            allDataUserAuthorityVO.setChannelName(channelService.findChannelById(dataSample.getChannelId()).getChannelName());
-            allDataUserAuthorityVO.setDataId(tmp.get(1));
-            allDataUserAuthorityVO.setDataName(dataSample.getDataName());
-            allDataUserAuthorityVO.setDataAuthoritySet(authoritySet);
-            result.add(allDataUserAuthorityVO);
-        }
+        List<UserDataAuthDto> usersDataAuthorityList = dataAuthorityService.findUsersDataAuthority();
+        List<AllDataUserAuthorityVO> result = usersDataAuthorityList.stream().map(AllDataUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toList());
         return new CommonResult<>(200,"查找成功",result);
     }
 
