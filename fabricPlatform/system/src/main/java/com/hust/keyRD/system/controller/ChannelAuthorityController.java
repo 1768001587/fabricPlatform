@@ -63,7 +63,7 @@ public class ChannelAuthorityController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();//管理员的id号
         User admin = userService.findUserById(userId);
-        List<UserChannelAuthDto> usersChannelAuthorityList = channelAuthorityService.findUsersChannelAuthority(userId, admin.getChannelId());
+        List<UserChannelAuthDto> usersChannelAuthorityList = channelAuthorityService.findUsersChannelAuthority(userId, 3 - admin.getChannelId());
         List<AllDataUserAuthorityVO> result = usersChannelAuthorityList.stream().map(AllDataUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toList());
         return new CommonResult<>(200, "查找成功", result);
     }
@@ -71,10 +71,14 @@ public class ChannelAuthorityController {
     //给用户添加管道权限
     @Transactional
     @PostMapping(value = "/channelAuthority/addChannelAuthority")
-    public CommonResult addDataAuthority(@RequestBody ChannelAuthority channelAuthority) {
+    public CommonResult addChannelAuthority(HttpServletRequest httpServletRequest, @RequestBody ChannelAuthority channelAuthority) {
         Integer channelId = channelAuthority.getChannelId();
         Integer userId = channelAuthority.getUserId();
-        Channel channel = channelService.findChannelById(channelId);
+        String token = httpServletRequest.getHeader("token");
+        Integer adminId = JWT.decode(token).getClaim("id").asInt();//管理员的id号
+        Integer adminChannelId = userService.findUserById(adminId).getChannelId();
+        // 增加的权限是管理员所在的channel权限
+        Channel channel = channelService.findChannelById(adminChannelId);
         User user = userService.findUserById(userId);
         Integer authorityKey = channelAuthority.getAuthorityKey();
         List<ChannelAuthority> channelAuthoritys = channelAuthorityService.findChannelAuthority(channelAuthority);
@@ -85,6 +89,7 @@ public class ChannelAuthorityController {
                 "1：在该channel上上传文件权限", null);
         log.info("************fabric添加管道权限操作记录区块链开始*****************");
         fabricService.grantUserPermission2Add(channel.getChannelName(), "AAA", user.getUsername());
+        channelAuthority.setChannelId(adminChannelId);
         channelAuthorityService.addChannelAuthority(channelAuthority);
         log.info("************fabric添加管道权限操作记录区块链结束*****************");
         return new CommonResult<>(200, "channelAuthority添加权限成功", channelAuthority);
@@ -93,17 +98,21 @@ public class ChannelAuthorityController {
     //撤销某个用户可以上传文件至某通道的权限
     @Transactional
     @PostMapping(value = "/channelAuthority/deleteChannelAuthority")
-    public CommonResult deleteChannelAuthority(@RequestBody ChannelAuthority channelAuthority) {
-        Integer channelId = channelAuthority.getChannelId();
+    public CommonResult deleteChannelAuthority(HttpServletRequest httpServletRequest, @RequestBody ChannelAuthority channelAuthority) {
         Integer userId = channelAuthority.getUserId();
-        Channel channel = channelService.findChannelById(channelId);
+        String token = httpServletRequest.getHeader("token");
+        Integer adminId = JWT.decode(token).getClaim("id").asInt();//管理员的id号
+        Integer adminChannelId = userService.findUserById(adminId).getChannelId();
+        // 删除的权限是管理员所在的channel权限
+        Channel channel = channelService.findChannelById(adminChannelId);
         User user = userService.findUserById(userId);
         Integer authorityKey = channelAuthority.getAuthorityKey();
-        if (channel == null) return new CommonResult<>(400, "撤销权限失败，不存在channelId为：" + channelId + "的channel", null);
+        if (channel == null) return new CommonResult<>(400, "撤销权限失败，不存在channelId为：" + adminChannelId + "的channel", null);
         if (user == null) return new CommonResult<>(400, "撤销权限失败，不存在userId为：" + userId + "的用户", null);
         if (authorityKey != 1) return new CommonResult<>(400, "authorityKey请选择：" +
                 "1：在该channel上上传文件权限", null);
         if (fabricService.revokeUserPermission2Add(channel.getChannelName(), "AAA", user.getUsername())) {
+            channelAuthority.setChannelId(adminChannelId);
             Integer count = channelAuthorityService.deleteChannelAuthority(channelAuthority);
             if (count >= 1) {
                 return new CommonResult<>(200, "channelAuthority撤销权限成功", channelAuthority);

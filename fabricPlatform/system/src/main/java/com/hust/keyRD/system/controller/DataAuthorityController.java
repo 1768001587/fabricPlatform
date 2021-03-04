@@ -108,7 +108,7 @@ public class DataAuthorityController {
             allDataUserAuthorityVO.setChannelName(channelService.findChannelById(dataSample.getChannelId()).getChannelName());
             allDataUserAuthorityVO.setDataId(tmp.get(1));
             allDataUserAuthorityVO.setDataName(dataSample.getDataName());
-            allDataUserAuthorityVO.setDataAuthoritySet(authoritySet);
+            allDataUserAuthorityVO.setChannelAuthoritySet(authoritySet);
             result.add(allDataUserAuthorityVO);
         }
         return new CommonResult<>(200,"查找成功",result);

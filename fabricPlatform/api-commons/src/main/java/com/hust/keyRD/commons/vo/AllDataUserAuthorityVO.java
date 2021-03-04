@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,10 +15,11 @@ import java.util.stream.Collectors;
 public class AllDataUserAuthorityVO {
     private Integer userId;
     private String userName;
+    private Integer channelId;
     private String channelName;
     private Integer dataId;
     private String dataName;
-    private Set<Integer> dataAuthoritySet;
+    private Set<Integer> channelAuthoritySet;
 
     /**
      * 逗号隔开的字符串转Set
@@ -26,6 +28,9 @@ public class AllDataUserAuthorityVO {
      */
     public static Set<Integer> stringToSet(String authSetStr){
 //        String[] strings = authSetStr.split(",");
+        if(authSetStr == null || authSetStr.isEmpty()){
+            return new HashSet<>();
+        }
         return Arrays.stream(authSetStr.split(",")).map(Integer::valueOf).collect(Collectors.toSet());
     }
 }

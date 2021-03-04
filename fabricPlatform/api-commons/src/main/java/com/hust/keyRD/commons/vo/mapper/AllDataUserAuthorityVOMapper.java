@@ -16,6 +16,6 @@ import org.mapstruct.factory.Mappers;
 public interface AllDataUserAuthorityVOMapper {
     AllDataUserAuthorityVOMapper INSTANCE = Mappers.getMapper(AllDataUserAuthorityVOMapper.class);
 
-    @Mapping( target = "dataAuthoritySet",expression = "java(com.hust.keyRD.commons.vo.AllDataUserAuthorityVO.stringToSet(userChannelAuthDto.getAuthSet()))")
+    @Mapping( target = "channelAuthoritySet",expression = "java(com.hust.keyRD.commons.vo.AllDataUserAuthorityVO.stringToSet(userChannelAuthDto.getAuthSet()))")
     AllDataUserAuthorityVO toAllDataUserAuthorityVO(UserChannelAuthDto userChannelAuthDto);
 }
