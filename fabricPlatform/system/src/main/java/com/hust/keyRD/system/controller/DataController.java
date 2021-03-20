@@ -197,6 +197,32 @@ public class DataController {
         log.info("************fabric读取文件操作记录区块链结束*****************");
         return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, fileContent);
     }
+    
+    /*// 获取channel间数据
+    // 只获取当前用户可pull的其他channel的数据
+    public CommonResult getInterChannelData(HttpServletRequest httpServletRequest){
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer originUserId = JWT.decode(token).getClaim("id").asInt();
+        User user = userService.findUserById(originUserId);
+        
+    }
+    
+    // 获取当前channel的数据
+    // 除对每个文件增删改查外，还能进行文件push到其他channel的权限
+    public CommonResult getCurrentChannelData(){
+        
+    }
+    
+    // 当前用户将channelId的文件dataId  pull到用户所在的channel
+    public CommonResult pullData(Long dataId, Long channelId){
+        
+    }
+    
+    // 当前用户将用户所在channel的dataId push到channelId上
+    public CommonResult pushData(Long dataId, Long channelId){
+        
+    }*/
 
     //根据文件id对文件内容进行更新
     @CheckToken

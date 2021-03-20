@@ -30,10 +30,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean login(User user) {
-        if(userDao.login(user)>=1) {
+        if(userDao.login(user) >= 1) {
             return true;
         }
-        else return false;
+        else 
+            return false;
     }
 
     @Override

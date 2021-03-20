@@ -160,3 +160,13 @@ INSERT INTO `user_channel_role` VALUES (1, 100, 1, '普通用户');
 INSERT INTO `user_channel_role` VALUES (2, 1001, 1, 'da');
 
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- 域间权限
+create table `channel_data_authority` (
+    `id` bigint(20) AUTO_INCREMENT NOT NULL COMMENT 'channel_data_authority_id',
+    `user_id` bigint(20) NOT NULL COMMENT '发送者或拉取者id',
+    `data_id` bigint(20) NOT NULL COMMENT '文件id',
+    `channel_id` bigint(20) NOT NULL COMMENT 'channelID',
+    `type` int NOT NULL COMMENT '权限类型：1-push，2-pull',
+    PRIMARY KEY(`id`) 
+);

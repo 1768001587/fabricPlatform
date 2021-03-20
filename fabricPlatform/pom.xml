@@ -128,7 +128,7 @@
                 <artifactId>mapstruct-processor</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
-        </dependencies>
+        </dependencies> 
     </dependencyManagement>
 
     <build>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hust.keyRD.system.dao.ChannelDataAuthorityDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.hust.keyRD.commons.entities.ChannelDataAuthority" id="channelDataAuthorityMap">
+        <result property="id" column="id"/>
+        <result property="userid" column="userId"/>
+        <result property="dataId" column="data_id"/>
+        <result property="channelId" column="channel_id"/>
+        <result property="type" column="type"/>
+    </resultMap>
+    
+    <!--<select id="getInterChannelPullData" parameterType="Map" resultMap="Long">-->
+    <!--    select data_sample.* from channel_data_authority join data_sample  on channel_data_authority.data_id = data_sample.id-->
+    <!--    where channel_data_authority.user_id = #{userId} and channel_data_authority.channel_id != #{channelId} and channel_data_authority.type = 2;-->
+    <!--</select>-->
+    
+    
+
+
+</mapper>

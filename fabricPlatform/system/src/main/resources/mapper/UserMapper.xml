@@ -23,8 +23,8 @@
         select id,user_name,channel_id from user ORDER BY user_name;
     </select>
     <!--用户登录-->
-    <select id="login"  parameterType="User" resultType="Integer">
-        select count(*) from user where user_name=#{username} and password=#{password} ;
+    <select id="login"  parameterType="User" resultType="java.lang.Integer">
+        select count(*) from user where user_name=#{username} and password=#{password};
     </select>
     <!--用户注册-->
     <insert id="register"  parameterType="User" useGeneratedKeys="true" keyProperty="id">
