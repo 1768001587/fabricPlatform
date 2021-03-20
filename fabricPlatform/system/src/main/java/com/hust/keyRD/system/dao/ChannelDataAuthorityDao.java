@@ -1,5 +1,6 @@
 package com.hust.keyRD.system.dao;
 
+import com.hust.keyRD.commons.Dto.PushDataInfoDto;
 import com.hust.keyRD.commons.entities.DataSample;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -22,4 +23,13 @@ public interface ChannelDataAuthorityDao {
      * @return
      */
     List<DataSample> getInterChannelPullData(@Param("userId")Integer userId, @Param("channelId") Integer channelId);
+
+
+    /**
+     * 获取当前用户可以push到其他域的(dataId,targetChannelSet)
+     * @param userId 当前用户id
+     * @param channelId 当前用户所在channel
+     * @return
+     */
+    List<PushDataInfoDto> getInnerChannelPushData(@Param("userId")Integer userId, @Param("channelId") Integer channelId);
 }

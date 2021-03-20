@@ -23,11 +23,29 @@
         <id column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
         <id column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
     </resultMap>
-    
+
     <select id="getInterChannelPullData" parameterType="Map" resultMap="DataSampleMap">
-        select data_sample.* from channel_data_authority join data_sample  on channel_data_authority.data_id = data_sample.id
-        where channel_data_authority.user_id = #{userId} and channel_data_authority.channel_id != #{channelId} and channel_data_authority.type = 2;
+        select data_sample.*
+        from channel_data_authority
+                 join data_sample on channel_data_authority.data_id = data_sample.id
+        where channel_data_authority.user_id = #{userId}
+          and channel_data_authority.channel_id != #{channelId}
+          and channel_data_authority.type = 2;
     </select>
-    
+
+    <select id="getInnerChannelPushData" parameterType="Map" resultType="PushDataInfoDto">
+
+        select channel_data_authority.data_id    as dataId,
+               channel_data_authority.channel_id as channelId,
+               channel.channel_name              as channelName
+        from channel_data_authority
+                 join data_sample
+                      on channel_data_authority.user_id = #{userId}
+                          and channel_data_authority.type = 1
+                          and data_sample.channel_id = #{channelId}
+                          and channel_data_authority.data_id = data_sample.id
+                 join channel on channel.id = channel_data_authority.channel_id;
+    </select>
+
 
 </mapper>

@@ -1,5 +1,6 @@
 package com.hust.keyRD.system.service.impl;
 
+import com.hust.keyRD.commons.Dto.PushDataInfoDto;
 import com.hust.keyRD.commons.entities.DataSample;
 import com.hust.keyRD.system.dao.ChannelDataAuthorityDao;
 import com.hust.keyRD.system.service.ChannelDataAuthorityService;
@@ -17,5 +18,10 @@ public class ChannelDataAuthorityServiceImpl implements ChannelDataAuthorityServ
     @Override
     public List<DataSample> getInterChannelPullData(Integer userId, Integer channelId) {
         return channelDataAuthorityDao.getInterChannelPullData(userId, channelId);
+    }
+
+    @Override
+    public List<PushDataInfoDto> getInnerChannelPushData(Integer userId, Integer channelId) {
+        return channelDataAuthorityDao.getInnerChannelPushData(userId, channelId);
     }
 }

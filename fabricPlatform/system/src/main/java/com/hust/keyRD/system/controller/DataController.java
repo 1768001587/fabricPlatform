@@ -1,16 +1,22 @@
 package com.hust.keyRD.system.controller;
 
 import com.auth0.jwt.JWT;
+import com.hust.keyRD.commons.Dto.PushDataInfoDto;
+import com.hust.keyRD.commons.Dto.UserInnerDataDto;
 import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.commons.exception.mongoDB.MongoDBException;
 import com.hust.keyRD.commons.utils.JwtUtil;
 import com.hust.keyRD.commons.utils.MD5Util;
+import com.hust.keyRD.commons.vo.UserInnerDataVO;
+import com.hust.keyRD.commons.vo.mapper.UserInnerDataVOMapper;
 import com.hust.keyRD.system.api.service.FabricService;
+import com.hust.keyRD.system.dao.ChannelDataAuthorityDao;
 import com.hust.keyRD.system.file.model.FileModel;
 import com.hust.keyRD.system.file.service.FileService;
 import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.system.service.*;
@@ -29,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -48,6 +55,8 @@ public class DataController {
     private FileService fileService;
     @Resource
     private ChannelDataAuthorityService channelDataAuthorityService;
+    @Resource
+    private ChannelDataAuthorityDao channelDataAuthorityDao;
 
 
     //上传文件
@@ -237,7 +246,7 @@ public class DataController {
     
     // 获取channel间数据
     // 只获取当前用户可pull的其他channel的数据
-    @ApiOperation("获取当前用户可pull的其他channel的数据")
+    @ApiOperation("获取当前用户可pull的其他channel的文件")
     @GetMapping("/data/getInterChannelData")
     public CommonResult<List<DataSample>> getInterChannelData(HttpServletRequest httpServletRequest){
         // 从 http 请求头中取出 token
@@ -248,35 +257,16 @@ public class DataController {
         return new CommonResult<>(200,"success", interChannelPullDataList);
     }
 
-    // 获取当前channel的数据
+    // 获取当前channel的文件
     // 除对每个文件增删改查外，还能进行文件push到其他channel的权限
-    public CommonResult getCurrentChannelData(HttpServletRequest httpServletRequest){
+    @ApiOperation("获取当前channel的文件 除对每个文件增删改查外，还能进行文件push到其他channel的权限")
+    @GetMapping("/data/getCurrentChannelData")
+    public CommonResult<List<UserInnerDataVO>> getCurrentChannelData(HttpServletRequest httpServletRequest){
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
-        List<DataAuthority> list = dataAuthorityService.findDataAuthorityByUserId(userId);//获取该用户的所有权限
-        List<DataUserAuthorityVO> result = new ArrayList<>();
-        Set<Integer> set = new HashSet<>();
-        for (int i = 0; i < list.size(); i++) {
-            DataUserAuthorityVO temp = new DataUserAuthorityVO();
-            Integer dataSampleId = list.get(i).getDataSampleId();
-            if (!set.contains(dataSampleId)) {
-                set.add(dataSampleId);
-                DataSample dataSample = dataService.findDataById(dataSampleId);
-                Channel channel = channelService.findChannelById(dataSample.getChannelId());
-                temp.setDataSample(dataSample);
-                temp.setChannelName(channel.getChannelName());
-                Set<Integer> s = new HashSet<>();
-                for (int j = 0; j < list.size(); j++) {
-                    if (list.get(j).getDataSampleId().equals(dataSampleId)) {
-                        s.add(list.get(j).getAuthorityKey());
-                    }
-                }
-                temp.setAuthoritySet(s);
-                result.add(temp);
-            }
-        }
-        return new CommonResult<>(200, "获取该用户所有文件权限列表成功", result);
+        List<UserInnerDataVO> userInnerDataVOList = dataService.getCurrentChannelData(userId);
+        return new CommonResult<>(200, "success", userInnerDataVOList);
     }
 //
 //    // 当前用户将channelId的文件dataId  pull到用户所在的channel
@@ -288,6 +278,11 @@ public class DataController {
 //    public CommonResult pushData(Long dataId, Long channelId){
 //
 //    }
+    
+    // 中心链跨链权限管理 分为push权限和pull权限
+    // 获取user列表
+    // 获取file列表
+    // 获取channel列表
 
     //根据文件id对文件内容进行更新
     @CheckToken
