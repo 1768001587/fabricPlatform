@@ -27,7 +27,6 @@ public class AllDataUserAuthorityVO {
      * @return
      */
     public static Set<Integer> stringToSet(String authSetStr){
-//        String[] strings = authSetStr.split(",");
         if(authSetStr == null || authSetStr.isEmpty()){
             return new HashSet<>();
         }

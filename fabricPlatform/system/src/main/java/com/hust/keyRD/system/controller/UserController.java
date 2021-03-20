@@ -3,10 +3,12 @@ package com.hust.keyRD.system.controller;
 import cn.hutool.json.JSONObject;
 import com.auth0.jwt.JWT;
 import com.hust.keyRD.commons.entities.DataAuthority;
+import com.hust.keyRD.commons.entities.SharedDataAuthority;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.commons.vo.UserChannelVO;
 import com.hust.keyRD.system.service.ChannelService;
 import com.hust.keyRD.system.service.DataAuthorityService;
+import com.hust.keyRD.system.service.SharedDataAuthorityService;
 import lombok.extern.slf4j.Slf4j;
 import com.hust.keyRD.commons.entities.CommonResult;
 import com.hust.keyRD.commons.entities.User;
@@ -33,6 +35,8 @@ public class UserController{
     private ChannelService channelService;
     @Resource
     private DataAuthorityService dataAuthorityService;
+    @Resource
+    private SharedDataAuthorityService sharedDataAuthorityService;
     //登录
     @PostMapping(value = "/user/login")
     @LoginToken
@@ -41,6 +45,9 @@ public class UserController{
         boolean result = userService.login(user);
         if(result) {
             User uresult = userService.findUserByUsername(user.getUsername());
+            if(uresult.getIsAdmin()==1){
+                return new CommonResult<>(500,"您不是普通用户，请选择正确的登录方式",null);
+            }
             String token = JwtUtil.createJWT(Integer.MAX_VALUE, uresult);
             String channelName = channelService.findChannelById(uresult.getChannelId()).getChannelName();
             jsonObject.put("user", uresult);
@@ -102,6 +109,7 @@ public class UserController{
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
+        //System.out.println("userId"+userId);
         Integer sharedDataId = Integer.valueOf(params.get("sharedDataId"));//授权文件Id
         List<User> users = userService.getAllUser();
         List<UserChannelVO> result  = new ArrayList<>();
@@ -113,7 +121,15 @@ public class UserController{
                 dataAuthority.setDataSampleId(sharedDataId);
                 dataAuthority.setAuthorityKey(1);
                 Integer count = dataAuthorityService.checkDataAuthority(dataAuthority);
-                if(count==0){//之前没有此权限
+                SharedDataAuthority sharedDataAuthority = new SharedDataAuthority();
+                sharedDataAuthority.setShareUserId(userId);
+                sharedDataAuthority.setSharedUserId(user.getId());
+                sharedDataAuthority.setSharedDataId(sharedDataId);
+                sharedDataAuthority.setAuthorityKey(1);//这里暂时写死
+                Integer count2 = sharedDataAuthorityService.checkSharedData(sharedDataAuthority);
+                //System.out.println("count"+count);
+                //System.out.println("count2"+count2);
+                if(count==0&&count2==0){//之前没有此权限  两个表都没有权限
                     UserChannelVO userChannelVO = new UserChannelVO();
                     userChannelVO.setUser(users.get(i));
                     userChannelVO.setChannelName(channelService.findChannelById(users.get(i).getChannelId()).getChannelName());

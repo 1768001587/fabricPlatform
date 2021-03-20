@@ -18,14 +18,6 @@ import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ComponentScan
-@SpringBootConfiguration
-@EnableAutoConfiguration
-//@AutoConfigureMybatis
-@Import(value = ChannelAuthorityServiceImpl.class)
-//@MapperScan(value = "com.hust.keyRD.system.dao")
-//@EnableFeignClients("com.hust.keyRD.system.api.feign")
-@ComponentScan({"com.hust.keyRD.system", "com.hust.keyRD.commons"})
 class ChannelAuthorityServiceImplTest {
 
     @Autowired
