@@ -10,6 +10,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DataSample implements Serializable {
+    
     private Integer id;
     private Integer channelId;
     private String mongoId;
