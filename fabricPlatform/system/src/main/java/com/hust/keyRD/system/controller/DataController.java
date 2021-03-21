@@ -1,26 +1,20 @@
 package com.hust.keyRD.system.controller;
 
 import com.auth0.jwt.JWT;
-import com.hust.keyRD.commons.Dto.PushDataInfoDto;
-import com.hust.keyRD.commons.Dto.UserInnerDataDto;
 import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.commons.exception.mongoDB.MongoDBException;
 import com.hust.keyRD.commons.utils.JwtUtil;
 import com.hust.keyRD.commons.utils.MD5Util;
 import com.hust.keyRD.commons.vo.UserInnerDataVO;
-import com.hust.keyRD.commons.vo.mapper.UserInnerDataVOMapper;
 import com.hust.keyRD.system.api.service.FabricService;
 import com.hust.keyRD.system.dao.ChannelDataAuthorityDao;
 import com.hust.keyRD.system.file.model.FileModel;
 import com.hust.keyRD.system.file.service.FileService;
-import io.jsonwebtoken.Claims;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.system.service.*;
-import com.hust.keyRD.commons.utils.TxtUtil;
 import com.hust.keyRD.commons.vo.DataUserAuthorityVO;
 import org.bson.types.Binary;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,11 +25,9 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -280,9 +272,15 @@ public class DataController {
 //    }
     
     // 中心链跨链权限管理 分为push权限和pull权限
-    // 获取user列表
-    // 获取file列表
-    // 获取channel列表
+
+    // 获取data列表
+    @ApiOperation("获取以channel分类的data列表")
+    @GetMapping("/data/getGroupedDataList")
+    public CommonResult<Map<Channel, List<DataSample>>> getGroupedDataList(){
+        Map<Channel, List<DataSample>> groupedDataList = dataService.getGroupedDataList();
+        return new CommonResult<>(200, "success", groupedDataList);
+    }
+
 
     //根据文件id对文件内容进行更新
     @CheckToken

@@ -9,6 +9,7 @@ import com.hust.keyRD.commons.vo.mapper.UserInnerDataVOMapper;
 import com.hust.keyRD.system.dao.DataDao;
 import com.hust.keyRD.commons.entities.DataSample;
 import com.hust.keyRD.system.service.ChannelDataAuthorityService;
+import com.hust.keyRD.system.service.ChannelService;
 import com.hust.keyRD.system.service.DataService;
 import com.hust.keyRD.system.service.UserService;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,8 @@ public class DataServiceImpl implements DataService
     private DataService dataService;
     @Resource
     private ChannelDataAuthorityService channelDataAuthorityService;
+    @Resource
+    private ChannelService channelService;
 
     @Override
     public void uploadFile(DataSample dataSample) {
@@ -87,5 +90,19 @@ public class DataServiceImpl implements DataService
             }
         });
         return userInnerDataVOList;
+    }
+
+
+
+    @Override
+    public Map<Channel, List<DataSample>> getGroupedDataList() {
+        List<DataSample> allData = getDataList();
+        Map<Integer, List<DataSample>> collect = allData.stream().collect(Collectors.groupingBy(DataSample::getChannelId));
+        Map<Channel, List<DataSample>> result = new HashMap<>();
+        collect.forEach((k,v) ->{
+            Channel channel = channelService.findChannelById(k);
+            result.put(channel, v);
+        });
+        return result;
     }
 }

@@ -2,9 +2,13 @@ package com.hust.keyRD.system.service.impl;
 
 import com.hust.keyRD.commons.Dto.UserChannelAuthDto;
 import com.hust.keyRD.commons.Dto.UserInnerDataDto;
+import com.hust.keyRD.commons.entities.Channel;
+import com.hust.keyRD.commons.entities.DataSample;
+import com.hust.keyRD.commons.entities.User;
 import com.hust.keyRD.commons.vo.UserInnerDataVO;
 import com.hust.keyRD.system.service.ChannelAuthorityService;
 import com.hust.keyRD.system.service.DataService;
+import com.hust.keyRD.system.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -25,12 +30,22 @@ class ChannelAuthorityServiceImplTest {
 
     @Autowired
     private DataService dataService;
-    
+
+    @Autowired
+    private UserService userService;
+
     @Test
     void getUserInnerDataListByUserIdAndChannelIdTest(){
-        Integer userId = 131, channelId = 2;
-        List<UserInnerDataVO> currentChannelData = dataService.getCurrentChannelData(userId);
-        currentChannelData.forEach(System.out::println);
+        Map<Channel, List<User>> groupedUserList = userService.getGroupedUserList();
+        groupedUserList.forEach((k,v)->{
+            System.out.println(k);
+            v.forEach(System.out::println);
+        });
+        Map<Channel, List<DataSample>> groupedDataList = dataService.getGroupedDataList();
+        groupedDataList.forEach((k,v) ->{
+            System.out.println(k);
+            v.forEach(System.out::println);
+        });
     }
     
 //    @Autowired

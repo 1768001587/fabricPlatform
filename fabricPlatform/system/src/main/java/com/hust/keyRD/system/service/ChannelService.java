@@ -11,4 +11,5 @@ public interface ChannelService {
     Channel findChannelById(Integer channelId);
     //根据channel名称获取channel
     Channel findChannelByName(String channelName);
+
 }
