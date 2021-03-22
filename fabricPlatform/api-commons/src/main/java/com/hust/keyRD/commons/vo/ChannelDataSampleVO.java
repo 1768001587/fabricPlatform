@@ -1,16 +1,17 @@
-package com.hust.keyRD.commons.entities;
+package com.hust.keyRD.commons.vo;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import java.io.Serializable;
+
 import java.sql.Timestamp;
 
+/**
+ * @program: system
+ * @description: 域间可pull的文件信息
+ * @author: zwh
+ * @create: 2021-03-20 13:37
+ **/
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class DataSample implements Serializable {
-    
+public class ChannelDataSampleVO {
     private Integer id;
     private Integer channelId;
     private String mongoId;
@@ -20,4 +21,6 @@ public class DataSample implements Serializable {
     private Integer originUserId;
     private Timestamp createdTime;
     private Timestamp modifiedTime;
+    // pull / push
+    private String type;
 }

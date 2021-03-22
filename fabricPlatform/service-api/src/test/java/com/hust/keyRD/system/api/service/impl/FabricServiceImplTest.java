@@ -37,7 +37,7 @@ class FabricServiceImplTest {
 
     @Test
     void testTraceBackward() {
-        String fileId = "file1";
+        String fileId = "file9";
         String txId = "28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba";
         Record record = fabricService.traceBackward(fileId,"channel1");
         System.out.println(record);

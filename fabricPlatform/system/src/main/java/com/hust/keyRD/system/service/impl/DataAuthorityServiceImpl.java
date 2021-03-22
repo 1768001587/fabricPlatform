@@ -117,7 +117,7 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
             allDataUserAuthorityVO.setChannelName(channelService.findChannelById(dataSample.getChannelId()).getChannelName());
             allDataUserAuthorityVO.setDataId(tmp.get(1));
             allDataUserAuthorityVO.setDataName(dataSample.getDataName());
-            allDataUserAuthorityVO.setDataAuthoritySet(authoritySet);
+            allDataUserAuthorityVO.setChannelAuthoritySet(authoritySet);
             result.add(allDataUserAuthorityVO);
         }
         return result;

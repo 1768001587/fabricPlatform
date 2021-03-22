@@ -2,16 +2,14 @@ package com.hust.keyRD.system.controller;
 
 import cn.hutool.json.JSONObject;
 import com.auth0.jwt.JWT;
-import com.hust.keyRD.commons.entities.DataAuthority;
-import com.hust.keyRD.commons.entities.SharedDataAuthority;
+import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.commons.myAnnotation.CheckToken;
 import com.hust.keyRD.commons.vo.UserChannelVO;
 import com.hust.keyRD.system.service.ChannelService;
 import com.hust.keyRD.system.service.DataAuthorityService;
 import com.hust.keyRD.system.service.SharedDataAuthorityService;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import com.hust.keyRD.commons.entities.CommonResult;
-import com.hust.keyRD.commons.entities.User;
 import com.hust.keyRD.commons.myAnnotation.LoginToken;
 import com.hust.keyRD.system.service.UserService;
 import com.hust.keyRD.commons.utils.JwtUtil;
@@ -138,5 +136,12 @@ public class UserController{
             }
         }
         return new CommonResult<>(200,"获取除了该用户以外和不拥有该文件权限的所有用户及其所在的channel名称",result);
+    }
+
+    @ApiOperation("获取 以channel进行分类的user列表")
+    @GetMapping("/user/getGroupedUserList")
+    public CommonResult<Map<Channel, List<User>>> getGroupedUserList(){
+        Map<Channel, List<User>> result = userService.getGroupedUserList();
+        return new CommonResult<>(200, "success", result);
     }
 }

@@ -5,3 +5,6 @@
 - ~~mongo~~
 - ~~swagger~~
 - event
+
+管理员只能管理其他channel的用户权限
+只有两个channel，channelId写死 3-adminChannelId

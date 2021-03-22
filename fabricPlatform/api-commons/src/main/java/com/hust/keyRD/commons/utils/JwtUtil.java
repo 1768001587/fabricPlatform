@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import com.hust.keyRD.commons.entities.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,6 +130,13 @@ public class JwtUtil {
             return true;
         }
         return false;
+    }
+
+    public static Integer getUserId(HttpServletRequest httpServletRequest){
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JwtUtil.parseJWT(token).get("id", Integer.class);
+        return userId;
     }
 
 }
