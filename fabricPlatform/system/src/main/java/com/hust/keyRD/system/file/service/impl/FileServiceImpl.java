@@ -49,4 +49,9 @@ public class FileServiceImpl implements FileService {
         list = page.getContent();
         return list;
     }
+
+    @Override
+    public FileModel copyFile(FileModel file) {
+        return null;
+    }
 }

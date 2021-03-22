@@ -32,4 +32,11 @@ public interface FileService {
      * @return
      */
     List<FileModel> listFilesByPage(int pageIndex, int pageSize);
+
+    /**
+     * 复制文件 
+     * @param file
+     * @return
+     */
+    FileModel copyFile(FileModel file);
 }
