@@ -1,7 +1,10 @@
 package com.hust.keyRD.system.dao;
 
 import com.hust.keyRD.commons.Dto.PushDataInfoDto;
+import com.hust.keyRD.commons.entities.Channel;
+import com.hust.keyRD.commons.entities.ChannelDataAuthority;
 import com.hust.keyRD.commons.entities.DataSample;
+import com.hust.keyRD.commons.vo.ChannelDataAuthorityVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -15,6 +18,12 @@ import java.util.List;
  **/
 @Mapper
 public interface ChannelDataAuthorityDao {
+    
+    void create(ChannelDataAuthority channelDataAuthority);
+    
+    
+
+    List<ChannelDataAuthorityVO> getAuthorityListByType(Integer type);
 
     /**
      * 获取当前用户可pull的其他域的文件list

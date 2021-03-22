@@ -5,7 +5,9 @@ import com.hust.keyRD.commons.Dto.UserInnerDataDto;
 import com.hust.keyRD.commons.entities.Channel;
 import com.hust.keyRD.commons.entities.DataSample;
 import com.hust.keyRD.commons.entities.User;
+import com.hust.keyRD.commons.vo.ChannelDataAuthorityVO;
 import com.hust.keyRD.commons.vo.UserInnerDataVO;
+import com.hust.keyRD.system.dao.ChannelDataAuthorityDao;
 import com.hust.keyRD.system.service.ChannelAuthorityService;
 import com.hust.keyRD.system.service.DataService;
 import com.hust.keyRD.system.service.UserService;
@@ -17,6 +19,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.core.mapping.TextScore;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -33,6 +36,9 @@ class ChannelAuthorityServiceImplTest {
 
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private ChannelDataAuthorityDao channelDataAuthorityDao;
 
     @Test
     void getUserInnerDataListByUserIdAndChannelIdTest(){
@@ -46,6 +52,14 @@ class ChannelAuthorityServiceImplTest {
             System.out.println(k);
             v.forEach(System.out::println);
         });
+    }
+    
+    @Test
+    void getAuthorityListByTypeTest(){
+        List<ChannelDataAuthorityVO> authorityListByType = channelDataAuthorityDao.getAuthorityListByType(1);
+        System.out.println(authorityListByType);
+        authorityListByType = channelDataAuthorityDao.getAuthorityListByType(2);
+        System.out.println(authorityListByType);
     }
     
 //    @Autowired

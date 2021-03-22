@@ -5,7 +5,9 @@ import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.commons.exception.mongoDB.MongoDBException;
 import com.hust.keyRD.commons.utils.JwtUtil;
 import com.hust.keyRD.commons.utils.MD5Util;
+import com.hust.keyRD.commons.vo.DataSampleVO;
 import com.hust.keyRD.commons.vo.UserInnerDataVO;
+import com.hust.keyRD.commons.vo.mapper.DataSampleVOMapper;
 import com.hust.keyRD.system.api.service.FabricService;
 import com.hust.keyRD.system.dao.ChannelDataAuthorityDao;
 import com.hust.keyRD.system.file.model.FileModel;
@@ -28,6 +30,7 @@ import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -240,13 +243,15 @@ public class DataController {
     // 只获取当前用户可pull的其他channel的数据
     @ApiOperation("获取当前用户可pull的其他channel的文件")
     @GetMapping("/data/getInterChannelData")
-    public CommonResult<List<DataSample>> getInterChannelData(HttpServletRequest httpServletRequest){
+    public CommonResult<List<DataSampleVO>> getInterChannelData(HttpServletRequest httpServletRequest){
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JwtUtil.parseJWT(token).get("id", Integer.class);
         User user = userService.findUserById(userId);
         List<DataSample> interChannelPullDataList = channelDataAuthorityService.getInterChannelPullData(user.getId(), user.getChannelId());
-        return new CommonResult<>(200,"success", interChannelPullDataList);
+        List<DataSampleVO> dataSampleVOList = interChannelPullDataList.parallelStream().map(DataSampleVOMapper.INSTANCE::toDataSampleVO).peek(dataSampleVO -> dataSampleVO.setChannelName(channelService.findChannelById(dataSampleVO.getChannelId()).getChannelName())).collect(Collectors.toList());
+
+        return new CommonResult<>(200,"success", dataSampleVOList);
     }
 
     // 获取当前channel的文件
@@ -258,6 +263,9 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
         List<UserInnerDataVO> userInnerDataVOList = dataService.getCurrentChannelData(userId);
+        userInnerDataVOList.parallelStream().forEach(userInnerDataVO -> {
+            userInnerDataVO.setChannelName(channelService.findChannelById(userInnerDataVO.getChannelId()).getChannelName());
+        });
         return new CommonResult<>(200, "success", userInnerDataVOList);
     }
 //

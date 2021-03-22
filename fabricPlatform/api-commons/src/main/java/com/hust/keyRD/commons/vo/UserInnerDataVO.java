@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class UserInnerDataVO {
     private Integer id;
     private Integer channelId;
+    private String channelName;
     private String mongoId;
     private String dataName;
     private String dataType;

@@ -4,6 +4,7 @@ package com.hust.keyRD.system.service;
 import com.hust.keyRD.commons.Dto.PushDataInfoDto;
 import com.hust.keyRD.commons.entities.ChannelDataAuthority;
 import com.hust.keyRD.commons.entities.DataSample;
+import com.hust.keyRD.commons.vo.ChannelDataAuthorityVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -51,5 +52,15 @@ public interface ChannelDataAuthorityService {
      * @return
      */
     Integer checkPushAuthority(Integer userId, Integer dataId, Integer channelId);
+    
+    
+    ChannelDataAuthority addPullAuthority(ChannelDataAuthority channelDataAuthority);
+
+    ChannelDataAuthority addPushAuthority(ChannelDataAuthority channelDataAuthority);
+    
+    List<ChannelDataAuthorityVO> getPullAuthorityList();
+
+    List<ChannelDataAuthorityVO> getPushAuthorityList();
+    
 }
 
