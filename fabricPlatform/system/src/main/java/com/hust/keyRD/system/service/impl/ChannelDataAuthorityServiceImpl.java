@@ -24,4 +24,14 @@ public class ChannelDataAuthorityServiceImpl implements ChannelDataAuthorityServ
     public List<PushDataInfoDto> getInnerChannelPushData(Integer userId, Integer channelId) {
         return channelDataAuthorityDao.getInnerChannelPushData(userId, channelId);
     }
+
+    @Override
+    public Integer checkPullAuthority(Integer userId, Integer dataId, Integer channelId) {
+        return channelDataAuthorityDao.checkPullAuthority(userId,dataId,channelId);
+    }
+
+    @Override
+    public Integer checkPushAuthority(Integer userId, Integer dataId, Integer channelId) {
+        return channelDataAuthorityDao.checkPushAuthority(userId,dataId,channelId);
+    }
 }

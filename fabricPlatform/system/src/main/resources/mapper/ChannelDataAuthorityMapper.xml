@@ -47,5 +47,15 @@
                  join channel on channel.id = channel_data_authority.channel_id;
     </select>
 
+    <select id="checkPullAuthority" parameterType="DataSample" resultType="java.lang.Integer">
+        select count(*) from channel_data_authority
+        where user_id = #{userId} and data_id= #{dataId} and channel_id = #{channelId} and type=2;
+    </select>
+
+    <select id="checkPushAuthority" parameterType="DataSample" resultType="java.lang.Integer">
+        select count(*) from channel_data_authority
+        where user_id = #{userId} and data_id= #{dataId} and channel_id = #{channelId} and type=1;
+    </select>
+
 
 </mapper>

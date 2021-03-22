@@ -261,15 +261,91 @@ public class DataController {
         return new CommonResult<>(200, "success", userInnerDataVOList);
     }
 //
-//    // 当前用户将channelId的文件dataId  pull到用户所在的channel
-//    public CommonResult pullData(Long dataId, Long channelId){
+    // 当前用户将channelId的文件dataId  pull到用户所在的channel
+    @ApiOperation("当前用户将channelId的文件dataId  pull到用户所在的channel")
+    @PostMapping("/data/pullData")
+    public CommonResult pullData(@RequestBody Map<String, String> params,HttpServletRequest httpServletRequest){
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();
+        Integer dataId = Integer.valueOf(params.get("dataId"));
+        Integer channelId = Integer.valueOf(params.get("channelId"));
+        User user = userService.findUserById(userId);
+        Integer checkAuthorityCount = channelDataAuthorityService.checkPullAuthority(userId,dataId,channelId);
+        if(checkAuthorityCount>=1){
+            Optional<FileModel> fileModel = fileService.getFileById(dataService.findDataById(dataId).getMongoId());
+            FileModel newFileModel = fileService.copyFile(fileModel.get());//获取新文件,已经保存至mangodb中
+            //将新文件保存至数据库，文件channelId为该用户所在的channelId
+            DataSample newDataSample = new DataSample();
+            newDataSample.setChannelId(user.getChannelId());
+            newDataSample.setMongoId(newFileModel.getId());
+            newDataSample.setDataName(newFileModel.getName());
+            newDataSample.setDataType(newFileModel.getName().substring(newFileModel.getName().lastIndexOf(".")) + "文件");
+            //初次创建时将初始时间和修改时间写成一样
+            newDataSample.setCreatedTime(new Timestamp(new Date().getTime()));
+            newDataSample.setModifiedTime(new Timestamp(new Date().getTime()));
+            //文件大小以KB作为单位
+            // 首先先将.getSize()获取的Long转为String 单位为B
+            Double size = Double.parseDouble(String.valueOf(newFileModel.getSize()));
+            BigDecimal b = new BigDecimal(size);
+            // 2表示2位 ROUND_HALF_UP表明四舍五入，
+            size = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            // 此时size就是保留两位小数的浮点数
+            newDataSample.setDataSize(size);
+            newDataSample.setOriginUserId(userId);
+            dataService.uploadFile(newDataSample);//上传至数据库
+            //写入上传者权限
+            dataAuthorityService.addMasterDataAuthority(userId, newDataSample.getId());
+            //TODO 以下需要做上链操作
+
+            return new CommonResult<>(200, "success", newDataSample);
+        }else {
+            return new CommonResult<>(400, "您没有拉取该文件的权限", null);
+        }
+
+    }
 //
-//    }
-//
-//    // 当前用户将用户所在channel的dataId push到channelId上
-//    public CommonResult pushData(Long dataId, Long channelId){
-//
-//    }
+    // 当前用户将用户所在channel的dataId push到channelId上
+    @ApiOperation("当前用户将用户所在channel的dataId push到channelId上")
+    @PostMapping("/data/pushData")
+    public CommonResult pushData(@RequestBody Map<String, String> params,HttpServletRequest httpServletRequest){
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();
+        Integer dataId = Integer.valueOf(params.get("dataId"));
+        Integer channelId = Integer.valueOf(params.get("channelId"));
+        User user = userService.findUserById(userId);
+        Integer checkAuthorityCount = channelDataAuthorityService.checkPushAuthority(userId,dataId,channelId);
+        if(checkAuthorityCount>=1){
+            Optional<FileModel> fileModel = fileService.getFileById(dataService.findDataById(dataId).getMongoId());
+            FileModel newFileModel = fileService.copyFile(fileModel.get());//获取新文件,已经保存至mangodb中
+            //将新文件保存至数据库，文件channelId为对应channelId
+            DataSample newDataSample = new DataSample();
+            newDataSample.setChannelId(channelId);
+            newDataSample.setMongoId(newFileModel.getId());
+            newDataSample.setDataName(newFileModel.getName());
+            newDataSample.setDataType(newFileModel.getName().substring(newFileModel.getName().lastIndexOf(".")) + "文件");
+            //初次创建时将初始时间和修改时间写成一样
+            newDataSample.setCreatedTime(new Timestamp(new Date().getTime()));
+            newDataSample.setModifiedTime(new Timestamp(new Date().getTime()));
+            //文件大小以KB作为单位
+            // 首先先将.getSize()获取的Long转为String 单位为B
+            Double size = Double.parseDouble(String.valueOf(newFileModel.getSize()));
+            BigDecimal b = new BigDecimal(size);
+            // 2表示2位 ROUND_HALF_UP表明四舍五入，
+            size = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+            // 此时size就是保留两位小数的浮点数
+            newDataSample.setDataSize(size);
+            newDataSample.setOriginUserId(userId);
+            dataService.uploadFile(newDataSample);//上传至数据库
+            //不写入上传者权限！
+            //TODO 以下需要做上链操作
+
+            return new CommonResult<>(200, "success", newDataSample);
+        }else {
+            return new CommonResult<>(400, "您没有上传该文件到对于通道的权限", null);
+        }
+    }
     
     // 中心链跨链权限管理 分为push权限和pull权限
 

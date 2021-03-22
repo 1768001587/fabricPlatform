@@ -32,4 +32,23 @@ public interface ChannelDataAuthorityDao {
      * @return
      */
     List<PushDataInfoDto> getInnerChannelPushData(@Param("userId")Integer userId, @Param("channelId") Integer channelId);
+
+
+    /**
+     *
+     * @param userId 拉取者的id
+     * @param dataId 拉取的文件id
+     * @param channelId 拉取文件id所在的channelId
+     * @return
+     */
+    Integer checkPullAuthority(@Param("userId")Integer userId, @Param("dataId")Integer dataId, @Param("channelId")Integer channelId);
+
+    /**
+     *
+     * @param userId 上传者id
+     * @param dataId 上传的文件id
+     * @param channelId 上传到对应的channelid
+     * @return
+     */
+    Integer checkPushAuthority(@Param("userId")Integer userId, @Param("dataId")Integer dataId, @Param("channelId")Integer channelId);
 }
