@@ -172,8 +172,9 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public String crossAccess(String peers, String channelName, String ccName, String fcn, List<String> args) {
-        Response response = fabricFeignService.crossAccess(peers, channelName, ccName, fcn, args);
+    public String crossAccess(String requester, String listenPeers, String peers,  String channelName, String ccName,
+                              String fcn, List<String> args) {
+        Response response = fabricFeignService.crossAccess(requester,listenPeers,peers,channelName,ccName,fcn,args);
         return response.body().toString();
     }
 
@@ -489,6 +490,79 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public Boolean revokeInnerChannelPush(String fileId, String role, String username) {
         return revokeInnerChannelPull(fileId, role, username);
+    }
+
+    @Override
+    public String pullData(String requester, String dataId, String fileHash,String requesterChannelName, String targetChannelName) {
+        String peers = getPeers(requester);
+        String channelUsername = getChannelUsername(requester);
+        String fcn = "srcAuditRecord";
+        String ccName = "record";
+        List<String> args = new ArrayList<String>(){{
+            add(fileHash);
+            add(requesterChannelName);
+            add(channelUsername);
+            add(targetChannelName);
+            add(dataId);
+            add("push");
+        }};
+        String response = fabricFeignService.pullFileAcrossChannel(requester,peers,peers,targetChannelName,ccName,fcn,args);
+        if(response.contains("hash_data")){
+            return response;
+        }else{
+            throw new FabricException("pullData failed! info: " + response);
+        }
+    }
+
+    @Override
+    public String pushData(String requester, String dataId,String fileHash, String requesterChannelName, String targetChannelName) {
+        String peers = getPeers(requester);
+        String channelUsername = getChannelUsername(requester);
+        String fcn = "srcAuditRecord";
+        String ccName = "record";
+        List<String> args = new ArrayList<String>(){{
+            add(fileHash);
+            add(requesterChannelName);
+            add(channelUsername);
+            add(targetChannelName);
+            add(dataId);
+            add("push");
+        }};
+        String res = crossAccess(requester, peers, peers, requesterChannelName, ccName, fcn, args);
+        System.out.println(res);
+        String txId;
+        try {
+            // 获取上链事务id
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(res);
+            txId = root.path("tx_id").asText();
+        }catch (IOException e){
+            throw new FabricException("push失败，跨链失败：" + res);
+        }
+        // 二次上链
+        // 目标域上链
+        args.add(txId);
+        pushTargetChannelDataSys(targetChannelName,args);
+        // 发起域第二次上链
+        String srcSyncRecord = invokeChaincode(requester, peers, requesterChannelName, ccName, "srcSyncRecord", args);
+        System.out.println(srcSyncRecord);
+        return srcSyncRecord;
+    }
+    
+    // push时目标域二次上链
+    private String pushTargetChannelDataSys(String targetChannelName, List<String> args){
+        String requester;
+        if(targetChannelName.equals("channel1")){
+            requester = "org2_user";
+        }else{
+            requester = "org5_user";
+        }
+        String peers = getPeers(requester);
+        String fcn = "dstSyncRecord";
+        String ccName = "record";
+        String res = invokeChaincode(requester,peers,targetChannelName,ccName,fcn,args);
+        System.out.println(res);
+        return res;
     }
 
 

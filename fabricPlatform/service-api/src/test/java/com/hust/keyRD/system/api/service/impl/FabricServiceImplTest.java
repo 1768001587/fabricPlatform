@@ -208,4 +208,16 @@ class FabricServiceImplTest {
         response = fabricService.getCentrePolicy("data3");
         System.out.println(response);
     }
+
+    @Test
+    void pushData() {
+        String s = fabricService.pushData("org3_user", "data3", "hash", "channel1", "channel2");
+        System.out.println(s);
+    }
+
+    @Test
+    void pullData() {
+        String s = fabricService.pullData("org5_user", "data1", "hash", "channel2", "channel1");
+        System.out.println(s);
+    }
 }

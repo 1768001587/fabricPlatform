@@ -1,6 +1,7 @@
 package com.hust.keyRD.system.api.service;
 
 import com.hust.keyRD.commons.entities.Record;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -110,7 +111,7 @@ public interface FabricService {
      * @return 交易 tx_id
      */
     // TODO: check
-    String crossAccess(String peers, String channelName, String ccName,
+    String crossAccess(String requester, String listenPeers, String peers,  String channelName, String ccName,
                        String fcn, List<String> args);
     
 
@@ -314,6 +315,11 @@ public interface FabricService {
      * @return
      */
     Boolean revokeInnerChannelPush(String fileId, String role, String username);
+    
+    String pullData(String requester, String dataId, String fileHash,String requesterChannelName, String targetChannelName);
+    
+    
+    String pushData(String requester, String dataId, String fileHash,String requesterChannelName, String targetChannelName);
     
     
 }
