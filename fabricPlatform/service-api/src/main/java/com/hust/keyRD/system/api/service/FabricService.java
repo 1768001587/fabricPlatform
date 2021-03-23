@@ -244,7 +244,7 @@ public interface FabricService {
      */
 
     String getPolicy(String requester, String channelName, String obj, String opt);
-
+    
     /**
      * 查询权限 channel1上文件的read或modify权限  由于权限管理由中心链完成，所以在本例中使用中心链上的org1来查询
      *
@@ -255,6 +255,14 @@ public interface FabricService {
      */
     // TODO: check
     String getPolicy(String fileId, String channelName, String opt);
+
+
+    /**
+     * 获取中心链上记录的有关文件share的权限
+     * @param fileId
+     * @return
+     */
+    String getCentrePolicy(String fileId);
 
     /**
      * 根据交易号查询结构体信息
@@ -268,4 +276,44 @@ public interface FabricService {
 
     String argsTest(String peers, String channelName, String ccName,
                     String fcn, List<String> args);
+
+
+    /**
+     * 授予域间pull权限
+     * @param fileId
+     * @param role
+     * @param username
+     * @return
+     */
+    Boolean grantInnerChannelPull(String fileId, String role,String username);
+
+    /**
+     * 授予域间push权限 由于链码没有区分，故与pull操作相同
+     * @param fileId
+     * @param role
+     * @param username
+     * @return
+     */
+    Boolean grantInnerChannelPush(String fileId, String role,String username);
+
+
+    /**
+     * 撤销域间pull权限
+     * @param fileId
+     * @param role
+     * @param username
+     * @return
+     */
+    Boolean revokeInnerChannelPull(String fileId, String role, String username);
+
+    /**
+     * 撤销域间push权限 底层与撤销pull权限一样
+     * @param fileId
+     * @param role
+     * @param username
+     * @return
+     */
+    Boolean revokeInnerChannelPush(String fileId, String role, String username);
+    
+    
 }
