@@ -399,6 +399,21 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
+    public String getCentrePolicy(String fileId) {
+        String requester = "org1_admin";
+        String peers = getPeers(requester);
+        String channelName = "centre";
+        String ccName = "audit";
+        List<String> args = new ArrayList<String>(){{
+            add(fileId);
+            add("share");
+        }};
+        String fcn = "GetPol";
+        Response response = fabricFeignService.invokeChaincodeTest(requester, peers, channelName, ccName, fcn, args);
+        return response.body().toString();
+    }
+
+    @Override
     public String queryAuthority(String txId, String order) {
         Response response = fabricFeignService.queryAuthority(txId, order);
         return response.body().toString();
@@ -407,6 +422,73 @@ public class FabricServiceImpl implements FabricService {
     @Override
     public String argsTest(String peers, String channelName, String ccName, String fcn, List<String> args) {
         return fabricFeignService.argsTest(peers, channelName, ccName, fcn, args);
+    }
+
+
+    @Override
+    public Boolean grantInnerChannelPull(String fileId, String role,String username){
+        String res = getCentrePolicy(fileId);
+        String requester = "org1_admin";
+        String peers = getPeers(requester);
+        String channelUsername = getChannelUsername(username);
+        String channelName = "centre";
+        String ccName = "audit";
+        String fcn;
+        List<String> args = new ArrayList<String>();
+        if(res.contains("obj")){
+            // 权限已存在，添加用户
+            fcn = "UpdatePolicy";
+            args.add(fileId);
+            args.add("share");
+            args.add("adduser");
+            args.add(role);
+            args.add(channelUsername);
+        }else{
+            // 权限不存在，添加policy
+            fcn = "AddPolicy";
+            args.add(fileId);
+            args.add("share");
+            args.add(role);
+            args.add(channelUsername);
+        }
+        Response response = fabricFeignService.invokeChaincodeTest(requester, peers, channelName, ccName, fcn, args);
+        if(response.body().toString().contains("Success")){
+            return true;
+        }else{
+            throw new FabricException("授权域间权限失败，info:" + response.body().toString());
+        }
+    }
+
+    @Override
+    public Boolean grantInnerChannelPush(String fileId, String role, String username) {
+        return grantInnerChannelPull(fileId,role,username);
+    }
+
+    @Override
+    public Boolean revokeInnerChannelPull(String fileId, String role, String username) {
+        String requester = "org1_admin";
+        String peers = getPeers(requester);
+        String channelUsername = getChannelUsername(username);
+        String channelName = "centre";
+        String ccName = "audit";
+        String fcn = "UpdatePolicy";
+        List<String> args = new ArrayList<String>();
+        args.add(fileId);
+        args.add("share");
+        args.add("deleteuser");
+        args.add(role);
+        args.add(channelUsername);
+        Response response = fabricFeignService.invokeChaincodeTest(requester, peers, channelName, ccName, fcn, args);
+        if(response.body().toString().contains("Success")){
+            return true;
+        }else{
+            throw new FabricException("授权域间权限失败，info:" + response.body().toString());
+        }
+    }
+
+    @Override
+    public Boolean revokeInnerChannelPush(String fileId, String role, String username) {
+        return revokeInnerChannelPull(fileId, role, username);
     }
 
 
@@ -427,4 +509,6 @@ public class FabricServiceImpl implements FabricService {
         char n = requester.charAt(3);
         return prefix + "@org" + n + ".example.com";
     }
+    
+    
 }

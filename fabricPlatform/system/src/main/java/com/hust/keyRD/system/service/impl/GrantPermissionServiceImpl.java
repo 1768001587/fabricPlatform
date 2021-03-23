@@ -57,7 +57,7 @@ public class GrantPermissionServiceImpl implements GrantPermissionService {
                 log.info("授权用户权限失败：invalid AuthorityKey");
                 return false;
         }
-        return fabricService.grantUserPermissionOnFile(fileId, fileChannelName, permission, role, Collections.singletonList(user));
+        return fabricService.grantUserPermissionOnFileInnerChannel("org"+fileChannelId*2+"_admin",fileId, fileChannelName, permission, role, user);
     }
 
     @Override
