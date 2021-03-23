@@ -59,6 +59,8 @@ public class ChannelDataAuthorityController {
         }
         channelDataAuthorityService.addPullAuthority(channelDataAuthority);
         // 区块链添加pull权限
+        //TODO fabric操作
+
         return new CommonResult(200, "success");
     }
 
@@ -74,6 +76,8 @@ public class ChannelDataAuthorityController {
         }
         channelDataAuthorityService.addPushAuthority(channelDataAuthority);
         // 区块链添加pull权限
+        //TODO fabric操作
+
         return new CommonResult(200, "success");
     }
     
@@ -92,6 +96,8 @@ public class ChannelDataAuthorityController {
         }
         channelDataAuthorityService.deleteById(channelDataAuthorityId);
         // 区块链删除权限
+        //TODO fabric操作
+
         return new CommonResult(200,"success");
     }
 
@@ -110,6 +116,8 @@ public class ChannelDataAuthorityController {
         }
         channelDataAuthorityService.deleteById(channelDataAuthorityId);
         // 区块链删除权限
+        //TODO fabric操作
+
         return new CommonResult(200,"success");
     }
     
