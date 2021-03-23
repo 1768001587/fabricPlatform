@@ -32,6 +32,8 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.codec.digest.MessageDigestAlgorithms.MD5;
+
 @Slf4j
 @RestController
 @Api(tags = "文件管理")
@@ -67,6 +69,7 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         Integer originUserId = JWT.decode(token).getClaim("id").asInt();
         User user = userService.findUserById(originUserId);
+        Channel channel = channelService.findChannelById(user.getChannelId());
         Channel dstChannel = channelService.findChannelById(channelId);
         try {
             // 文件保存到mongoDB
@@ -96,27 +99,36 @@ public class DataController {
             log.info("************fabric上传文件操作记录区块链开始*****************");
             String result = "";
             // 1. 权限申请 一次上链
-//            String username = user.getUsername();
-//            String dstChannelName = dstChannel.getChannelName();
-//            String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
-//            String txId = fabricService.applyForCreateFile("null", srcChannelName, username, dstChannelName, dataSample.getId() + "");
-//            log.info("1.创建文件成功 txId: " + txId);
-//            result += "1.创建文件成功 txId: " + txId + "\r\n";
+            String username = user.getUsername();
+            //String dstChannelName = dstChannel.getChannelName();
+            //String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
+            String txId = fabricService.applyForCreateFile(username, channel.getChannelName(),dataSample.hashCode()+"", dataSample.getId() + "");
+            log.info("1.创建文件成功 txId: " + txId);
+            result += "1.创建文件成功 txId: " + txId + "\r\n";
 //            //hash
 //            // 3. 更新链上hash 二次上链
-//            Record record = fabricService.updateForCreateFile(new String(file.getBytes()), srcChannelName,username, dstChannelName, dataSample.getId() + "", txId);
-//            log.info("2. 更新链上hash ： " + record.toString());
-//            result += "2. 更新链上hash ： " + record.toString() + "\r\n";
+            String record = fabricService.updateForCreateFile(username, channel.getChannelName(),dataSample.hashCode()+"", dataSample.getId() + "", txId);
+            log.info("2. 更新链上hash ： " + record);
+            result += "2. 更新链上hash ： " + record + "\r\n";
 //            // 4. 授予用户文件的查改权限
-//            Boolean res = fabricService.grantUserPermissionOnFile(dataSample.getId() + "", dstChannelName, "read", "role1", Collections.singletonList(username));
-//            log.info("3.授予用户文件读取权限：" + res);
-//            result += "3.授予用户文件读取权限：" + res + "\r\n";
-//            res = fabricService.grantUserPermissionOnFile(dataSample.getId() + "", dstChannelName, "modify", "role1", Collections.singletonList(username));
-//            log.info("4.授予用户文件修改权限：" + res);
-//            result += "4.授予用户文件修改权限：" + res + "\r\n";
-//            //写入上传者权限
-//            dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
-//            log.info("************fabric上传文件操作记录区块链结束*****************");
+            Boolean res = false;
+            if(channel.getId()==1){
+                res = fabricService.grantUserPermissionOnFileInnerChannel("org2_admin",dataSample.getId() + "", channel.getChannelName(), "read", "role1", username);
+            }else if(channel.getId()==2){
+                res = fabricService.grantUserPermissionOnFileInnerChannel("org4_admin",dataSample.getId() + "", channel.getChannelName(), "read", "role1", username);
+            }
+           log.info("3.授予用户文件读取权限：" + res);
+            result += "3.授予用户文件读取权限：" + res + "\r\n";
+            if(channel.getId()==1){
+                res = fabricService.grantUserPermissionOnFileInnerChannel("org2_admin",dataSample.getId() + "", channel.getChannelName(), "modify", "role1", username);
+            }else if(channel.getId()==2){
+                res = fabricService.grantUserPermissionOnFileInnerChannel("org4_admin",dataSample.getId() + "", channel.getChannelName(), "modify", "role1", username);
+            }
+           log.info("4.授予用户文件修改权限：" + res);
+           result += "4.授予用户文件修改权限：" + res + "\r\n";
+            //写入上传者权限
+          dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
+         log.info("************fabric上传文件操作记录区块链结束*****************");
             return new CommonResult<>(200, "上传成功，文件位于：" + fileName + "\r\n" + result, dataSample);
         } catch (Exception e) {
             return new CommonResult<>(400, e.getMessage(), null);
@@ -223,7 +235,7 @@ public class DataController {
         String username = user.getUsername();
         String dstChannelName = channelService.findChannelById(dataSample.getChannelId()).getChannelName();
         String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
-        String txId = fabricService.applyForReadFile("null", srcChannelName, username, dstChannelName, String.valueOf(dataId));
+        String txId = fabricService.applyForReadFile(username, srcChannelName, dataSample.hashCode()+"", String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
             log.info("申请文件读取权限失败");
             return new CommonResult<>(300, "申请文件读取权限失败", null);
@@ -235,8 +247,8 @@ public class DataController {
                 .orElse(null))
         );
         // 3. 二次上链
-        Record record = fabricService.updateForReadFile(fileContent, srcChannelName, username, dstChannelName, String.valueOf(dataId), txId);
-        log.info("2. 二次上链 ： " + record.toString());
+        String record = fabricService.updateForReadFile(username, srcChannelName, dataSample.hashCode()+"", String.valueOf(dataId), txId);
+        log.info("2. 二次上链 ： " + record);
         log.info("************fabric读取文件操作记录区块链结束*****************");
         return new CommonResult<>(200, "文件token为：" + token + "\r\ntxId：" + txId, fileContent);
     }
@@ -398,7 +410,7 @@ public class DataController {
         String username = user.getUsername();
         String dstChannelName = channelService.findChannelById(dataSample.getChannelId()).getChannelName();
         String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
-        String txId = fabricService.applyForModifyFile("null", srcChannelName, username, dstChannelName, String.valueOf(dataId));
+        String txId = fabricService.applyForModifyFile(username, srcChannelName,dataSample.hashCode()+"", String.valueOf(dataId));
         if (txId == null || txId.isEmpty()) {
             log.info("申请文件修改权限失败");
             return new CommonResult<>(300, "申请文件修改权限失败", null);
@@ -424,8 +436,8 @@ public class DataController {
         dataService.updateFile(dataSample);
 
         // 3. 更新hash值到fabric 二次上链
-        Record record = fabricService.updateForModifyFile(dataContent,srcChannelName, username, dstChannelName, String.valueOf(dataId), txId);
-        log.info("更新hash值结果：" + record.toString());
+        String record = fabricService.updateForModifyFile(username,srcChannelName, dataSample.hashCode()+"", String.valueOf(dataId), txId);
+        log.info("更新hash值结果：" + record);
         log.info("************fabric更新文件操作记录区块链结束*****************");
         return new CommonResult<>(200, "id为：" + dataId + "的文件更新成功\r\ntxId：" + txId, null);
     }
