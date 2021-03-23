@@ -106,6 +106,11 @@ public class ChannelDataAuthorityServiceImpl implements ChannelDataAuthorityServ
     }
 
     @Override
+    public ChannelDataAuthority findByCondition(Integer userId, Integer dataId, Integer channelId, Integer type) {
+        return channelDataAuthorityDao.findByCondition(userId, dataId,  channelId,  type);
+    }
+
+    @Override
     public Integer checkPullAuthority(Integer userId, Integer dataId, Integer channelId) {
         return channelDataAuthorityDao.checkPullAuthority(userId,dataId,channelId);
     }

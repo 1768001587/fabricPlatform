@@ -32,7 +32,6 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.apache.commons.codec.digest.MessageDigestAlgorithms.MD5;
 
 @Slf4j
 @RestController
@@ -199,21 +198,20 @@ public class DataController {
 
     //根据文件id删除文件
     //上传文件
-    @CheckToken
-    @PostMapping(value = "/data/deleteDataById")
-    @ResponseBody
-    public CommonResult deleteDataById(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
-        Integer dataId = Integer.valueOf(params.get("dataId"));
-        // 从 http 请求头中取出 token
-        String token = httpServletRequest.getHeader("token");
-        //TODO fabric操作
-
-        Integer result = dataService.deleteDataById(dataId);
-        if (result < 1) {
-            return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
-        }
-        return new CommonResult<>(200, "成功删除id为：" + dataId + "的文件,token为：" + token, null);
-    }
+//    @CheckToken
+//    @PostMapping(value = "/data/deleteDataById")
+//    @ResponseBody
+//    public CommonResult deleteDataById(@RequestBody Map<String, String> params, HttpServletRequest httpServletRequest) {
+//        Integer dataId = Integer.valueOf(params.get("dataId"));
+//        // 从 http 请求头中取出 token
+//        String token = httpServletRequest.getHeader("token");
+//
+//        Integer result = dataService.deleteDataById(dataId);
+//        if (result < 1) {
+//            return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
+//        }
+//        return new CommonResult<>(200, "成功删除id为：" + dataId + "的文件,token为：" + token, null);
+//    }
 
     //根据文件id获取文件内容
     @CheckToken
@@ -262,8 +260,6 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JwtUtil.parseJWT(token).get("id", Integer.class);
         User user = userService.findUserById(userId);
-        //TODO fabric操作
-
         List<DataSample> interChannelPullDataList = channelDataAuthorityService.getInterChannelPullData(user.getId(), user.getChannelId());
         List<DataSampleVO> dataSampleVOList = interChannelPullDataList.parallelStream().map(DataSampleVOMapper.INSTANCE::toDataSampleVO).peek(dataSampleVO -> dataSampleVO.setChannelName(channelService.findChannelById(dataSampleVO.getChannelId()).getChannelName())).collect(Collectors.toList());
 
@@ -279,8 +275,6 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
         List<UserInnerDataVO> userInnerDataVOList = dataService.getCurrentChannelData(userId);
-        //TODO fabric操作
-
         userInnerDataVOList.parallelStream().forEach(userInnerDataVO -> {
             userInnerDataVO.setChannelName(channelService.findChannelById(userInnerDataVO.getChannelId()).getChannelName());
         });

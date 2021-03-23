@@ -65,6 +65,7 @@ public interface ChannelDataAuthorityService {
     List<ChannelDataAuthorityVO> getPullAuthorityList();
 
     List<ChannelDataAuthorityVO> getPushAuthorityList();
-    
+
+    ChannelDataAuthority findByCondition(Integer userId, Integer dataId, Integer channelId, Integer type);
 }
 

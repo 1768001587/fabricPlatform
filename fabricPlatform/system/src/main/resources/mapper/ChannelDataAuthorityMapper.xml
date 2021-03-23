@@ -5,7 +5,7 @@
 
     <resultMap type="com.hust.keyRD.commons.entities.ChannelDataAuthority" id="channelDataAuthorityMap">
         <result property="id" column="id"/>
-        <result property="userid" column="userId"/>
+        <result property="userId" column="user_id"/>
         <result property="dataId" column="data_id"/>
         <result property="channelId" column="channel_id"/>
         <result property="type" column="type"/>
@@ -83,6 +83,10 @@
     <select id="checkPushAuthority" parameterType="DataSample" resultType="java.lang.Integer">
         select count(*) from channel_data_authority
         where user_id = #{userId} and data_id= #{dataId} and channel_id = #{channelId} and type=1;
+    </select>
+    <select id="findByCondition" parameterType="ChannelDataAuthority" resultMap="channelDataAuthorityMap">
+        select * from channel_data_authority
+         where user_id = #{userId} and data_id= #{dataId} and channel_id = #{channelId} and type = #{type};
     </select>
 
 
