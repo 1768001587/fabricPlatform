@@ -30,9 +30,16 @@ class FabricServiceImplTest {
     
     @Autowired
     private FabricService fabricService;
+    
+    @Autowired
+    private FabricServiceImpl fabricServiceImpl;
 
     @Test
     void traceBackward() {
+        System.out.println(fabricServiceImpl.getPeers("org2_admin"));
+        System.out.println(fabricServiceImpl.getUsername("org2_admin"));
+        System.out.println(fabricServiceImpl.getPeers("org3_user"));
+        System.out.println(fabricServiceImpl.getUsername("org3_user"));
     }
 
     @Test

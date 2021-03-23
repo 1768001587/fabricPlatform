@@ -24,6 +24,11 @@ public class GlobalExceptionHandler {
         return new CommonResult<>(400, "fabric error: " + e.getMessage());
         //return "fabric error: " + e.getMessage();
     }
+    
+    @ExceptionHandler(BadRequestException.class)
+    public CommonResult handleBadRequestException(BadRequestException e){
+        return new CommonResult<>(400, "bad request: " + e.getMessage());
+    }
 
 
 }

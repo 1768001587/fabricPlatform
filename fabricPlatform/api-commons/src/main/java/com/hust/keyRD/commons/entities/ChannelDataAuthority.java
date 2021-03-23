@@ -19,27 +19,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChannelDataAuthority implements Serializable {
-    private static final long serialVersionUID = 1L;
 
     /**
      * channel_data_authority_id
      */
-    private Long id;
+    private Integer id;
 
     /**
      * 发送者或拉取者id
      */
-    private Long userId;
+    private Integer userId;
 
     /**
      * 文件id
      */
-    private Long dataId;
+    private Integer dataId;
 
     /**
      * channelID
      */
-    private Long channelId;
+    private Integer channelId;
 
     /**
      * 权限类型：1-push，2-pull

@@ -134,6 +134,7 @@ public class DataAuthorityController {
         sharedDataAuthority.setAuthorityKey(1);
         sharedDataAuthority.setAcceptOrNot(0);
         sharedDataAuthorityService.addSharedDataAuthority(sharedDataAuthority);
+
         return new CommonResult<>(200,"发送请求成功",null);
     }
 

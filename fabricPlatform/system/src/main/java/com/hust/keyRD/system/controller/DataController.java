@@ -5,7 +5,9 @@ import com.hust.keyRD.commons.entities.*;
 import com.hust.keyRD.commons.exception.mongoDB.MongoDBException;
 import com.hust.keyRD.commons.utils.JwtUtil;
 import com.hust.keyRD.commons.utils.MD5Util;
+import com.hust.keyRD.commons.vo.DataSampleVO;
 import com.hust.keyRD.commons.vo.UserInnerDataVO;
+import com.hust.keyRD.commons.vo.mapper.DataSampleVOMapper;
 import com.hust.keyRD.system.api.service.FabricService;
 import com.hust.keyRD.system.dao.ChannelDataAuthorityDao;
 import com.hust.keyRD.system.file.model.FileModel;
@@ -28,6 +30,7 @@ import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -191,6 +194,8 @@ public class DataController {
         Integer dataId = Integer.valueOf(params.get("dataId"));
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
+        //TODO fabric操作
+
         Integer result = dataService.deleteDataById(dataId);
         if (result < 1) {
             return new CommonResult<>(400, "不存在id为：" + dataId + "的文件", null);
@@ -240,13 +245,17 @@ public class DataController {
     // 只获取当前用户可pull的其他channel的数据
     @ApiOperation("获取当前用户可pull的其他channel的文件")
     @GetMapping("/data/getInterChannelData")
-    public CommonResult<List<DataSample>> getInterChannelData(HttpServletRequest httpServletRequest){
+    public CommonResult<List<DataSampleVO>> getInterChannelData(HttpServletRequest httpServletRequest){
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JwtUtil.parseJWT(token).get("id", Integer.class);
         User user = userService.findUserById(userId);
+        //TODO fabric操作
+
         List<DataSample> interChannelPullDataList = channelDataAuthorityService.getInterChannelPullData(user.getId(), user.getChannelId());
-        return new CommonResult<>(200,"success", interChannelPullDataList);
+        List<DataSampleVO> dataSampleVOList = interChannelPullDataList.parallelStream().map(DataSampleVOMapper.INSTANCE::toDataSampleVO).peek(dataSampleVO -> dataSampleVO.setChannelName(channelService.findChannelById(dataSampleVO.getChannelId()).getChannelName())).collect(Collectors.toList());
+
+        return new CommonResult<>(200,"success", dataSampleVOList);
     }
 
     // 获取当前channel的文件
@@ -258,6 +267,11 @@ public class DataController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
         List<UserInnerDataVO> userInnerDataVOList = dataService.getCurrentChannelData(userId);
+        //TODO fabric操作
+
+        userInnerDataVOList.parallelStream().forEach(userInnerDataVO -> {
+            userInnerDataVO.setChannelName(channelService.findChannelById(userInnerDataVO.getChannelId()).getChannelName());
+        });
         return new CommonResult<>(200, "success", userInnerDataVOList);
     }
 //
@@ -268,7 +282,9 @@ public class DataController {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
+        // 所pull的文件Id
         Integer dataId = Integer.valueOf(params.get("dataId"));
+        // 文件所在的channelId
         Integer channelId = Integer.valueOf(params.get("channelId"));
         User user = userService.findUserById(userId);
         Integer checkAuthorityCount = channelDataAuthorityService.checkPullAuthority(userId,dataId,channelId);
@@ -296,7 +312,7 @@ public class DataController {
             dataService.uploadFile(newDataSample);//上传至数据库
             //写入上传者权限
             dataAuthorityService.addMasterDataAuthority(userId, newDataSample.getId());
-            //TODO 以下需要做上链操作
+            //TODO fabric操作
 
             return new CommonResult<>(200, "success", newDataSample);
         }else {
@@ -312,7 +328,9 @@ public class DataController {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
+        // 所pull的文件Id
         Integer dataId = Integer.valueOf(params.get("dataId"));
+        // 目标channelId 要发送到该channel上
         Integer channelId = Integer.valueOf(params.get("channelId"));
         User user = userService.findUserById(userId);
         Integer checkAuthorityCount = channelDataAuthorityService.checkPushAuthority(userId,dataId,channelId);
@@ -339,7 +357,7 @@ public class DataController {
             newDataSample.setOriginUserId(userId);
             dataService.uploadFile(newDataSample);//上传至数据库
             //不写入上传者权限！
-            //TODO 以下需要做上链操作
+            //TODO fabric操作
 
             return new CommonResult<>(200, "success", newDataSample);
         }else {
@@ -436,4 +454,6 @@ public class DataController {
         }
         return new CommonResult<>(200, "获取该用户所有文件列表成功", result);
     }
+    
+    
 }
