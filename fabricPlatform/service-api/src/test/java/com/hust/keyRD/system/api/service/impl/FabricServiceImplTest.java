@@ -166,5 +166,46 @@ class FabricServiceImplTest {
         System.out.println(txId);
     }
 
-    
+
+    @Test
+    void getCentrePolicy() {
+        String data1 = fabricService.getCentrePolicy("data1");
+        System.out.println(data1);
+    }
+
+    @Test
+    void grantInnerChannelPull() {
+        Boolean res = fabricService.grantInnerChannelPull("data2", "role1", "org2_user");
+        System.out.println(res);
+        String response = fabricService.getCentrePolicy("data2");
+        System.out.println(response);
+    }
+
+    @Test
+    void grantInnerChannelPush() {
+        Boolean res = fabricService.grantInnerChannelPush("data3", "role1", "org3_user");
+        System.out.println(res);
+        String response = fabricService.getCentrePolicy("data3");
+        System.out.println(response);
+    }
+
+    @Test
+    void revokeInnerChannelPull() {
+        String response = fabricService.getCentrePolicy("data2");
+        System.out.println(response);
+        Boolean res = fabricService.revokeInnerChannelPull("data2", "role1", "org2_user");
+        System.out.println(res);
+        response = fabricService.getCentrePolicy("data2");
+        System.out.println(response);
+    }
+
+    @Test
+    void revokeInnerChannelPush() {
+        String response = fabricService.getCentrePolicy("data3");
+        System.out.println(response);
+        Boolean res = fabricService.revokeInnerChannelPush("data3", "role1", "org2_user");
+        System.out.println(res);
+        response = fabricService.getCentrePolicy("data3");
+        System.out.println(response);
+    }
 }
