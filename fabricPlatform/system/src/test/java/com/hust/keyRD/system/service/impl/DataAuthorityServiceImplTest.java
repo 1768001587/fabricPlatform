@@ -35,7 +35,7 @@ class DataAuthorityServiceImplTest {
 
     @Test
     void findUsersDataAuthority() {
-        List<UserDataAuthDto> usersDataAuthority = dataAuthorityService.findUsersDataAuthority();
+        List<UserDataAuthDto> usersDataAuthority = dataAuthorityService.findUsersDataAuthority(1);
         Set<AllDataUserAuthorityVO> set = usersDataAuthority.stream().map(AllDataUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toSet());
 
         List<AllDataUserAuthorityVO> allDataUserAuthorityVOS = dataAuthorityService.findUsersDataAuthorityVO();

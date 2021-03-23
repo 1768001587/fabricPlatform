@@ -83,7 +83,7 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     }
 
     @Override
-    public List<UserDataAuthDto> findUsersDataAuthority() {
+    public List<UserDataAuthDto> findUsersDataAuthority(Integer channelId) {
         return dataAuthorityDao.findUsersDataAuthority();
     }
 

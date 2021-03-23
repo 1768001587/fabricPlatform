@@ -63,7 +63,7 @@ public class ChannelAuthorityController {
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();//管理员的id号
         User admin = userService.findUserById(userId);
-        List<UserChannelAuthDto> usersChannelAuthorityList = channelAuthorityService.findUsersChannelAuthority(userId, 3 - admin.getChannelId());
+        List<UserChannelAuthDto> usersChannelAuthorityList = channelAuthorityService.findUsersChannelAuthority(userId, admin.getChannelId());
         List<AllChannelUserVO> result = usersChannelAuthorityList.stream().map(AllChannelUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toList());
         return new CommonResult<>(200, "查找成功", result);
     }

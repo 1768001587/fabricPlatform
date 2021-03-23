@@ -39,7 +39,7 @@ public interface DataAuthorityService {
     Integer deleteDataAuthority(DataAuthority dataAuthority);
 
     // 获取除管理员外的所有用户对所有文件的权限
-    List<UserDataAuthDto> findUsersDataAuthority();
+    List<UserDataAuthDto> findUsersDataAuthority(Integer channelId);
 
     List<AllDataUserAuthorityVO> findUsersDataAuthorityVO();
 }

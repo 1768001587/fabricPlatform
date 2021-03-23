@@ -36,6 +36,7 @@ public class ChannelDataAuthorityController {
     @RequestMapping("getPullAuthorityList")
     public CommonResult<List<ChannelDataAuthorityVO>> getPullAuthorityList(){
         List<ChannelDataAuthorityVO> pullAuthorityList = channelDataAuthorityService.getPullAuthorityList();
+
         return new CommonResult(200, "success", pullAuthorityList);
     }
 
