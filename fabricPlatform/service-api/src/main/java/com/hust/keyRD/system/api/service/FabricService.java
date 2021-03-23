@@ -72,19 +72,18 @@ public interface FabricService {
      */
     // TODO: check
     Boolean grantUserPermissionOnFileInnerChannel(String requester, String fileId, String fileChannelName, String permission, String role, String username);
-
-
+    
+    
     /**
-     * 撤销 某角色 某些用户 某个文件的权限
-     *
-     * @param fileId          文件id
-     * @param fileChannelName 文件所在channel  授予该channel文件的权限
-     * @param permission      权限 删改查
-     * @param role            角色
-     * @param users           用户列表
-     * @return success / throw FabricException
+     * 撤销用户对文件的相关权限
+     * @param requester 调用者
+     * @param channelName 调用者所在的channel
+     * @param fileId 文件id
+     * @param permission 权限
+     * @param role 角色
+     * @param username 用户名
+     * @return
      */
-    // TODO: check
     Boolean revokeUserPermissionOnFile(String requester, String channelName,String fileId, String permission, String role, String username);
 
 
@@ -194,27 +193,25 @@ public interface FabricService {
      */
     String dataSyncRecord(String requester, String channelName,String fileHash, String fileId,String typeTx, String txId);
 
-
+    
     /**
      * 溯源 查找fileId文件最新的交易记录
-     *
-     * @param fileId          文件id
-     * @param fileChannelName 文件所在channel  授予该channel文件的权限
+     * @param requester 
+     * @param channelName
+     * @param fileId
      * @return
      */
-    // TODO: check
-    Record traceBackward(String fileId, String fileChannelName);
-
+    Record traceBackward(String requester, String channelName, String fileId);
+    
     /**
      * 溯源 查找fileId文件txId交易的上一次交易记录  继续溯源的话使用Record.thisTxId和原fileId作为参数 将进行下一次溯源
-     *
-     * @param fileId          文件id
-     * @param fileChannelName 文件所在channel  授予该channel文件的权限
-     * @param txId            交易id
-     * @return 上一次record实例
+     * @param requester
+     * @param channelName
+     * @param fileId
+     * @param txId
+     * @return
      */
-    // TODO: check
-    Record traceBackward(String fileId, String fileChannelName, String txId);
+    Record traceBackward(String requester, String channelName, String fileId, String txId);
 
     /**
      * 溯源 查找fileId文件全部的交易记录
@@ -224,7 +221,7 @@ public interface FabricService {
      * @return
      */
     // TODO: check
-    List<Record> traceBackwardAll(String fileId, String fileChannelName);
+    List<Record> traceBackwardAll(String requester, String channelName, String fileId);
 
     /**
      * 溯源 查找fileId文件txId交易的上面的全部交易记录
@@ -235,7 +232,7 @@ public interface FabricService {
      * @return 上一次record实例
      */
     // TODO: check
-    List<Record> traceBackwardAll(String fileId, String fileChannelName, String txId);
+    List<Record> traceBackwardAll(String requester, String channelName, String fileId, String txId);
 
 
     /**

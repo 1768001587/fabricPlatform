@@ -36,17 +36,13 @@ class FabricServiceImplTest {
 
     @Test
     void traceBackward() {
-        System.out.println(fabricServiceImpl.getPeers("org2_admin"));
-        System.out.println(fabricServiceImpl.getChannelUsername("org2_admin"));
-        System.out.println(fabricServiceImpl.getPeers("org3_user"));
-        System.out.println(fabricServiceImpl.getChannelUsername("org3_user"));
     }
 
     @Test
     void testTraceBackward() {
         String fileId = "file9";
         String txId = "28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba";
-        Record record = fabricService.traceBackward(fileId,"channel1");
+        Record record = fabricService.traceBackward("org5_user","channel2", "data3");
         System.out.println(record);
 //        String response = "{\"next_tx\": \"28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba\", \"tx_info\":\n" +
 //                "\"{\\\"data_id\\\":\\\"file1\\\",\\\"dst_chain\\\":\\\"channel1\\\",\\\"hash_data\\\":\\\"456\\\",\\\"last_tx_id\\\":\\\"cbcf5226f0aaf8754859b6b22fa8a14116bc84191ab8d720011abaa6ea846a47\\\",\\\"src_chain\\\":\\\"channel2\\\",\\\"this_tx_id\\\":\\\"28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba\\\",\\\"type_tx\\\":\\\"delete\\\",\\\"user\\\":\\\"userC\\\"}\"}";
@@ -59,6 +55,12 @@ class FabricServiceImplTest {
 ////            log.error("溯源失败,fileId:{},txId:{}, response:{}", fileId, txId, response);
 //            throw new FabricException("溯源失败: fileId:" + fileId + ", txId: " + txId);
 //        }
+    }
+    
+    @Test
+    void traceBackwardAll1(){
+        List<Record> records = fabricService.traceBackwardAll("org5_user", "channel2", "data3");
+        records.forEach(System.out::println);
     }
 
     @Test
@@ -147,8 +149,8 @@ class FabricServiceImplTest {
 
     @Test
     void traceBackwardAll() {
-        List<Record> recordList = fabricService.traceBackwardAll("16", "channel1");
-        recordList.forEach(System.out::println);
+//        List<Record> recordList = fabricService.traceBackwardAll("16", "channel1");
+//        recordList.forEach(System.out::println);
     }
 
     @Test
