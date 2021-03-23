@@ -113,7 +113,6 @@ public class ChannelAuthorityController {
         if (user == null) return new CommonResult<>(400, "撤销权限失败，不存在userId为：" + userId + "的用户", null);
         if (authorityKey != 1) return new CommonResult<>(400, "authorityKey请选择：" +
                 "1：在该channel上上传文件权限", null);
-        // TODO
         if (fabricService.revokeUserPermission2Add(admin.getUsername(),channel.getChannelName(), "role1", user.getUsername())) {
             channelAuthority.setChannelId(adminChannelId);
             Integer count = channelAuthorityService.deleteChannelAuthority(channelAuthority);

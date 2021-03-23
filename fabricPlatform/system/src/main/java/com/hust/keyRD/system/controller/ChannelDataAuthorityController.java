@@ -6,11 +6,13 @@ import com.hust.keyRD.commons.entities.User;
 import com.hust.keyRD.commons.exception.BadRequestException;
 import com.hust.keyRD.commons.utils.JwtUtil;
 import com.hust.keyRD.commons.vo.ChannelDataAuthorityVO;
+import com.hust.keyRD.system.api.service.FabricService;
 import com.hust.keyRD.system.service.ChannelDataAuthorityService;
 import com.hust.keyRD.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -23,6 +25,7 @@ import java.util.List;
  * @author: zwh
  * @create: 2021-03-22 10:37
  **/
+@Slf4j
 @RestController
 @Api(tags = "域间权限Controller")
 @RequestMapping("innerChannelAuthority")
@@ -31,12 +34,13 @@ public class ChannelDataAuthorityController {
     private UserService userService;
     @Resource
     private ChannelDataAuthorityService channelDataAuthorityService;
+    @Resource
+    private FabricService fabricService;
     
     @ApiOperation("获取pull权限列表")
     @RequestMapping("getPullAuthorityList")
     public CommonResult<List<ChannelDataAuthorityVO>> getPullAuthorityList(){
         List<ChannelDataAuthorityVO> pullAuthorityList = channelDataAuthorityService.getPullAuthorityList();
-
         return new CommonResult(200, "success", pullAuthorityList);
     }
 
@@ -58,9 +62,13 @@ public class ChannelDataAuthorityController {
         if(user.getIsAdmin() != 1){
             throw new BadRequestException("非管理员");
         }
-        channelDataAuthorityService.addPullAuthority(channelDataAuthority);
+        String username = userService.findUserById(channelDataAuthority.getUserId()).getUsername();
+       // System.out.println(username);
         // 区块链添加pull权限
-        //TODO fabric操作
+        log.info("************fabric增加文件pull权限记录区块链开始*****************");
+        fabricService.grantInnerChannelPull(channelDataAuthority.getDataId()+"","role1",username);
+        log.info("************fabric增加文件pull权限记录区块链结束*****************");
+        channelDataAuthorityService.addPullAuthority(channelDataAuthority);
 
         return new CommonResult(200, "success");
     }
@@ -75,50 +83,58 @@ public class ChannelDataAuthorityController {
         if(user.getIsAdmin() != 1){
             throw new BadRequestException("非管理员");
         }
+        // 区块链添加push权限
+        log.info("************fabric增加文件push权限记录区块链开始*****************");
+        fabricService.grantInnerChannelPush(channelDataAuthority.getDataId()+"","role1",userService.findUserById(channelDataAuthority.getUserId()).getUsername());
+        log.info("************fabric增加文件push权限记录区块链结束*****************");
         channelDataAuthorityService.addPushAuthority(channelDataAuthority);
-        // 区块链添加pull权限
-        //TODO fabric操作
 
         return new CommonResult(200, "success");
     }
     
     @ApiOperation("删除域间pull权限")
-    @DeleteMapping("deletePullAuthority")
-    public CommonResult deleteInterChannelPullAuthority(Integer channelDataAuthorityId, HttpServletRequest httpServletRequest){
+    @PostMapping("deletePullAuthority")
+    public CommonResult deleteInterChannelPullAuthority(@RequestBody ChannelDataAuthority channelDataAuthority, HttpServletRequest httpServletRequest){
         // 判断是否是管理员
         Integer userId = JwtUtil.getUserId(httpServletRequest);
         User user = userService.findUserById(userId);
         if(user.getIsAdmin() != 1){
             throw new BadRequestException("非管理员");
         }
-        ChannelDataAuthority channelDataAuthority = channelDataAuthorityService.findById(channelDataAuthorityId);
         if(!channelDataAuthority.getType().equals(2)){
             throw new BadRequestException("非pull类型");
         }
-        channelDataAuthorityService.deleteById(channelDataAuthorityId);
-        // 区块链删除权限
-        //TODO fabric操作
+        channelDataAuthority = channelDataAuthorityService.findByCondition(channelDataAuthority.getUserId(),
+                channelDataAuthority.getDataId(),channelDataAuthority.getChannelId(),channelDataAuthority.getType());
+        //System.out.println(channelDataAuthority.getId()+","+channelDataAuthority.getUserId());
+        // 区块链删除pull权限
+        log.info("************fabric删除文件pull权限记录区块链开始*****************");
+        fabricService.revokeInnerChannelPull(channelDataAuthority.getDataId()+"","role1",userService.findUserById(channelDataAuthority.getUserId()).getUsername());
+        log.info("************fabric删除文件pull权限记录区块链结束*****************");
+        channelDataAuthorityService.deleteById(channelDataAuthority.getId());
 
         return new CommonResult(200,"success");
     }
 
     @ApiOperation("删除域间push权限")
-    @DeleteMapping("deletePushAuthority")
-    public CommonResult deleteInterChannelPushAuthority(Integer channelDataAuthorityId, HttpServletRequest httpServletRequest){
+    @PostMapping("deletePushAuthority")
+    public CommonResult deleteInterChannelPushAuthority(@RequestBody ChannelDataAuthority channelDataAuthority, HttpServletRequest httpServletRequest){
         // 判断是否是管理员
         Integer userId = JwtUtil.getUserId(httpServletRequest);
         User user = userService.findUserById(userId);
         if(user.getIsAdmin() != 1){
             throw new BadRequestException("非管理员");
         }
-        ChannelDataAuthority channelDataAuthority = channelDataAuthorityService.findById(channelDataAuthorityId);
         if(!channelDataAuthority.getType().equals(1)){
             throw new BadRequestException("非push类型");
         }
-        channelDataAuthorityService.deleteById(channelDataAuthorityId);
-        // 区块链删除权限
-        //TODO fabric操作
-
+        channelDataAuthority = channelDataAuthorityService.findByCondition(channelDataAuthority.getUserId(),
+                channelDataAuthority.getDataId(),channelDataAuthority.getChannelId(),channelDataAuthority.getType());
+        // 区块链删除push权限
+        log.info("************fabric删除文件push权限记录区块链开始*****************");
+        fabricService.revokeInnerChannelPush(channelDataAuthority.getDataId()+"","role1",userService.findUserById(channelDataAuthority.getUserId()).getUsername());
+        log.info("************fabric删除文件push权限记录区块链结束*****************");
+        channelDataAuthorityService.deleteById(channelDataAuthority.getId());
         return new CommonResult(200,"success");
     }
     

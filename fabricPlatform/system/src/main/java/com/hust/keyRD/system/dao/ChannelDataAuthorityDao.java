@@ -65,4 +65,6 @@ public interface ChannelDataAuthorityDao {
      * @return
      */
     Integer checkPushAuthority(@Param("userId")Integer userId, @Param("dataId")Integer dataId, @Param("channelId")Integer channelId);
+
+    ChannelDataAuthority findByCondition(@Param("userId")Integer userId, @Param("dataId")Integer dataId, @Param("channelId")Integer channelId, @Param("type")Integer type);
 }
