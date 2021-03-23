@@ -96,27 +96,27 @@ public class DataController {
             log.info("************fabric上传文件操作记录区块链开始*****************");
             String result = "";
             // 1. 权限申请 一次上链
-            String username = user.getUsername();
-            String dstChannelName = dstChannel.getChannelName();
-            String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
-            String txId = fabricService.applyForCreateFile("null", srcChannelName, username, dstChannelName, dataSample.getId() + "");
-            log.info("1.创建文件成功 txId: " + txId);
-            result += "1.创建文件成功 txId: " + txId + "\r\n";
-            //hash
-            // 3. 更新链上hash 二次上链
-            Record record = fabricService.updateForCreateFile(new String(file.getBytes()), srcChannelName,username, dstChannelName, dataSample.getId() + "", txId);
-            log.info("2. 更新链上hash ： " + record.toString());
-            result += "2. 更新链上hash ： " + record.toString() + "\r\n";
-            // 4. 授予用户文件的查改权限
-            Boolean res = fabricService.grantUserPermissionOnFile(dataSample.getId() + "", dstChannelName, "read", "role1", Collections.singletonList(username));
-            log.info("3.授予用户文件读取权限：" + res);
-            result += "3.授予用户文件读取权限：" + res + "\r\n";
-            res = fabricService.grantUserPermissionOnFile(dataSample.getId() + "", dstChannelName, "modify", "role1", Collections.singletonList(username));
-            log.info("4.授予用户文件修改权限：" + res);
-            result += "4.授予用户文件修改权限：" + res + "\r\n";
-            //写入上传者权限
-            dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
-            log.info("************fabric上传文件操作记录区块链结束*****************");
+//            String username = user.getUsername();
+//            String dstChannelName = dstChannel.getChannelName();
+//            String srcChannelName = channelService.findChannelById(user.getChannelId()).getChannelName();
+//            String txId = fabricService.applyForCreateFile("null", srcChannelName, username, dstChannelName, dataSample.getId() + "");
+//            log.info("1.创建文件成功 txId: " + txId);
+//            result += "1.创建文件成功 txId: " + txId + "\r\n";
+//            //hash
+//            // 3. 更新链上hash 二次上链
+//            Record record = fabricService.updateForCreateFile(new String(file.getBytes()), srcChannelName,username, dstChannelName, dataSample.getId() + "", txId);
+//            log.info("2. 更新链上hash ： " + record.toString());
+//            result += "2. 更新链上hash ： " + record.toString() + "\r\n";
+//            // 4. 授予用户文件的查改权限
+//            Boolean res = fabricService.grantUserPermissionOnFile(dataSample.getId() + "", dstChannelName, "read", "role1", Collections.singletonList(username));
+//            log.info("3.授予用户文件读取权限：" + res);
+//            result += "3.授予用户文件读取权限：" + res + "\r\n";
+//            res = fabricService.grantUserPermissionOnFile(dataSample.getId() + "", dstChannelName, "modify", "role1", Collections.singletonList(username));
+//            log.info("4.授予用户文件修改权限：" + res);
+//            result += "4.授予用户文件修改权限：" + res + "\r\n";
+//            //写入上传者权限
+//            dataAuthorityService.addMasterDataAuthority(originUserId, dataSample.getId());
+//            log.info("************fabric上传文件操作记录区块链结束*****************");
             return new CommonResult<>(200, "上传成功，文件位于：" + fileName + "\r\n" + result, dataSample);
         } catch (Exception e) {
             return new CommonResult<>(400, e.getMessage(), null);

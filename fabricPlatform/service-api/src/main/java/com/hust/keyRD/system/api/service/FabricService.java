@@ -9,6 +9,7 @@ public interface FabricService {
     /**
      * 调用链码  这里是指使用中心链上org1来进行权限管理
      *
+     * @param requester   调用者
      * @param peers       peer list
      * @param channelName channel名
      * @param ccName      ccName
@@ -16,23 +17,26 @@ public interface FabricService {
      * @param args        链码调用参数
      * @return 结果
      */
-    String invokeChaincode(String peers, String channelName, String ccName,
+    String invokeChaincode(String requester, String peers, String channelName, String ccName,
                            String fcn, List<String> args);
 
-
+    
     /**
-     * 增加policy
+     * 域内增加policy
      *
-     * @param obj        channelName 或 fileId
-     * @param permission 权限
-     * @param role       角色
-     * @param users      用户list
+     * @param requester   链码调用者
+     * @param channelName 调用者所在channel
+     * @param peers       调用peers
+     * @param obj         channelName 或 fileName
+     * @param permission  权限
+     * @param role        角色
+     * @param users       用户list
      * @return
      */
-    Boolean addPolicy(String obj, String permission, String role, List<String> users);
+    Boolean addPolicyInnerChannel(String requester, String channelName, String peers, String obj, String permission, String role, List<String> users);
 
     /**
-     * 更新policy 即更新state <obj+permission, Map<String role, String[] users>的value
+     * 域内 更新 policy 即更新state <obj+permission, Map<String role, String[] users>的value
      *
      * @param obj        channelName 或 fileId
      * @param permission 权限
@@ -41,7 +45,7 @@ public interface FabricService {
      * @param users      用户list
      * @return success/fail
      */
-    Boolean updatePolicy(String obj, String permission, String func, String role, List<String> users);
+    Boolean updatePolicyInnerChannel(String requester, String channelName, String obj, String permission, String func, String role, List<String> users);
 
 
     /**
@@ -52,19 +56,22 @@ public interface FabricService {
      * @param username       用户名
      * @return success / throw FabricException
      */
-    Boolean grantUserPermission2Add(String dstChannelName, String role, String username);
+    Boolean grantUserPermission2Add(String requester, String dstChannelName, String role, String username);
+
 
     /**
-     * 授予 某角色 某些用户 某个文件的查看 修改 删除 权限
+     * 域内 授予 某角色 某些用户 某个文件的查看 修改 删除 权限
      *
-     * @param fileChannelName 文件所在channel名
+     * @param requester       调用者
      * @param fileId          文件id
-     * @param permission      权限 删改查
+     * @param fileChannelName 文件所在channel
+     * @param permission      权限
      * @param role            角色
-     * @param users           用户列表
-     * @return success / throw FabricException
+     * @param username        授权用户名
+     * @return
      */
-    Boolean grantUserPermissionOnFile(String fileId, String fileChannelName, String permission, String role, List<String> users);
+    // TODO: check
+    Boolean grantUserPermissionOnFileInnerChannel(String requester, String fileId, String fileChannelName, String permission, String role, String username);
 
 
     /**
@@ -77,17 +84,21 @@ public interface FabricService {
      * @param users           用户列表
      * @return success / throw FabricException
      */
-    Boolean revokeUserPermissionOnFile(String fileId, String fileChannelName, String permission, String role, List<String> users);
+    // TODO: check
+    Boolean revokeUserPermissionOnFile(String requester, String channelName,String fileId, String permission, String role, String username);
+
 
     /**
-     * 撤销 某角色 某些用户 某个channel的（文件）add权限
+     * 撤销 某角色 某些用户 当前channel的（文件）add权限
      *
-     * @param dstChannelName 目标channel  授予该channel的增加文件的权限
-     * @param role           角色
-     * @param username       用户名
-     * @return success / throw FabricException
+     * @param requester   调用者
+     * @param channelName 调用者所在channel
+     * @param role        角色
+     * @param username    要撤销权限的用户名（数据库名）
+     * @return
      */
-    Boolean revokeUserPermission2Add(String dstChannelName, String role, String username);
+    Boolean revokeUserPermission2Add(String requester, String channelName, String role, String username);
+
 
     /**
      * 跨链请求权限 操作链第一次上链
@@ -99,90 +110,89 @@ public interface FabricService {
      * @param args        链码调用参数
      * @return 交易 tx_id
      */
+    // TODO: check
     String crossAccess(String peers, String channelName, String ccName,
                        String fcn, List<String> args);
+    
 
     /**
-     * 申请创建文件权限  第一次上链
-     *
-     * @param username       申请用户
-     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
-     * @param fileId         文件id
-     * @return 交易id 或 空字符串
+     * 申请域内创建文件权限  第一次上链
+     * @param requester 调用者
+     * @param channelName 调用者所在channel
+     * @param fileHash 文件hash
+     * @param fileId 文件id
+     * @return
      */
-    String applyForCreateFile(String fileHash, String srcChannelName, String username, String dstChannelName, String fileId);
+    String applyForCreateFile(String requester, String channelName,String fileHash, String fileId);
 
     /**
-     * 申请读取文件权限  第一次上链
-     *
-     * @param username       申请用户
-     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
-     * @param fileId         文件id
-     * @return 交易id 或 throw FabricException
+     * 申请域内读取文件权限  第一次上链
+     * @param requester 调用者
+     * @param channelName 调用者所在channel
+     * @param fileHash 文件hash
+     * @param fileId 文件id
+     * @return
      */
-    String applyForReadFile(String fileHash, String srcChannelName, String username, String dstChannelName, String fileId);
+    String applyForReadFile(String requester, String channelName,String fileHash, String fileId);
 
     /**
-     * 申请修改文件权限  第一次上链
-     *
-     * @param username       申请用户
-     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
-     * @param fileId         文件id
-     * @return 交易id 或 throw FabricException
+     * 申请域内修改文件权限  第一次上链
+     * @param requester 调用者
+     * @param channelName 调用者所在channel
+     * @param fileHash 文件hash
+     * @param fileId 文件id
+     * @return
      */
-    String applyForModifyFile(String fileHash, String srcChannelName, String username, String dstChannelName, String fileId);
+    String applyForModifyFile(String requester, String channelName,String fileHash, String fileId);
 
 
     /**
      * 创建文件时 更新链上文件hash值  第二次上链
-     *
-     * @param fileString     文件字符串
-     * @param username       操作用户
-     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
-     * @param fileId         文件id
-     * @param txId           第一次上链交易id
+     * @param requester 调用者
+     * @param channelName 调用者所在channel
+     * @param fileHash 文件hash
+     * @param fileId 文件id
+     * @param txId 第一次上链事务号
      * @return
      */
-    Record updateForCreateFile(String fileString, String srcChannelName, String username, String dstChannelName, String fileId, String txId);
+    String updateForCreateFile(String requester, String channelName,String fileHash, String fileId,String txId);
 
     /**
      * 查看文件时 更新链上文件hash值  第二次上链
-     *
-     * @param fileString     文件字符串
-     * @param username       操作用户
-     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
-     * @param fileId         文件id
-     * @param txId           第一次上链交易id
+     * @param requester 调用者
+     * @param channelName 调用者所在channel
+     * @param fileHash 文件hash
+     * @param fileId 文件id
+     * @param txId 第一次上链事务号
      * @return
      */
-    Record updateForReadFile(String fileString, String srcChannelName, String username, String dstChannelName, String fileId, String txId);
+    String updateForReadFile(String requester, String channelName,String fileHash, String fileId,String txId);
+    
 
     /**
      * 修改文件时 更新链上文件hash值  第二次上链
-     *
-     * @param fileString     文件字符串
-     * @param username       操作用户
-     * @param dstChannelName 目标channel 即申请在该目标channel上创建文件
-     * @param fileId         文件id
-     * @param txId           第一次上链交易id
+     * @param requester 调用者
+     * @param channelName 调用者所在channel
+     * @param fileHash 文件hash
+     * @param fileId 文件id
+     * @param txId 第一次上链事务号
      * @return
      */
-    Record updateForModifyFile(String fileString, String srcChannelName, String username, String dstChannelName, String fileId, String txId);
+    String updateForModifyFile(String requester, String channelName,String fileHash, String fileId,String txId);
 
+    
 
     /**
-     * 第二次上链，更新链上数据hash值，实现与链下数据的同步
-     *
-     * @param peers       peer list
-     * @param channelName channel名
-     * @param ccName      ccname
-     * @param fcn         调用函数
-     * @param args        链码调用参数
-     * @param txId        第一次上链的交易号
-     * @return 结果
+     * 域内第二次上链，更新链上数据hash值，实现与链下数据的同步
+     * @param requester 调用者
+     * @param channelName 调用者所在channel
+     * @param fileHash 文件hash
+     * @param fileId 文件id
+     * @param typeTx 操作类型 add/read/modify...
+     * @param txId 第一次上链事务号
+     * @return
      */
-    String dataSyncRecord(String peers, String channelName, String ccName,
-                          String fcn, List<String> args, String txId);
+    String dataSyncRecord(String requester, String channelName,String fileHash, String fileId,String typeTx, String txId);
 
 
     /**
@@ -192,6 +202,7 @@ public interface FabricService {
      * @param fileChannelName 文件所在channel  授予该channel文件的权限
      * @return
      */
+    // TODO: check
     Record traceBackward(String fileId, String fileChannelName);
 
     /**
@@ -202,7 +213,7 @@ public interface FabricService {
      * @param txId            交易id
      * @return 上一次record实例
      */
-
+    // TODO: check
     Record traceBackward(String fileId, String fileChannelName, String txId);
 
     /**
@@ -212,6 +223,7 @@ public interface FabricService {
      * @param fileChannelName 文件所在channel  授予该channel文件的权限
      * @return
      */
+    // TODO: check
     List<Record> traceBackwardAll(String fileId, String fileChannelName);
 
     /**
@@ -222,9 +234,8 @@ public interface FabricService {
      * @param txId            交易id
      * @return 上一次record实例
      */
+    // TODO: check
     List<Record> traceBackwardAll(String fileId, String fileChannelName, String txId);
-
-
 
 
     /**
@@ -234,7 +245,8 @@ public interface FabricService {
      * @param opt         操作名 如 add
      * @return policy实体
      */
-    String getPolicy(String channelName, String opt);
+
+    String getPolicy(String requester, String channelName, String obj, String opt);
 
     /**
      * 查询权限 channel1上文件的read或modify权限  由于权限管理由中心链完成，所以在本例中使用中心链上的org1来查询
@@ -244,6 +256,7 @@ public interface FabricService {
      * @param opt         操作 read / modify
      * @return
      */
+    // TODO: check
     String getPolicy(String fileId, String channelName, String opt);
 
     /**
@@ -253,6 +266,7 @@ public interface FabricService {
      * @param order 第几次上链 1/2
      * @return 结构体JSON
      */
+    // TODO: check
     String queryAuthority(String txId, String order);
 
     String argsTest(String peers, String channelName, String ccName,
