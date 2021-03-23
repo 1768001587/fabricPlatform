@@ -276,7 +276,9 @@ public class DataController {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
+        // 所pull的文件Id
         Integer dataId = Integer.valueOf(params.get("dataId"));
+        // 文件所在的channelId
         Integer channelId = Integer.valueOf(params.get("channelId"));
         User user = userService.findUserById(userId);
         Integer checkAuthorityCount = channelDataAuthorityService.checkPullAuthority(userId,dataId,channelId);
@@ -320,7 +322,9 @@ public class DataController {
         // 从 http 请求头中取出 token
         String token = httpServletRequest.getHeader("token");
         Integer userId = JWT.decode(token).getClaim("id").asInt();
+        // 所pull的文件Id
         Integer dataId = Integer.valueOf(params.get("dataId"));
+        // 目标channelId 要发送到该channel上
         Integer channelId = Integer.valueOf(params.get("channelId"));
         User user = userService.findUserById(userId);
         Integer checkAuthorityCount = channelDataAuthorityService.checkPushAuthority(userId,dataId,channelId);
@@ -444,4 +448,6 @@ public class DataController {
         }
         return new CommonResult<>(200, "获取该用户所有文件列表成功", result);
     }
+    
+    
 }

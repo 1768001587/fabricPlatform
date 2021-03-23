@@ -24,10 +24,18 @@
         <id column="modified_time" property="modifiedTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <insert id="create" parameterType="ChannelDataAuthority" useGeneratedKeys="true" keyProperty="id">
-        insert into channelDataAuthority(id, user_id, data_id, channel_id, type)
+    <insert id="create" parameterType="Map" useGeneratedKeys="true" keyProperty="id">
+        insert into channel_data_authority(id, user_id, data_id, channel_id, type)
         values (null, #{userId}, #{dataId}, #{channelId}, #{type});
     </insert>
+    
+    <delete id="deleteById" parameterType="Map">
+        delete from channel_data_authority where id = #{id};
+    </delete>
+    
+    <select id="findById" parameterType="Map" resultMap="channelDataAuthorityMap">
+        select * from channel_data_authority where id = #{id};
+    </select>
 
     <select id="getAuthorityListByType" parameterType="Map" resultType="com.hust.keyRD.commons.vo.ChannelDataAuthorityVO">
         select channel_data_authority.user_id    as userId,
@@ -41,7 +49,7 @@
         from channel_data_authority
                  join user on channel_data_authority.user_id = user.id
                  join data_sample on channel_data_authority.data_id = data_sample.id
-        where type = #{type}
+        where type = #{type};
     </select>
 
     <select id="getInterChannelPullData" parameterType="Map" resultMap="DataSampleMap">

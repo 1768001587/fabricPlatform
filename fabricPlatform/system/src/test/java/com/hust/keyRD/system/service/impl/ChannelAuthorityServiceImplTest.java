@@ -3,6 +3,7 @@ package com.hust.keyRD.system.service.impl;
 import com.hust.keyRD.commons.Dto.UserChannelAuthDto;
 import com.hust.keyRD.commons.Dto.UserInnerDataDto;
 import com.hust.keyRD.commons.entities.Channel;
+import com.hust.keyRD.commons.entities.ChannelDataAuthority;
 import com.hust.keyRD.commons.entities.DataSample;
 import com.hust.keyRD.commons.entities.User;
 import com.hust.keyRD.commons.vo.ChannelDataAuthorityVO;
@@ -60,6 +61,13 @@ class ChannelAuthorityServiceImplTest {
         System.out.println(authorityListByType);
         authorityListByType = channelDataAuthorityDao.getAuthorityListByType(2);
         System.out.println(authorityListByType);
+    }
+    
+    @Test
+    void addPullAuthority(){
+        ChannelDataAuthority channelDataAuthority = new ChannelDataAuthority(null,131,9,1,1);
+        channelDataAuthorityDao.create(channelDataAuthority);
+        System.out.println(channelDataAuthority);
     }
     
 //    @Autowired

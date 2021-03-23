@@ -372,4 +372,23 @@ public class FabricServiceImpl implements FabricService {
     public String argsTest(String peers, String channelName, String ccName, String fcn, List<String> args) {
         return fabricFeignService.argsTest(peers, channelName, ccName, fcn, args);
     }
+    
+    
+    public String getPeers(String requestor){
+        String str1 = "peer0.org", str2 = ".example.com";
+        char n = requestor.charAt(3);
+        return str1 + n + str2;
+    }
+    
+    public String getUsername(String requestor){
+        String[] strings = requestor.split("_");
+        String prefix ;
+        if(strings[1].equals("admin")){
+            prefix = "Admin";
+        }else{
+            prefix = "User1";
+        }
+        char n = requestor.charAt(3);
+        return prefix + "@org" + n + ".example.com";
+    }
 }

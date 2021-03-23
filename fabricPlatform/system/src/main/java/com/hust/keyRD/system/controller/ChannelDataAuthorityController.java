@@ -11,9 +11,7 @@ import com.hust.keyRD.system.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +50,7 @@ public class ChannelDataAuthorityController {
     
     @ApiOperation("添加域间pull权限")
     @PostMapping("addPullAuthority")
-    public CommonResult addInterChannelPullAuthority(ChannelDataAuthority channelDataAuthority, HttpServletRequest httpServletRequest){
+    public CommonResult addInterChannelPullAuthority(@RequestBody ChannelDataAuthority channelDataAuthority, HttpServletRequest httpServletRequest){
         // 判断是否是管理员
         Integer userId = JwtUtil.getUserId(httpServletRequest);
         User user = userService.findUserById(userId);
@@ -67,7 +65,7 @@ public class ChannelDataAuthorityController {
 
     @ApiOperation("添加域间push权限")
     @PostMapping("addPushAuthority")
-    public CommonResult addInterChannelPushAuthority(ChannelDataAuthority channelDataAuthority, HttpServletRequest httpServletRequest){
+    public CommonResult addInterChannelPushAuthority(@RequestBody ChannelDataAuthority channelDataAuthority, HttpServletRequest httpServletRequest){
         // 判断是否是管理员
         Integer userId = JwtUtil.getUserId(httpServletRequest);
         User user = userService.findUserById(userId);
@@ -78,5 +76,42 @@ public class ChannelDataAuthorityController {
         // 区块链添加pull权限
         return new CommonResult(200, "success");
     }
+    
+    @ApiOperation("删除域间pull权限")
+    @DeleteMapping("deletePullAuthority")
+    public CommonResult deleteInterChannelPullAuthority(Integer channelDataAuthorityId, HttpServletRequest httpServletRequest){
+        // 判断是否是管理员
+        Integer userId = JwtUtil.getUserId(httpServletRequest);
+        User user = userService.findUserById(userId);
+        if(user.getIsAdmin() != 1){
+            throw new BadRequestException("非管理员");
+        }
+        ChannelDataAuthority channelDataAuthority = channelDataAuthorityService.findById(channelDataAuthorityId);
+        if(!channelDataAuthority.getType().equals(2)){
+            throw new BadRequestException("非pull类型");
+        }
+        channelDataAuthorityService.deleteById(channelDataAuthorityId);
+        // 区块链删除权限
+        return new CommonResult(200,"success");
+    }
+
+    @ApiOperation("删除域间push权限")
+    @DeleteMapping("deletePushAuthority")
+    public CommonResult deleteInterChannelPushAuthority(Integer channelDataAuthorityId, HttpServletRequest httpServletRequest){
+        // 判断是否是管理员
+        Integer userId = JwtUtil.getUserId(httpServletRequest);
+        User user = userService.findUserById(userId);
+        if(user.getIsAdmin() != 1){
+            throw new BadRequestException("非管理员");
+        }
+        ChannelDataAuthority channelDataAuthority = channelDataAuthorityService.findById(channelDataAuthorityId);
+        if(!channelDataAuthority.getType().equals(1)){
+            throw new BadRequestException("非push类型");
+        }
+        channelDataAuthorityService.deleteById(channelDataAuthorityId);
+        // 区块链删除权限
+        return new CommonResult(200,"success");
+    }
+    
     
 }

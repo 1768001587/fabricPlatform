@@ -29,6 +29,16 @@ public class ChannelDataAuthorityServiceImpl implements ChannelDataAuthorityServ
     private DataService dataService;
 
     @Override
+    public ChannelDataAuthority findById(Integer id) {
+        return channelDataAuthorityDao.findById(id);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        channelDataAuthorityDao.deleteById(id);
+    }
+
+    @Override
     public List<DataSample> getInterChannelPullData(Integer userId, Integer channelId) {
         return channelDataAuthorityDao.getInterChannelPullData(userId, channelId);
     }

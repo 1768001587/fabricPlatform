@@ -21,6 +21,11 @@ public interface ChannelDataAuthorityDao {
     
     void create(ChannelDataAuthority channelDataAuthority);
     
+    void deleteById(Integer id);
+    
+    
+    ChannelDataAuthority findById(Integer id);
+    
     
 
     List<ChannelDataAuthorityVO> getAuthorityListByType(Integer type);

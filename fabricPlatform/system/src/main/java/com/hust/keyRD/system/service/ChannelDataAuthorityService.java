@@ -27,6 +27,10 @@ public interface ChannelDataAuthorityService {
      */
     List<DataSample> getInterChannelPullData(Integer userId, Integer channelId);
 
+    ChannelDataAuthority findById(Integer id);
+
+    void deleteById(Integer id);
+
     /**
      * 获取当前用户可以push到其他域的(dataId,targetChannelSet)
      * @param userId 当前用户id
