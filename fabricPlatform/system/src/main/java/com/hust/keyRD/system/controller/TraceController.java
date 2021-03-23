@@ -45,11 +45,10 @@ public class TraceController {
         Integer channelId = dataService.findDataById(Integer.valueOf(dataId)).getChannelId();
         String channelName = channelService.findChannelById(channelId).getChannelName();
         Record record = fabricService.traceBackward(user.getUsername(),channelName,dataId);
+        record.setUser(user.getUsername());
         RecordVO recordVO = new RecordVO();
         recordVO.setRecord(record);
-        int i = record.getDataId().indexOf(FabricConstant.Separator);
-        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId().substring(0,i)));
-        recordVO.setFileName(dataSample.getDataName());
+        recordVO.setFileName(dataService.findDataById(Integer.valueOf(record.getDataId())).getDataName());
         return new CommonResult<>(200,"溯源成功",recordVO);
     }
 
@@ -66,12 +65,11 @@ public class TraceController {
         if(txId.equals("0")) {
             return new CommonResult<>(404,"该记录已经是最早的记录，无更早的记录",null);
         }
-        Record record = fabricService.traceBackward(user.getUsername(),channelName,dataId);
+        Record record = fabricService.traceBackward(user.getUsername(),channelName,dataId,txId);
         RecordVO recordVO = new RecordVO();
+        record.setUser(user.getUsername());
         recordVO.setRecord(record);
-        int i = record.getDataId().indexOf(FabricConstant.Separator);
-        DataSample dataSample = dataService.findDataById(Integer.valueOf(record.getDataId().substring(0,i)));
-        recordVO.setFileName(dataSample.getDataName());
+        recordVO.setFileName(dataService.findDataById(Integer.valueOf(record.getDataId())).getDataName());
         return new CommonResult<>(200,"溯源成功",recordVO);
     }
     //一次性获取指定文件所有溯源操作记录
@@ -84,12 +82,12 @@ public class TraceController {
         User user = userService.findUserById(userId);
         Integer channelId = dataService.findDataById(Integer.valueOf(dataId)).getChannelId();
         String channelName = channelService.findChannelById(channelId).getChannelName();
-        Record record = fabricService.traceBackward(user.getUsername(),channelName,dataId);;//这是最新一次的操作记录
+        Record record = fabricService.traceBackward(user.getUsername(),channelName,dataId);//这是最新一次的操作记录
         result.add(record);
         Record tmp = record;
         while(!tmp.getLastTxId().equals("0")){
             String thisTxId = tmp.getThisTxId();
-            tmp = fabricService.traceBackward(user.getUsername(),channelName,dataId);
+            tmp = fabricService.traceBackward(user.getUsername(),channelName,dataId,thisTxId);
             result.add(tmp);
         }
         return new CommonResult<>(200,"获取该文件的所有溯源记录成功",result);

@@ -83,8 +83,21 @@ public class DataAuthorityController {
 
     //获取所有权限，返回AllDataUserAuthorityVO类
     @GetMapping(value = "/dataAuthority/getAllAuthority")
-    public CommonResult getAllAuthority() {
-        List<UserDataAuthDto> usersDataAuthorityList = dataAuthorityService.findUsersDataAuthority();
+    public CommonResult getAllAuthority(HttpServletRequest httpServletRequest) {
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("token");
+        Integer userId = JWT.decode(token).getClaim("id").asInt();//授权者Id
+        User admin = userService.findUserById(userId);
+        //System.out.println(admin.getChannelId());
+        List<UserDataAuthDto> usersDataAuthorityList = dataAuthorityService.findUsersDataAuthority(admin.getChannelId());
+        Integer channelId = admin.getChannelId();
+        String channelName = channelService.findChannelById(channelId).getChannelName();
+        for (int i = 0; i < usersDataAuthorityList.size(); i++) {
+            if(!usersDataAuthorityList.get(i).getChannelName().equals(channelName)){
+                usersDataAuthorityList.remove(i);
+                i--;
+            }
+        }
         List<AllDataUserAuthorityVO> result = usersDataAuthorityList.stream().map(AllDataUserAuthorityVOMapper.INSTANCE::toAllDataUserAuthorityVO).collect(Collectors.toList());
         return new CommonResult<>(200,"查找成功",result);
     }
