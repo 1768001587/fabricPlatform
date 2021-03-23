@@ -322,16 +322,19 @@ public class FabricServiceImpl implements FabricService {
     private Record parseRecordFromResponse(String response) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(response);
-        JsonNode txInfo = root.path("tx_info");
-        String recordJson = txInfo.toString().replaceAll("\\\\", "");
-        recordJson = recordJson.substring(1, recordJson.length() - 1);
+        String recordJson = root.toString().replaceAll("\\\\", "");
         return mapper.readValue(recordJson, Record.class);
     }
 
     @Override
-    public Record traceBackward(String fileId, String fileChannelName) {
-        String fileIdFinal = fileId + FabricConstant.Separator + fileChannelName;
-        String response = fabricFeignService.traceBackward(fileIdFinal, fileChannelName).body().toString();
+    public Record traceBackward(String requester, String channelName, String fileId) {
+        String peers = getPeers(requester);
+        String fcn = "traceBackward";
+        String ccName = "record";
+        List<String> args = new ArrayList<String>(){{
+            add(fileId);
+        }};
+        String response = invokeChaincode(requester,peers,channelName,ccName,fcn,args);
         try {
             return parseRecordFromResponse(response);
         } catch (IOException e) {
@@ -341,33 +344,39 @@ public class FabricServiceImpl implements FabricService {
     }
 
     @Override
-    public Record traceBackward(String fileId, String fileChannelName, String txId) {
-        String fileIdFinal = fileId + FabricConstant.Separator + fileChannelName;
-        String response = fabricFeignService.traceBackward(fileIdFinal, fileChannelName, txId).body().toString();
+    public Record traceBackward(String requester, String channelName, String fileId, String txId) {
+        String peers = getPeers(requester);
+        String fcn = "traceBackward";
+        String ccName = "record";
+        List<String> args = new ArrayList<String>(){{
+            add(fileId);
+            add(txId);
+        }};
+        String response = invokeChaincode(requester,peers,channelName,ccName,fcn,args);
         try {
             return parseRecordFromResponse(response);
         } catch (IOException e) {
-            log.error("溯源失败,fileId:{},txId:{}, response:{}", fileId, txId, response);
-            throw new FabricException("溯源失败: fileId:" + fileId + ", txId: " + txId);
+            log.error("溯源失败,fileId:{}, response:{}", fileId, response);
+            throw new FabricException("溯源失败: fileId:" + fileId);
         }
     }
 
     @Override
-    public List<Record> traceBackwardAll(String fileId, String fileChannelName) {
+    public List<Record> traceBackwardAll(String requester, String channelName, String fileId) {
         List<Record> ans = new ArrayList<>();
-        Record record = traceBackward(fileId, fileChannelName);
+        Record record = traceBackward(requester, channelName, fileId);
         ans.add(record);
-        ans.addAll(traceBackwardAll(fileId, fileChannelName, record.getThisTxId()));
+        ans.addAll(traceBackwardAll(requester,channelName,fileId, record.getThisTxId()));
         return ans;
     }
 
     @Override
-    public List<Record> traceBackwardAll(String fileId, String fileChannelName, String txId) {
+    public List<Record> traceBackwardAll(String requester, String channelName, String fileId, String txId) {
         List<Record> ans = new ArrayList<>();
-        Record record = traceBackward(fileId, fileChannelName, txId);
+        Record record = traceBackward(requester, channelName, fileId,txId);
         ans.add(record);
         while (!record.getLastTxId().equals("0")) {
-            record = traceBackward(fileId, fileChannelName, record.getThisTxId());
+            record = traceBackward(requester,channelName,fileId, record.getThisTxId());
             ans.add(record);
         }
         return ans;
