@@ -17,6 +17,8 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class Record {
+    
+    
     /**
      * 数据密文hash
      */

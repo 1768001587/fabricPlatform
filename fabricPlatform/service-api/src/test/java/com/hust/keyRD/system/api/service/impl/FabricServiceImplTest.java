@@ -36,17 +36,13 @@ class FabricServiceImplTest {
 
     @Test
     void traceBackward() {
-        System.out.println(fabricServiceImpl.getPeers("org2_admin"));
-        System.out.println(fabricServiceImpl.getUsername("org2_admin"));
-        System.out.println(fabricServiceImpl.getPeers("org3_user"));
-        System.out.println(fabricServiceImpl.getUsername("org3_user"));
     }
 
     @Test
     void testTraceBackward() {
         String fileId = "file9";
         String txId = "28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba";
-        Record record = fabricService.traceBackward(fileId,"channel1");
+        Record record = fabricService.traceBackward("org5_user","channel2", "data3");
         System.out.println(record);
 //        String response = "{\"next_tx\": \"28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba\", \"tx_info\":\n" +
 //                "\"{\\\"data_id\\\":\\\"file1\\\",\\\"dst_chain\\\":\\\"channel1\\\",\\\"hash_data\\\":\\\"456\\\",\\\"last_tx_id\\\":\\\"cbcf5226f0aaf8754859b6b22fa8a14116bc84191ab8d720011abaa6ea846a47\\\",\\\"src_chain\\\":\\\"channel2\\\",\\\"this_tx_id\\\":\\\"28df397b16ec36df92a23cd179ff5a10808bae543c776e3f6304c9db368724ba\\\",\\\"type_tx\\\":\\\"delete\\\",\\\"user\\\":\\\"userC\\\"}\"}";
@@ -60,35 +56,101 @@ class FabricServiceImplTest {
 //            throw new FabricException("溯源失败: fileId:" + fileId + ", txId: " + txId);
 //        }
     }
+    
+    @Test
+    void traceBackwardAll1(){
+        List<Record> records = fabricService.traceBackwardAll("org5_user", "channel2", "data3");
+        records.forEach(System.out::println);
+    }
 
     @Test
     void grantUserPermission2Add() {
-        Boolean aBoolean = fabricService.grantUserPermission2Add("channel3", "role123", "rick");
+        Boolean aBoolean = fabricService.grantUserPermission2Add("org4_admin","channel2", "role1", "org4_admin");
+        System.out.println(aBoolean);
+    }
+
+    @Test
+    void revokeUserPermission2Add() {
+        Boolean aBoolean = fabricService.revokeUserPermission2Add("org4_admin", "channel2", "role1", "org4_admin");
+        System.out.println(aBoolean);
+    }
+
+    // 撤销用户对应文件权限
+    @Test
+    void revokeUserPermissionOnFile() {
+        Boolean aBoolean = fabricService.revokeUserPermissionOnFile("org4_admin", "channel2", "data3", "modify", "role1", "org5_user");
         System.out.println(aBoolean);
     }
 
     @Test
     void getPolicy() {
-        String ans = fabricService.getPolicy("channel1", "add");
+        String ans = fabricService.getPolicy("org4_admin","channel2","channel1", "add");
         System.out.println(ans);
+    }
+    
+    // 上传文件 一二次上链
+    @Test
+    void uploadFile(){
+        String tx = fabricService.applyForCreateFile("org5_user", "channel2","hash","data3");
+        System.out.println(tx);
+        tx = fabricService.updateForCreateFile("org5_user", "channel2","hash","data3",tx);
+        System.out.println(tx);
+    }
+    
+    // 授予文件read权限
+    @Test
+    void grantReadPermission(){
+        Boolean aBoolean = fabricService.grantUserPermissionOnFileInnerChannel("org4_admin", "data3", "channel2", "read", "role1", "org5_user");
+        System.out.println(aBoolean);
+        // String requester, String channelName,  String obj, String opt
+        String policy = fabricService.getPolicy("org5_user", "channel2", "data3", "read");
+        System.out.println(policy);
+    }
+    
+    // 读取文件
+    @Test
+    void readFile(){
+        String tx = fabricService.applyForReadFile("org5_user", "channel2","hash","data3");
+        System.out.println(tx);
+        tx = fabricService.updateForReadFile("org5_user", "channel2","hash","data3",tx);
+        System.out.println(tx);
+    }
+
+    // 授予文件修改权限
+    @Test
+    void grantModifyPermission(){
+        Boolean aBoolean = fabricService.grantUserPermissionOnFileInnerChannel("org4_admin", "data3", "channel2", "modify", "role1", "org5_user");
+        System.out.println(aBoolean);
+        // String requester, String channelName,  String obj, String opt
+        String policy = fabricService.getPolicy("org5_user", "channel2", "data3", "modify");
+        System.out.println(policy);
+    }
+
+    // 修改文件
+    @Test
+    void modifyFile(){
+        String tx = fabricService.applyForModifyFile("org5_user", "channel2","hash","data3");
+        System.out.println(tx);
+        tx = fabricService.updateForModifyFile("org5_user", "channel2","hash","data3",tx);
+        System.out.println(tx);
     }
 
     @Test
     void grantUserPermissionOnFile() {
-        Boolean aBoolean = fabricService.grantUserPermissionOnFile("file333", "channel1","read", "role1", Collections.singletonList("rick"));
-        System.out.println(aBoolean);
+//        Boolean aBoolean = fabricService.grantUserPermissionOnFile("file333", "channel1","read", "role1", Collections.singletonList("rick"));
+//        System.out.println(aBoolean);
     }
 
     @Test
     void applyForReadFile() {
-        String txId = fabricService.applyForReadFile("", "channel1","userD", "channel1", "218");
-        System.out.println(txId);
+//        String txId = fabricService.applyForReadFile("", "channel1","userD", "channel1", "218");
+//        System.out.println(txId);
     }
 
     @Test
     void traceBackwardAll() {
-        List<Record> recordList = fabricService.traceBackwardAll("16", "channel1");
-        recordList.forEach(System.out::println);
+//        List<Record> recordList = fabricService.traceBackwardAll("16", "channel1");
+//        recordList.forEach(System.out::println);
     }
 
     @Test
@@ -97,4 +159,12 @@ class FabricServiceImplTest {
         List<Record> recordList = fabricService.traceBackwardAll("16", "channel1", txId);
         recordList.forEach(System.out::println);
     }
+
+    @Test
+    void applyForCreateFile() {
+        String txId = fabricService.applyForCreateFile("org5_user", "channel2", "hashdata","data2");
+        System.out.println(txId);
+    }
+
+    
 }

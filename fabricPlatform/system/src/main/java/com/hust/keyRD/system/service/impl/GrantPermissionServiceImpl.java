@@ -82,9 +82,11 @@ public class GrantPermissionServiceImpl implements GrantPermissionService {
                 log.info("撤销用户权限失败：invalid AuthorityKey");
                 return false;
         }
-        return fabricService.revokeUserPermissionOnFile(fileId, fileChannelName, permission, role, new ArrayList<String>() {{
-            add(user);
-        }});
+        // TODO:
+//        return fabricService.revokeUserPermissionOnFile(fileId, fileChannelName, permission, role, new ArrayList<String>() {{
+//            add(user);
+//        }});
+        return null;
     }
 }
 
