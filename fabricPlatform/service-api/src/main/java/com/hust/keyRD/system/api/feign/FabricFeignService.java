@@ -50,6 +50,10 @@ public interface FabricFeignService {
     String argsTest(@RequestParam("peers") String peers, @RequestParam("channel_name") String channelName, @RequestParam("cc_name") String ccName,
                     @RequestParam("fcn") String fcn, @RequestParam("args") List<String> args);
     
+    @PostMapping("/trace_forward")
+    String traceForwardCrossChain(@RequestParam("requestor") String requester,@RequestParam("listen_peer") String listenPeers, @RequestParam("invoke_peers") String peers, @RequestParam("src_channel") String channelName, @RequestParam("cc_name") String ccName,
+                                  @RequestParam("fcn") String fcn, @RequestParam("args") List<String> args);
+    
     @PostMapping("/pullFileAcrossChannel")
     String pullFileAcrossChannel(@RequestParam("requestor") String requester,@RequestParam("listen_peer") String listenPeers, @RequestParam("invoke_peers") String peers, @RequestParam("src_channel") String channelName, @RequestParam("cc_name") String ccName,
                                  @RequestParam("fcn") String fcn, @RequestParam("args") List<String> args);

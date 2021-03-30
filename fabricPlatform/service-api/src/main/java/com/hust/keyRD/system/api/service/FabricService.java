@@ -1,5 +1,6 @@
 package com.hust.keyRD.system.api.service;
 
+import com.hust.keyRD.commons.Dto.ShareResult;
 import com.hust.keyRD.commons.entities.Record;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -194,6 +195,20 @@ public interface FabricService {
      */
     String dataSyncRecord(String requester, String channelName,String fileHash, String fileId,String typeTx, String txId);
 
+    /**
+     * 共享文件后的域内第二次上链，由于跨链共享后二次上链的fcn不同，所以需要指定fcn
+     * @param requester 调用者
+     * @param requesterChannelName 调用者所在channel
+     * @param fileHash 文件hash
+     * @param fileId 文件id
+     * @param dataChannelName 文件所在channel
+     * @param typeTx 操作类型 add/read/modify...
+     * @param txId 第一次上链事务号
+     * @param fcn  指定fcn   
+     * @return
+     */
+    String dataSyncRecordAfterShare(String requester, String requesterChannelName,String fileHash, String fileId,String dataChannelName, String typeTx, String txId, String fcn);
+
     
     /**
      * 溯源 查找fileId文件最新的交易记录
@@ -315,11 +330,45 @@ public interface FabricService {
      * @return
      */
     Boolean revokeInnerChannelPush(String fileId, String role, String username);
-    
-    String pullData(String requester, String dataId, String fileHash,String requesterChannelName, String targetChannelName);
-    
+
+    /**
+     * pull文件操作   注意：如果成功，后面还需要加两次二次上链
+     * @param requester 调用者
+     * @param dataId  要pull的文件id
+     * @param dataHash  dataHash
+     * @param requesterChannelName 调用者所在channel 即 srcChannel 
+     * @param dataChannelName 文件所在channel
+     * @param copyDataId 复制后的dataId  需要先保存到数据库，如果出错再回滚
+     * @return
+     */
+    ShareResult pullData(String requester, String dataId, String dataHash, String requesterChannelName, String dataChannelName, String copyDataId);
+
+
+    /**
+     * push文件操作   注意：如果成功，后面还需要加两次二次上链
+     * @param requester 调用者
+     * @param dataId  要push的文件id
+     * @param dataHash  dataHash
+     * @param requesterChannelName 调用者所在channel 即 srcChannel 
+     * @param targetChannelName 目标域channel
+     * @param copyDataId 复制后的dataId   需要先保存到数据库，如果出错再回滚
+     * @return
+     */
+    ShareResult pushData(String requester, String dataId, String dataHash, String requesterChannelName, String targetChannelName, String copyDataId);
+
+
+
+    /**
+     * 对跨链分享出去的文件进行跨链追踪
+     * @param requester  调用者
+     * @param requesterChannelName  调用者所在channel
+     * @param txId   文件被pull的时候产生的txId
+     * @param targetChannelName  文件被分享到targetChannel  现在要在targetChannel上对文件进行追踪
+     * @return
+     */
+    Record traceForwardCrossChain(String requester,String requesterChannelName,String txId, String targetChannelName);
     
     String pushData(String requester, String dataId, String fileHash,String requesterChannelName, String targetChannelName);
-    
+
     
 }
