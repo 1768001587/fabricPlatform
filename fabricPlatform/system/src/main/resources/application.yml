@@ -65,7 +65,7 @@ feign:
       connectTimeout: 5000
       readTimeout: 5000   # 读超时时间
       loggerLevel: full # 日志级别
-      
+
 logging:
   level:
     com:
